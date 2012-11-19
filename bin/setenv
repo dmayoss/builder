@@ -1,0 +1,128 @@
+#!/bin/ksh
+
+# COPYRIGHT: Copyright (c) 2010 System Data Recorder
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#  (http://www.gnu.org/copyleft/gpl.html)
+
+####################
+# Platform and OS
+#
+####################
+OS_NAME=$(uname -s)
+PT_NAME=$(uname -m)
+HOSTNAME=$(uname -n)
+####################
+
+
+NGINX_PERLBIN=/opt/nginx/perl/bin
+NGXAL_PERLBIN=/opt/www/perl/bin
+SDR_PERLBIN=/opt/sdr/perl/bin
+SDRREP_PERLBIN=/opt/sdr/report/perl/bin
+BUILD_PATH=/opt/build/log
+#############################################
+
+###############################
+# COMPILER & USER ID
+###############################
+case "$OS_NAME" in
+ SunOS)
+  USER_ID=$(/usr/xpg4/bin/id -u)
+  KERNEL=$(uname -sr)
+ ;;
+
+ Linux)
+  COMPILER=$(gcc --version | head -1 | sed 's/(GCC) //')
+  KERNEL=$(uname -r)
+  USER_ID=$(/usr/bin/id -u)
+ ;;
+
+ *)
+ print "Not supported OS !"
+esac
+###############################
+
+
+###############################
+# JDK_PATH
+# - set here where your JDK is
+#   installed
+###############################
+JDK_PATH=/opt/java/current
+###############################
+
+
+###############################
+# System Data Recorder Settings
+# - the main installation dir
+#
+#####################################
+MONITOR_PATH=/opt/sdr
+MONITOR_BIN=${MONITOR_PATH}/bin
+MONITOR_LIB=${MONITOR_PATH}/lib
+MONITOR_LOG=${MONITOR_PATH}/log
+MONITOR_RAW=${MONITOR_LOG}/raw
+MONITOR_DAILY=${MONITOR_LOG}/daily
+REPORT_ROOT=${MONITOR_PATH}/report
+REPORT_BIN=${REPORT_ROOT}/rrd/bin
+REPORT_DOCROOT=${REPORT_ROOT}/docroot
+REPORT_DB=${REPORT_ROOT}/db
+#####################################
+
+
+########################################
+# RAW COLLECTOR DATA DIRECTORY
+# - this is the place where all raw data
+#   will be saved
+# - based on MONITOR_RAW
+#
+########################################
+SYSREC_RAW=${MONITOR_RAW}/sysrec.raw
+CPUREC_RAW=${MONITOR_RAW}/cpurec.raw
+NICREC_RAW=${MONITOR_RAW}/nicrec.raw
+NETREC_RAW=${MONITOR_RAW}/netrec.raw
+JVMREC_RAW=${MONITOR_RAW}/jvmrec.raw
+COREREC_RAW=${MONITOR_RAW}/corerec.raw
+ZONEREC_RAW=${MONITOR_RAW}/zonerec.raw
+########################################
+
+
+########################################
+# WEBREC STDOUT
+# - all stdout log
+#
+########################################
+WEBREC_LOG=${MONITOR_RAW}/webrec.log
+
+
+#############################
+# OS UTILITIES
+# - used by all collectors
+#
+#############################
+WC_BIN=/usr/bin/wc
+GREP_BIN=/usr/bin/grep
+PERL_BIN=/opt/sdr/perl/bin/perl
+TAIL_BIN=/usr/bin/tail
+MPSTAT_BIN=/usr/bin/mpstat
+PRSTAT_BIN=/usr/bin/prstat
+ZLOGIN_BIN=/usr/sbin/zlogin
+NETSTAT_BIN=/usr/bin/netstat
+ZONEADM_BIN=/usr/sbin/zoneadm
+#############################
+
+
+export HOSTNAME REPORT_ROOT REPORT_BIN REPORT_DOCROOT MONITOR_PATH MONITOR_BIN MONITOR_LOG MONITOR_RAW SDR_PERLBIN SDRREP_PERLBIN

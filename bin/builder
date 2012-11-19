@@ -1,0 +1,1125 @@
+#!/usr/bin/ksh93 -p
+
+# COPYRIGHT: Copyright (c) 2012 System Data Recorder
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#  (http://www.gnu.org/copyleft/gpl.html)
+
+# VERSION: 0.6.7
+
+
+usage() {
+
+cat << END
+USAGE: ${0##*/} [OPTION] rec|rep|nginx version
+OPTIONS:
+  -a nginx mode, enable all pkgs: php, mariadb
+  -p path
+  -h
+  -t enable tests
+  -m perl|openssl|idn|curl|wcurl|sysstat|nrec|webrec|scripts
+     rep1|rep2|rep3|rep4|rep5
+
+  eg, builder    rec 0.73      # build recording for 0.73 version
+      builder    rep 0.71      # build reporting for 0.71 version
+      builder    nginx 0.8.54  # build nginx 0.8.54
+      builder -a nginx 0.8.54  # build nginx 0.8.54
+END
+exit 1
+}
+
+
+# ######### #
+# MAIN BODY #
+# ######### #
+
+perl_sem=0
+lidn_sem=0
+lcrl_sem=0
+lwcl_sem=0
+wrec_sem=0
+recs_sem=0
+test_sem=0
+nrec_sem=0
+ossl_sem=0
+syss_sem=0
+rec1_sem=0
+rep1_sem=0
+rep2_sem=0
+rep3_sem=0
+rep4_sem=0
+rep5_sem=0
+rep6_sem=0
+
+# Recording
+idn_done=0
+perl_done=0
+ossl_done=0
+curl_done=0
+wrec_done=0
+recs_done=0
+nrec_done=0
+tests_done=0
+wwwcurl_done=0
+sysstat_done=0
+rec_ssh2_done=0
+rec_perlssh2_done=0
+libxml2_done=0
+perlxml_done=0
+
+
+# Reporting
+rep_idn_done=0
+rep_ssh2_done=0
+rep_perlssh2_done=0
+rep_curl_done=0
+rep_pkgc_done=0
+rep_pixm_done=0
+rep_libpng_done=0
+rep_freetype_done=0
+rep_fontconfig_done=0
+rep_cairo_done=0
+rep_ffi_done=0
+rep_harfbuzz_done=0
+rep_glib_done=0
+rep_pango_done=0
+rep_rrd_done=0
+rep_gett_done=0
+rep_ossl_done=0
+rep_perl_done=0
+rep_iconv_done=0
+rep_libxml2_done=0
+rep_perllxml_done=0
+rep_rdln_done=0
+rep_gd_done=0
+rep_perlmodules_done=0
+rep_perlnetdns_done=0
+rep_dbdpg_done=0
+rep_pcre_done=0
+rep_fcgi_done=0
+rep_fcgiw_done=0
+rep_ws_done=0
+rep_rsts_done=0
+rep_rcairo_done=0
+rep_rggplot2_done=0
+rep_pdq_done=0
+rep_wcurl_done=0
+rep_wsscripts_done=0
+rep_tests_done=0
+rep_fin_done=0
+
+# Nginx
+nginx_all_sem=0
+ngx_perl_done=0
+ngx_conv_done=0
+ngx_ossl_done=0
+ngx_gd_done=0
+ngx_perlmodules_done=0
+ngx_dbdpg_done=0
+ngx_pcre_done=0
+ngx_fcgi_done=0
+ngx_fcgiw_done=0
+ngx_ws_done=0
+ngx_mariadb_done=0
+ngx_mcd_done=0
+ngx_idn_done=0
+ngx_curl_done=0
+ngx_php_done=0
+ngx_event_done=0
+ngx_scripts_done=0
+
+# Source Global SDR Settings
+PWD=$(dirname $0)
+. ${PWD}/setenv
+
+while getopts ":ahm:p:t" arg
+do
+    case "${arg}" in
+
+    a)
+        nginx_all_sem=1
+    ;;
+
+    h)
+        usage
+    ;;
+
+    p)
+        iprefix=$OPTARG
+        if [[ ! -d $iprefix ]]; then
+            usage
+        fi
+    ;;
+
+    m)
+        module=$OPTARG
+        case "$module" in
+            perl)
+                perl_sem=1
+            ;;
+
+            openssl)
+                ossl_sem=1
+            ;;
+
+            idn)
+                lidn_sem=1
+            ;;
+
+            curl)
+                lcrl_sem=1
+            ;;
+ 
+            gd)
+                lgd_sem=1
+            ;;
+
+            wcurl)
+                lwcl_sem=1
+            ;;
+
+            nrec)
+                nrec_sem=1
+            ;;
+
+            sysstat)
+                if [[ "$OS_NAME" != "Linux" ]]; then
+                    print "Error: sysstat is a Linux specific pkg !\n"
+                    exit 1
+                fi
+                syss_sem=1
+            ;;
+
+            webrec)
+
+                wrec_sem=1
+            ;;
+
+            scripts)
+                recs_sem=1
+            ;;
+
+            rec1)
+		rec1_sem=1
+            ;;
+
+            rep1)
+                rep1_sem=1
+            ;;
+
+            rep2)
+                rep2_sem=1
+            ;;
+
+            rep3)
+                rep3_sem=1
+            ;;
+
+            rep4)
+                rep4_sem=1
+            ;;
+
+            rep5)
+                rep5_sem=1
+            ;;
+
+            rep6)
+                rep6_sem=1
+            ;;
+
+            *)
+                print "Not supported module!"
+                usage
+            ;;
+        esac
+    ;;
+    
+    t)
+        test_sem=1
+    ;;
+
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+
+# check arguments
+if (( $# < 2 || $# > 2 ))
+then
+    usage
+fi
+
+version=$2
+module=$1
+
+
+# Status File
+STATFILE="build.${module}.${PT_NAME}"
+BUILD_LOG="${module}.${PT_NAME}.${version}.log"
+
+# status file
+if [[ -f /var/tmp/${STATFILE} ]]; then
+    print "Error: builder already working, module: ${module}, plat: ${PT_NAME}, ver: ${version}"
+    exit 1
+else
+    touch /var/tmp/${STATFILE}
+fi
+
+
+case "$OS_NAME" in
+    SunOS)
+         
+        # get workspace user id
+        WORKSPACE_USER=$(/usr/xpg4/bin/id -un)
+
+	# source here the engine for Solaris
+        case "$module" in
+	 rec)
+             iprefix=${iprefix:-/opt/sdr}
+             iuser=sdr
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             case "$version" in
+                 0.73*)
+                  . ${PWD}/engine.rec.solaris.073
+                  ;;
+
+                 0.74*)
+                  . ${PWD}/engine.rec.solaris.074
+                  ;;
+
+               
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+         rep)
+             iprefix=${iprefix:-/opt/sdr/report}
+             iuser=sdr
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+
+             case "$version" in
+                 0.74)
+                  . ${PWD}/engine.rep.solaris.074
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+
+         ;;
+         
+	 nginx)
+
+             iprefix=${iprefix:-/opt/nginx}
+             if [[ $iprefix == "/opt/nginx" ]]; then
+                 iuser=nginx
+             else
+                 if [[ $iprefix == "/opt/www" ]]; then
+                     iuser=www
+                 else
+                     iuser=nobody
+                 fi
+             fi
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/nginx
+
+             case "$version" in
+                 0.8.54)
+                  . ${PWD}/engine.nginx.solaris.0854
+                  ;;
+
+                 1.2.*)
+                  . ${PWD}/engine.nginx.solaris.12x
+                 ;;
+ 
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+         *)
+            usage
+         ;;
+        esac
+    ;;
+
+    Linux)
+
+        # get workspace user id
+        WORKSPACE_USER=$(/usr/bin/id -un)
+
+        case "$module" in
+         rec)
+
+             iprefix=${iprefix:-/opt/sdr}
+             iuser=sdr
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+
+             case "$version" in
+                 0.73*)
+                  . ${PWD}/engine.rec.linux.073
+                  ;;
+               
+                 0.74*)
+                  . ${PWD}/engine.rec.linux.074
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+         rep)
+
+             iprefix=${iprefix:-/opt/sdr/report}
+             iuser=sdr
+             
+             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+
+             case "$version" in
+                 0.74*)
+                  . ${PWD}/engine.rep.linux.074
+                  ;;
+               
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+         
+	 nginx)
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/nginx
+
+             case "$version" in
+                 0.8.54)
+                  . ${PWD}/engine.nginx.linux.0854
+                  ;;
+               
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+         *)
+            usage
+         ;;
+        esac
+
+    ;;
+
+    *)
+        WORKSPACE=
+	print "Not supported module!"
+        usage
+    ;;
+
+esac
+
+if [[ ! -d ${WORKSPACE}/build ]]; then
+    print "Error: Invalid workspace structure: build"
+    exit 1
+fi
+
+if [[ -d ${WORKSPACE}/build/${module}/${version} ]]; then
+    cd ${WORKSPACE}/build/${module}/${version}
+else
+    print "Error: Invalid workspace structure: wrong module/version"
+    exit 1
+fi
+
+
+
+start=$SECONDS
+
+print ""
+print "#################################################################"
+print "# SDR Build Engine                                              #"
+print "#################################################################"
+print "# Start  : $(date)"
+print "# Target : ${OS_NAME} ${PT_NAME}"
+if ((nginx_all_sem == 1)); then
+    print "# Module : $module + php, mariadb, others"
+else
+    print "# Module : $module"
+fi
+print "# Version: $version"
+print "#################################################################"
+
+#print "Debug: perl_mod=$perl_mod, idn_mod=$idn_mod"
+
+case "$module" in
+ rec)
+    if (( perl_sem == 0 && ossl_sem == 0 && \
+          lidn_sem == 0 && syss_sem == 0 && \
+          lcrl_sem == 0 && lwcl_sem == 0 && \
+          wrec_sem == 0 && nrec_sem == 0 && \
+          recs_sem == 0 && test_sem == 0 && \
+          rec1_sem == 0 ));then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rec_perl
+        build_rec_ossl
+        build_rec_ssh2
+        build_rec_perlssh2
+        build_rec_idn
+        build_rec_libxml2
+        build_rec_xmllibxml
+        build_rec_curl
+        build_rec_wcurl
+        if [[ ${OS_NAME} == "Linux" ]]; then
+            build_rec_sysstat
+        fi
+   
+        # nicrec native went unmaintained
+        #if [[ ${OS_NAME} == "SunOS" ]]; then
+        #    build_rec_nrec
+        #fi
+
+        build_rec_webrec
+        build_rec_scripts
+        test_rec_scripts
+    else
+        if (( perl_sem == 1 )); then
+          print "" > ${BUILD_PATH}/${BUILD_LOG}
+          build_rec_perl
+        fi
+
+        if (( ossl_sem == 1 )); then
+          print "" > ${BUILD_PATH}/${BUILD_LOG}
+          build_rec_ossl
+        fi
+     
+        if (( rec1_sem == 1 )); then
+          print "" > ${BUILD_PATH}/${BUILD_LOG}
+          #build_rec_ssh2
+          build_rec_perlssh2
+        fi
+
+        if (( lidn_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            build_rec_idn
+        fi
+
+        if (( lcrl_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            build_rec_curl
+        fi
+
+        if (( lwcl_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            build_rec_wcurl
+        fi
+
+        if (( syss_sem == 1 )); then
+            if [[ ${OS_NAME} == "Linux" ]]; then
+                print "" > ${BUILD_PATH}/${BUILD_LOG}
+                build_rec_sysstat
+            fi
+        fi
+
+        if (( nrec_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            build_rec_nrec
+        fi
+
+        if (( wrec_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            build_rec_webrec
+        fi
+
+        if (( recs_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            build_rec_scripts
+        fi
+
+        if (( test_sem == 1 )); then
+            print "" > ${BUILD_PATH}/${BUILD_LOG}
+            test_rec_scripts
+        fi
+
+    fi
+
+ ;;
+
+ rep)
+
+    if (( rep1_sem == 0 && rep2_sem == 0 && 
+          rep3_sem == 0 && rep4_sem == 0 &&
+          rep5_sem == 0 && rep6_sem == 0 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_perl
+        build_rep_ossl
+        build_rep_iconv
+        build_rep_libxml2
+        build_rep_xmllibxml
+        build_rep_ssh2
+        build_rep_gettext
+        build_rep_readline
+        build_rep_idn
+        build_rep_curl
+        build_rep_harfbuzz
+        build_rep_ffi
+        build_rep_glib
+        build_rep_perlssh2
+        build_rep_wcurl
+        build_rep_pcre
+        build_rep_fcgi
+        build_rep_ws
+        build_rep_fcgiwrap
+        build_rep_ws_scripts
+        build_rep_pkgconfig
+        build_rep_pixman
+        build_rep_libpng
+        build_rep_freetype
+        build_rep_fontconfig
+        build_rep_cairo
+        build_rep_pango
+        build_rep_rrd
+        build_rep_R
+        build_rep_rcairo
+        build_rep_rggplot2
+        build_rep_pdq
+        build_rep_fin
+    elif (( rep1_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_perl
+        build_rep_ossl
+        build_rep_ssh2
+        build_rep_gettext
+        build_rep_iconv
+        build_rep_gettext
+        build_rep_readline
+        build_rep_libxml2
+        build_rep_xmllibxml
+        build_rep_idn
+        build_rep_curl
+        build_rep_harfbuzz
+        build_rep_ffi
+        build_rep_glib
+        build_rep_perlssh2
+        build_rep_wcurl
+        build_rep_pcre
+        build_rep_fcgi
+        build_rep_ws
+        build_rep_fcgiwrap
+        build_rep_ws_scripts
+        build_rep_fin
+    elif (( rep2_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_harfbuzz
+        build_rep_ffi
+        build_rep_glib
+        build_rep_ossl
+        build_rep_gettext
+        build_rep_iconv
+        build_rep_gettext
+        build_rep_readline
+        build_rep_libxml2
+        build_rep_xmllibxml
+        build_rep_pkgconfig
+        build_rep_pixman
+        build_rep_libpng
+        build_rep_freetype
+        build_rep_fontconfig
+        build_rep_cairo
+        build_rep_pango
+        build_rep_rrd
+    elif (( rep3_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_gettext
+        build_rep_iconv
+        build_rep_gettext
+        build_rep_readline
+        build_rep_libxml2
+        build_rep_xmllibxml
+        build_rep_R
+        build_rep_rcairo
+        build_rep_rggplot2
+        build_rep_pdq
+    elif (( rep4_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_pdq
+    elif (( rep5_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_rggplot2
+    elif (( rep6_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_fin
+    fi
+ ;;
+
+
+ nginx)
+    print "" > ${BUILD_PATH}/${BUILD_LOG}
+
+    build_nginx_perl
+    build_nginx_ossl
+    build_nginx_gettext
+    build_nginx_iconv
+    build_nginx_gettext
+    build_nginx_readline
+    build_nginx_gd
+    build_nginx_perlmods
+    build_nginx_pcre
+    build_nginx_fcgi
+    build_nginx_ws
+    build_nginx_fcgiwrap
+    build_nginx_dbdpg
+    build_nginx_scripts 
+
+    if (( nginx_all_sem == 1)); then
+        # build here php, mariadb, others
+        build_nginx_event
+        build_nginx_idn
+        build_nginx_curl
+        build_nginx_mariadb
+        build_nginx_mcd
+        build_nginx_mcrypt
+        build_nginx_php
+        build_nginx_peclmcd
+    fi
+
+ ;;
+ *) 
+    usage
+ ;;
+
+esac
+
+
+# FINAL INTEGRATION MESSAGE
+
+print "#################################################################"
+printf "%-25s\n" "# SUMMARY"
+printf "%-25s%-20s\n" "# Target:"  "${OS_NAME} ${PT_NAME}"
+printf "%-25s%-20s\n" "# Compiler:" "${COMPILER}"
+printf "%-25s%-20s\n" "# Built on:" "${OS_NAME} ${KERNEL}"
+printf "%-25s%-20s\n" "# SDR Module:"  "${module}"
+printf "%-25s%-20s\n" "# Version:" "${version}"
+printf "%-25s%-20s\n" "# Build Date:" "$(date)"
+
+case "$module" in
+
+ rec)
+
+    if ((perl_done == 1));then
+        printf "%-25s%-20s\n" "# PERL SUBSYSTEM:" "built and integrated"
+    else
+        if ((perl_done == 90));then
+            printf "%-25s%-20s\n" "# PERL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((ossl_done == 1));then
+        printf "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "built and integrated"
+    else
+        if ((ossl_done == 90));then
+            printf "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rec_ssh2_done == 1));then
+        printf "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "built and integrated"
+    else
+        if ((rec_ssh2_done == 90));then
+            printf "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rec_perlssh2_done == 1));then
+        printf "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "built and integrated"
+    else
+        if ((rec_perlssh2_done == 90));then
+            printf "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((idn_done == 1));then
+        printf "%-25s%-20s\n" "# IDN SUBSYSTEM:" "built and integrated"
+    else
+        if ((idn_done == 90));then
+            printf "%-25s%-20s\n" "# IDN SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((curl_done == 1));then
+        printf "%-25s%-20s\n" "# CURL SUBSYSTEM:" "built and integrated"
+    else
+        if ((curl_done == 90));then
+            printf "%-25s%-20s\n" "# CURL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if [[ "$OS_NAME" == "Linux" ]]; then
+        if ((sysstat_done == 1));then
+            printf "%-25s%-20s\n" "# SYSSTAT SUBSYSTEM:" "built and integrated"
+        else
+            if ((sysstat_done == 90));then
+                printf "%-25s%-20s\n" "# SYSSTAT SUBSYSTEM:" "not integrated"
+            fi
+        fi
+    fi
+
+    if ((wwwcurl_done == 1));then
+        printf "%-25s%-20s\n" "# WCURL SUBSYSTEM:" "built and integrated"
+    else
+        if ((wwwcurl_done == 90));then
+            printf "%-25s%-20s\n" "# WCURL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+
+    if [[ "$OS_NAME" == "Linux" ]]; then
+        if ((nrec_done == 1));then
+            printf "%-25s%-20s\n" "# NICREC SUBSYSTEM:" "built and integrated"
+        else
+            if ((nrec_done == 90));then
+                printf "%-25s%-20s\n" "# NICREC SUBSYSTEM:" "not integrated"
+            fi
+        fi
+    fi
+
+
+    if ((wrec_done == 1));then
+        printf "%-25s%-20s\n" "# WEBREC SUBSYSTEM:" "built and integrated"
+    else
+        if ((wrec_done == 90));then
+            printf "%-25s%-20s\n" "# WEBREC SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+
+    if ((recs_done == 1));then
+        printf "%-25s%-20s\n" "# RECORDERS:" "built and integrated"
+    else
+        if ((recs_done == 90));then
+            printf "%-25s%-20s\n" "# RECORDERS:" "not integrated"
+        fi
+    fi
+
+    if ((tests_done == 1));then
+        printf "%-25s%-20s\n" "# TESTS:" "ok"
+    else
+        if ((tests_done == 90));then
+            printf "%-25s%-20s\n" "# TESTS:" "failed"
+        fi
+    fi
+
+ ;;
+
+ rep)
+
+    if ((rep_perl_done == 1));then
+        printf "%-25s%-20s\n" "# PERL SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_perl_done == 90));then
+            printf "%-25s%-20s\n" "# PERL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_ossl_done == 1));then
+        printf "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_perl_done == 90));then
+            printf "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_gett_done == 1));then
+        printf "%-25s%-20s\n" "# GETTEXT SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_gett_done == 90));then
+            printf "%-25s%-20s\n" "# GETTEXT SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_iconv_done == 1));then
+        printf "%-25s%-20s\n" "# ICONV SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_iconv_done == 90));then
+            printf "%-25s%-20s\n" "# ICONV SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_libxml2_done == 1));then
+        printf "%-25s%-20s\n" "# LIBXML2 SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_libxml2_done == 90));then
+            printf "%-25s%-20s\n" "# LIBXML2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_perllxml_done == 1));then
+        printf "%-25s%-20s\n" "# XML::LIBXML SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_perllxml_done == 90));then
+            printf "%-25s%-20s\n" "# XML::LIBXML SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_rdln_done == 1));then
+        printf "%-25s%-20s\n" "# READLINE SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rdln_done == 90));then
+            printf "%-25s%-20s\n" "# READLINE SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_idn_done == 1));then
+        printf "%-25s%-20s\n" "# LIBIDN SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_idn_done == 90));then
+            printf "%-25s%-20s\n" "# LIBIDN SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_curl_done == 1));then
+        printf "%-25s%-20s\n" "# LIBCURL SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_curl_done == 90));then
+            printf "%-25s%-20s\n" "# LIBCURL SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_ssh2_done == 1));then
+        printf "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_ssh2_done == 90));then
+            printf "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_perlssh2_done == 1));then
+        printf "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_perlssh2_done == 90));then
+            printf "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_gd_done == 1));then
+        printf "%-25s%-20s\n" "# GD SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_gd_done == 90));then
+            printf "%-25s%-20s\n" "# GD SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_perlmodules_done == 1));then
+        printf "%-25s%-20s\n" "# PERLMODS SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_perlmodules_done == 90));then
+            printf "%-25s%-20s\n" "# PERLMODS SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+   if ((rep_wcurl_done == 1));then
+        printf "%-25s%-20s\n" "# WWWCurl SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_wcurl_done == 90));then
+            printf "%-25s%-20s\n" "# WWWCurl SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_dbdpg_done == 1));then
+        printf "%-25s%-20s\n" "# DBDPG SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_dbdpg_done == 90));then
+            printf "%-25s%-20s\n" "# DBDPG SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_pcre_done == 1));then
+        printf "%-25s%-20s\n" "# PCRE SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_pcre_done == 90));then
+            printf "%-25s%-20s\n" "# PCRE SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_fcgi_done == 1));then
+        printf "%-25s%-20s\n" "# FCGI SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_fcgi_done == 90));then
+            printf "%-25s%-20s\n" "# FCGI SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_fcgiw_done == 1));then
+        printf "%-25s%-20s\n" "# FCGIW SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_fcgiw_done == 90));then
+            printf "%-25s%-20s\n" "# FCGIW SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_ws_done == 1));then
+        printf "%-25s%-20s\n" "# NGINX SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_ws_done == 90));then
+            printf "%-25s%-20s\n" "# NGINX SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_wsscripts_done == 1));then
+        printf "%-25s%-20s\n" "# NGINXS SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_wsscripts_done == 90));then
+            printf "%-25s%-20s\n" "# NGINXS SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_pkgc_done == 1));then
+        printf "%-25s%-20s\n" "# PKGCONFIG SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_pkgc_done == 90));then
+            printf "%-25s%-20s\n" "# PKGCONFIG SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_pixm_done == 1));then
+        printf "%-25s%-20s\n" "# PIXMAN SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_pixm_done == 90));then
+            printf "%-25s%-20s\n" "# PIXMAN SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_harfbuzz_done == 1));then
+        printf "%-25s%-20s\n" "# HARFBUZZ SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_harfbuzz_done == 90));then
+            printf "%-25s%-20s\n" "# HARFBUZZ SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_ffi_done == 1));then
+        printf "%-25s%-20s\n" "# FFI SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_ffi_done == 90));then
+            printf "%-25s%-20s\n" "# FFI SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_glib_done == 1));then
+        printf "%-25s%-20s\n" "# GLIB SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_glib_done == 90));then
+            printf "%-25s%-20s\n" "# GLIB SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_cairo__done == 1));then
+        printf "%-25s%-20s\n" "# CAIRO SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_cairo_done == 90));then
+            printf "%-25s%-20s\n" "# CAIRO SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_pango_done == 1));then
+        printf "%-25s%-20s\n" "# PANGO SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_pango_done == 90));then
+            printf "%-25s%-20s\n" "# PANGO SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_rrd_done == 1));then
+        printf "%-25s%-20s\n" "# RRD SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rrd_done == 90));then
+            printf "%-25s%-20s\n" "# RRD SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_rsts_done == 1));then
+        printf "%-25s%-20s\n" "# R SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rsts_done == 90));then
+            printf "%-25s%-20s\n" "# R SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_rcairo_done == 1));then
+        printf "%-25s%-20s\n" "# R CAIRO SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rcairo_done == 90));then
+            printf "%-25s%-20s\n" "# R CAIRO SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_rggplot2_done == 1));then
+        printf "%-25s%-20s\n" "# R SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rggplot2_done == 90));then
+            printf "%-25s%-20s\n" "# R GGPLOT2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_pdq_done == 1));then
+        printf "%-25s%-20s\n" "# PDQ SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_pdq_done == 90));then
+            printf "%-25s%-20s\n" "# PDQ SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_fin_done == 1));then
+        printf "%-25s%-20s\n" "# FINALIZE:" "done"
+    else
+        if ((rep_pdq_done == 90));then
+            printf "%-25s%-20s\n" "# FINALIZE:" "not done"
+        fi
+    fi
+
+ ;;
+
+esac
+
+print "#################################################################"
+
+typeset -F2 elapsed
+((elapsed = SECONDS - start))
+
+if (( elapsed > 3600 )); then
+    h=$(( elapsed / 3600 ))
+    m=$(( ( elapsed / 60 ) % 60 ))
+    s=$(( elapsed % 60 ))
+    printf "%s%02d:%02d:%02d%s\n" "# Total Build time: " $h $m $s " (hh:mm:ss)"
+else
+    if (( elapsed > 60 && elapsed < 3600 )); then
+        m=$(( ( elapsed / 60 )  % 60 ))
+        printf "%s%02d%s\n" "# Total Build time: " $m " (mins)"
+    else
+        printf "%s%02d%s\n" "# Total Build time: " $elapsed " (secs)"
+    fi
+fi
+print "#################################################################"
+
+
+#cleanup
+rm /var/tmp/${STATFILE}
