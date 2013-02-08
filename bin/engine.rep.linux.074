@@ -1,4 +1,4 @@
-#!/usr/bin/ksh93
+#!/usr/bin/ksh93 -p
 
 # COPYRIGHT: Copyright (c) 2012 System Data Recorder
 #
@@ -365,6 +365,107 @@ if (( rep_pkgc_done == 4 )); then
    rep_pkgc_done=1
 else
    rep_pkgc_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi 
+cd ..
+
+}
+
+
+# ############################################################### #
+# Reporting: libjpeg Build Phase                                  #
+# ############################################################### #
+build_rep_libjpeg() {
+dir=libjpeg
+step1=0
+step2=0
+step3=0
+step4=0
+
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+    PATH=${iprefix}/bin:$PATH \
+    CFLAGS="-O3 -I${iprefix}/include"                        \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi 
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+(( rep_libjpeg_done = step1 + step2 + step3 + step4 ))
+if (( rep_libjpeg_done == 4 )); then
+   rep_libjpeg_done=1
+else
+   rep_libjpeg_done=90
 fi
 
 cd ..
@@ -822,7 +923,7 @@ env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     CC=cc CFLAGS="-O3 -fPIC -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    ./configure --enable-xlib=no \
+    ./configure --enable-xml \
     --prefix=${iprefix} --enable-win32=no >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
@@ -937,7 +1038,7 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -3128,6 +3229,7 @@ step3=0
 cd $dir
 print "\n############################################################"
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "iprefix=$iprefix"
 print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 ls *.tar.gz | read archive_file
 # Debug
@@ -3148,7 +3250,8 @@ cd ${archive_file%%.tar*}
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+cp Makefile.Linux Makefile
+make iprefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -3167,7 +3270,7 @@ if [[ ! -d ${iprefix}/ws/sbin ]]; then
     mkdir ${iprefix}/ws/sbin
 fi
 
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+make iprefix=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make install fcgiwrap failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -4094,10 +4197,10 @@ fi
 
 # STEP 13
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Info: Step 13 - Install scales $dir ..." |\
+print "Info: Step 13 - Install labeling $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls scales*.tar.gz | read archive_file
+ls labeling*.tar.gz | read archive_file
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4113,10 +4216,10 @@ fi
 
 # STEP 14
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Info: Step 14 - Install memoise $dir ..." |\
+print "Info: Step 14 - Install scales $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls memoise*.tar.gz | read archive_file
+ls scales*.tar.gz | read archive_file
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4132,10 +4235,10 @@ fi
 
 # STEP 15
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Info: Step 15 - Install ggplot2 $dir ..." |\
+print "Info: Step 15 - Install memoise $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls ggplot*.tar.gz | read archive_file
+ls memoise*.tar.gz | read archive_file
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4149,12 +4252,51 @@ else
 fi
 
 
+# STEP 16
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 16 - Install gtable $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+ls gtable*.tar.gz | read archive_file
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+    ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step16=1
+fi
+
+
+# STEP 17
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 17 - Install ggplot2 $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+ls ggplot*.tar.gz | read archive_file
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+    ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step17=1
+fi
+
+
 #
 # final check; 1 step
-(( rep_rggplot2_done = step1 + step2 + step3 + step4 + step5 + \
-                       step6 + step7 + step8 + step9 + step10 +\
-                       step11 + step12 + step13 + step14 + step15 ))
-if (( rep_rggplot2_done == 15 )); then
+(( rep_rggplot2_done = step1 + step2 + step3 + step4 + step5  + \
+                       step6 + step7 + step8 + step9 + step10 + \
+                       step11 + step12 + step13 + step14      + \
+                       step15 + step16 + step17 ))
+if (( rep_rggplot2_done == 16 )); then
    rep_rggplot2_done=1
 else
    rep_rggplot2_done=90

@@ -1,6 +1,6 @@
 #!/usr/bin/ksh93 -p
 
-# COPYRIGHT: Copyright (c) 2012 System Data Recorder
+# COPYRIGHT: Copyright (c) 2013 System Data Recorder
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,25 +18,24 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 0.6.7
-
-
 usage() {
 
 cat << END
-USAGE: ${0##*/} [OPTION] rec|rep|nginx version
+USAGE: ${0##*/} [OPTIONS] rec|rep|nginx version
 OPTIONS:
-  -a nginx mode, enable all pkgs: php, mariadb
+  -a nginx mode, enable all pkgs: php, mariadb, pgsql
+  -d db, nginx mode, enable pgsql or mariadb
   -p path
   -h
   -t enable tests
   -m perl|openssl|idn|curl|wcurl|sysstat|nrec|webrec|scripts
      rep1|rep2|rep3|rep4|rep5
 
-  eg, builder    rec 0.73      # build recording for 0.73 version
-      builder    rep 0.71      # build reporting for 0.71 version
-      builder    nginx 0.8.54  # build nginx 0.8.54
-      builder -a nginx 0.8.54  # build nginx 0.8.54
+  eg, builder rec 0.73                          # build recording 0.73
+      builder rep 0.71                          # build reporting 0.71
+      builder nginx 0.8.54                      # build nginx 0.8.54
+      builder -a nginx 0.8.54                   # build nginx 0.8.54
+      builder -p /opt/www -d pgsql nginx 1.2.6  # build nginx 0.8.54
 END
 exit 1
 }
@@ -63,6 +62,8 @@ rep3_sem=0
 rep4_sem=0
 rep5_sem=0
 rep6_sem=0
+fcgiwrap_sem=0
+jpeg_sem=0
 
 # Recording
 idn_done=0
@@ -89,6 +90,7 @@ rep_curl_done=0
 rep_pkgc_done=0
 rep_pixm_done=0
 rep_libpng_done=0
+rep_libjpeg_done=0
 rep_freetype_done=0
 rep_fontconfig_done=0
 rep_cairo_done=0
@@ -145,7 +147,7 @@ ngx_scripts_done=0
 PWD=$(dirname $0)
 . ${PWD}/setenv
 
-while getopts ":ahm:p:t" arg
+while getopts ":ahm:p:d:t" arg
 do
     case "${arg}" in
 
@@ -153,6 +155,25 @@ do
         nginx_all_sem=1
     ;;
 
+    d)
+        dbtype=$OPTARG
+
+        case "$dbtype" in
+            mariadb)
+                mariadb_sem=1
+            ;;
+
+            pgsql)
+                pgsql_sem=1
+            ;;
+
+            *)
+                print "Not supported db module!"
+                usage
+            ;;
+        esac
+    ;;
+     
     h)
         usage
     ;;
@@ -240,6 +261,14 @@ do
                 rep6_sem=1
             ;;
 
+            fcgiwrap)
+                fcgiwrap_sem=1
+            ;;
+
+            libjpeg)
+                jpeg_sem=1
+            ;;
+
             *)
                 print "Not supported module!"
                 usage
@@ -268,12 +297,12 @@ module=$1
 
 
 # Status File
-STATFILE="build.${module}.${PT_NAME}"
-BUILD_LOG="${module}.${PT_NAME}.${version}.log"
+STATFILE="build.${module}.${PT_NAME}.${HOSTNAME}"
+BUILD_LOG="${module}.${PT_NAME}.${HOSTNAME}.${version}.log"
 
 # status file
 if [[ -f /var/tmp/${STATFILE} ]]; then
-    print "Error: builder already working, module: ${module}, plat: ${PT_NAME}, ver: ${version}"
+    print "Error: builder already working, module: ${module}, host: ${HOSTNAME}, plat: ${PT_NAME}, ver: ${version}"
     exit 1
 else
     touch /var/tmp/${STATFILE}
@@ -411,13 +440,28 @@ case "$OS_NAME" in
          
 	 nginx)
 
+             iprefix=${iprefix:-/opt/nginx}
+             if [[ $iprefix == "/opt/nginx" ]]; then
+                 iuser=nginx
+             else
+                 if [[ $iprefix == "/opt/www" ]]; then
+                     iuser=www
+                 else
+                     iuser=nobody
+                 fi
+             fi
+
              WORKSPACE=~${WORKSPACE_USER}/workspace/nginx
 
              case "$version" in
                  0.8.54)
                   . ${PWD}/engine.nginx.linux.0854
                   ;;
-               
+
+                 1.2.*)
+                  . ${PWD}/engine.nginx.linux.12x
+                 ;;
+ 
                  *)
                    usage
                  ;;
@@ -568,7 +612,8 @@ case "$module" in
 
     if (( rep1_sem == 0 && rep2_sem == 0 && 
           rep3_sem == 0 && rep4_sem == 0 &&
-          rep5_sem == 0 && rep6_sem == 0 )); then
+          rep5_sem == 0 && rep6_sem == 0 && 
+          jpeg_sem == 0 && fcgiwrap_sem == 0 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
@@ -580,7 +625,6 @@ case "$module" in
         build_rep_readline
         build_rep_idn
         build_rep_curl
-        build_rep_harfbuzz
         build_rep_ffi
         build_rep_glib
         build_rep_perlssh2
@@ -591,8 +635,10 @@ case "$module" in
         build_rep_fcgiwrap
         build_rep_ws_scripts
         build_rep_pkgconfig
-        build_rep_pixman
+        build_rep_harfbuzz
+        build_rep_libjpeg
         build_rep_libpng
+        build_rep_pixman
         build_rep_freetype
         build_rep_fontconfig
         build_rep_cairo
@@ -603,6 +649,7 @@ case "$module" in
         build_rep_rggplot2
         build_rep_pdq
         build_rep_fin
+
     elif (( rep1_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
@@ -627,9 +674,9 @@ case "$module" in
         build_rep_fcgiwrap
         build_rep_ws_scripts
         build_rep_fin
+
     elif (( rep2_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_harfbuzz
         build_rep_ffi
         build_rep_glib
         build_rep_ossl
@@ -640,34 +687,41 @@ case "$module" in
         build_rep_libxml2
         build_rep_xmllibxml
         build_rep_pkgconfig
-        build_rep_pixman
+        build_rep_harfbuzz
+        build_rep_libjpeg
         build_rep_libpng
+        build_rep_pixman
         build_rep_freetype
         build_rep_fontconfig
         build_rep_cairo
         build_rep_pango
         build_rep_rrd
+
     elif (( rep3_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_gettext
-        build_rep_iconv
-        build_rep_gettext
-        build_rep_readline
-        build_rep_libxml2
-        build_rep_xmllibxml
-        build_rep_R
+        # build_rep_R
         build_rep_rcairo
         build_rep_rggplot2
-        build_rep_pdq
+
     elif (( rep4_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_pdq
+
     elif (( rep5_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_rggplot2
+
     elif (( rep6_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_fin
+
+    elif (( fcgiwrap_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_fcgiwrap
+
+    elif (( jpeg_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_libjpeg
     fi
  ;;
 
@@ -681,17 +735,30 @@ case "$module" in
     build_nginx_iconv
     build_nginx_gettext
     build_nginx_readline
+    build_nginx_libpng
+    build_nginx_freetype
+    build_nginx_fontconfig
     build_nginx_gd
     build_nginx_perlmods
     build_nginx_pcre
     build_nginx_fcgi
     build_nginx_ws
     build_nginx_fcgiwrap
-    build_nginx_dbdpg
     build_nginx_scripts 
 
+    if (( mariadb_sem == 1)); then
+        build_nginx_mariadb
+    fi
+
+    if (( pgsql_sem == 1)); then
+        build_nginx_pgsql
+        build_nginx_dbdpg
+    fi
+
     if (( nginx_all_sem == 1)); then
-        # build here php, mariadb, others
+        # build here php, pgsql, mariadb, others
+        build_nginx_pgsql
+        build_nginx_dbdpg
         build_nginx_event
         build_nginx_idn
         build_nginx_curl
@@ -1005,6 +1072,22 @@ case "$module" in
     else
         if ((rep_pixm_done == 90));then
             printf "%-25s%-20s\n" "# PIXMAN SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_libpng_done == 1));then
+        printf "%-25s%-20s\n" "# LIBPNG SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_libpnbg_done == 90));then
+            printf "%-25s%-20s\n" "# LIBPNG SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_libjpeg_done == 1));then
+        printf "%-25s%-20s\n" "# LIBJPEG SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_libjpeg_done == 90));then
+            printf "%-25s%-20s\n" "# LIBJPEG SUBSYSTEM:" "not integrated"
         fi
     fi
 
