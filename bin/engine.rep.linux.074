@@ -209,7 +209,8 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    CC=cc CFLAGS="-O3" \
+    CPPFLAGS="-I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
     -L/lib64 -L/usr/lib64" ./configure --enable-cookies --enable-nonblocking \
     --with-libidn --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
