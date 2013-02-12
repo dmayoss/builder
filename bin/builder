@@ -1168,10 +1168,18 @@ case "$module" in
     fi
 
     if ((rep_rggplot2_done == 1));then
-        printf "%-25s%-20s\n" "# R SUBSYSTEM:" "built and integrated"
+        printf "%-25s%-20s\n" "# R GGPLOT2 SUBSYSTEM:" "built and integrated"
     else
         if ((rep_rggplot2_done == 90));then
             printf "%-25s%-20s\n" "# R GGPLOT2 SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_rserve_done == 1));then
+        printf "%-25s%-20s\n" "# R Rserve SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rserve_done == 90));then
+            printf "%-25s%-20s\n" "# R RServe SUBSYSTEM:" "not integrated"
         fi
     fi
 
