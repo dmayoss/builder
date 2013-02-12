@@ -64,6 +64,7 @@ rep5_sem=0
 rep6_sem=0
 fcgiwrap_sem=0
 jpeg_sem=0
+rserve_sem=0
 
 # Recording
 idn_done=0
@@ -122,6 +123,7 @@ rep_wcurl_done=0
 rep_wsscripts_done=0
 rep_tests_done=0
 rep_fin_done=0
+rep_rserve_done=0
 
 # Nginx
 nginx_all_sem=0
@@ -267,6 +269,10 @@ do
 
             libjpeg)
                 jpeg_sem=1
+            ;;
+
+            rserve)
+                rserve_sem=1
             ;;
 
             *)
@@ -613,7 +619,8 @@ case "$module" in
     if (( rep1_sem == 0 && rep2_sem == 0 && 
           rep3_sem == 0 && rep4_sem == 0 &&
           rep5_sem == 0 && rep6_sem == 0 && 
-          jpeg_sem == 0 && fcgiwrap_sem == 0 )); then
+          jpeg_sem == 0 && fcgiwrap_sem == 0 && 
+          rserve_sem==0 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
@@ -647,6 +654,7 @@ case "$module" in
         build_rep_R
         build_rep_rcairo
         build_rep_rggplot2
+        build_rep_rserve
         build_rep_pdq
         build_rep_fin
 
@@ -722,6 +730,10 @@ case "$module" in
     elif (( jpeg_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_libjpeg
+
+    elif (( rserve_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_rserve
     fi
  ;;
 
