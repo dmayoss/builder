@@ -3475,7 +3475,8 @@ env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     CXXFLAGS="-O3 -I${iprefix}/include"           \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
             -Wl,-rpath -Wl,${iprefix}/R/lib64"   \
-    ./configure --with-x --prefix=${iprefix}/R >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ./configure --enable-R-shlib --with-x \
+     --prefix=${iprefix}/R >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -4301,6 +4302,93 @@ if (( rep_rggplot2_done == 16 )); then
    rep_rggplot2_done=1
 else
    rep_rggplot2_done=90
+fi
+
+cd ..
+
+}
+
+
+# ############################################################### #
+# Reporting: R module: rserve                                     #
+# ############################################################### #
+build_rep_rserve() {
+dir=rserve
+step1=0
+step2=0
+step3=0
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# STEP 1
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 1 - Install Rserve $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+ls Rserve_*.tar.gz | read archive_file
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+    ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step1=1
+fi
+
+
+
+# STEP 2
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Install FastRWeb $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+ls FastRWeb*.tar.gz | read archive_file
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+    ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step2=1
+fi
+
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Install XML $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+ls XML*.tar.gz | read archive_file
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig  \
+    ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step3=1
+fi
+
+
+
+# final check; 1 step
+(( rep_rserve_done = step1 + step2 + step3 ))
+if (( rep_rserve_done == 3 )); then
+   rep_rserve_done=1
+else
+   rep_rserve_done=90
 fi
 
 cd ..
