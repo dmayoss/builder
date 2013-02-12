@@ -4438,9 +4438,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Installing sdr.conf ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp etc/sdr etc/*.conf ${iprefix}/etc
+cp etc/sdr etc/init.sdr etc/*.conf ${iprefix}/etc
 if (( $? != 0 )); then
-    print "Error: cannot install hostadm script !" |\
+    print "Error: cannot install etc scripts !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
