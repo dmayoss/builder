@@ -3515,9 +3515,19 @@ else
 fi
 
 # set the sym links
-ln -s ${iprefix}/R/lib64/R/lib/libRblas.so ${iprefix}/R/lib64/libRblas.so
-ln -s ${iprefix}/R/lib64/R/lib/libRlapack.so ${iprefix}/R/lib64/libRlapack.so
-
+if [[ ! -d ${iprefix}/R/lib64 ]]; then
+    ln -s ${iprefix}/R/lib/R/lib/libRblas.so ${iprefix}/R/lib/libRblas.so
+    ln -s ${iprefix}/R/lib/R/lib/libRlapack.so ${iprefix}/R/lib/libRlapack.so
+    ln -s ${iprefix}/R/lib/R/lib/libRblas.so ${iprefix}/lib/libRblas.so
+    ln -s ${iprefix}/R/lib/R/lib/libRlapack.so ${iprefix}/lib/libRlapack.so
+    ln -s ${iprefix}/R/lib/R/lib/libR.so ${iprefix}/lib/libR.so
+else
+    ln -s ${iprefix}/R/lib64/R/lib/libRblas.so ${iprefix}/R/lib64/libRblas.so
+    ln -s ${iprefix}/R/lib64/R/lib/libRlapack.so ${iprefix}/R/lib64/libRlapack.so
+    ln -s ${iprefix}/R/lib64/R/lib/libRblas.so ${iprefix}/lib/libRblas.so
+    ln -s ${iprefix}/R/lib64/R/lib/libRlapack.so ${iprefix}/lib/libRlapack.so
+    ln -s ${iprefix}/R/lib64/R/lib/libR.so ${iprefix}/lib/libR.so
+fi    
 
 # final check; all 4 steps
 (( rep_rsts_done = step1 + step2 + step3 + step4 ))
