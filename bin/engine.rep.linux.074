@@ -1937,7 +1937,7 @@ for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
            Text::CSV_XS Text::CSV Regexp::Common IO::Interactive            \
            Compress::Zlib Regexp::Log::DateRange Term::Prompt               \
            Net::Netmask Text::Autoformat Text::FormatTable Data::Dumper     \
-           Perl::Critic Fatal Devel::Cover Devel::Cycle Data::Report        \
+           Perl::Critic Devel::Cover Devel::Cycle Data::Report        \
            Test::Deep Devel::Size                                           \
            Logfile::Rotate Log::Log4perl Statistics::R Geo::IPfree          \
            Archive::Zip Time::HiRes Net::Ping::External \
@@ -1970,7 +1970,7 @@ do
 done
 
 # there are 69 perl modules install calls
-(( step6 = step6 / 69 ));
+(( step6 = step6 / 67 ));
 
 
 # final check; all 6 steps
@@ -3962,6 +3962,14 @@ step6=0
 step7=0
 step8=0
 step9=0
+step10=0
+step11=0
+step12=0
+step13=0
+step14=0
+step15=0
+step16=0
+step17=0
 
 # we build here ggplot2 for R
 # order: 
@@ -4308,7 +4316,7 @@ fi
                        step6 + step7 + step8 + step9 + step10 + \
                        step11 + step12 + step13 + step14      + \
                        step15 + step16 + step17 ))
-if (( rep_rggplot2_done == 16 )); then
+if (( rep_rggplot2_done == 17 )); then
    rep_rggplot2_done=1
 else
    rep_rggplot2_done=90
@@ -4339,7 +4347,8 @@ print "Info: Step 1 - Install Rserve $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ls Rserve_*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+env PATH=${iprefix}/bin:$PATH \
+    PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if (( $? != 0 )); then
@@ -4359,7 +4368,8 @@ print "Info: Step 2 - Install FastRWeb $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ls FastRWeb*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+env PATH=${iprefix}/bin:$PATH \
+    PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if (( $? != 0 )); then
@@ -4379,7 +4389,8 @@ print "Info: Step 3 - Install XML $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ls XML*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig  \
+env PATH=${iprefix}/bin:$PATH \
+    PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig  \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if (( $? != 0 )); then
