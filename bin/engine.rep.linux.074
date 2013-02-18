@@ -1967,10 +1967,11 @@ do
     else
         ((step6 = step6 + 1))
     fi
+
 done
 
-# there are 69 perl modules install calls
-(( step6 = step6 / 67 ));
+# there are 66 perl modules install calls
+(( step6 = step6 / 66 ));
 
 
 # final check; all 6 steps
