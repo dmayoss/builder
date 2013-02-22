@@ -1073,10 +1073,10 @@ case "$module" in
     fi
 
     if ((rep_wsscripts_done == 1));then
-        printf "%-25s%-20s\n" "# NGINX STARTUP SUBSYSTEM:" "built and integrated"
+        printf "%-25s%-20s\n" "# NGINX START SUBSYSTEM:" "built and integrated"
     else
         if ((rep_wsscripts_done == 90));then
-            printf "%-25s%-20s\n" "# NGINX STARTUP SUBSYSTEM:" "not integrated"
+            printf "%-25s%-20s\n" "# NGINX START SUBSYSTEM:" "not integrated"
         fi
     fi
 
