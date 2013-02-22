@@ -4350,7 +4350,7 @@ print "Info: Step 1 - Install Rserve $dir ..." |\
 ls Rserve_*.tar.gz | read archive_file
 env PATH=${iprefix}/bin:$PATH \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
-    ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ${iprefix}/R/bin/R CMD INSTALL --configure-vars="LIBS=-L${iprefix}/lib CPPFLAGS=-I${iprefix}/include" $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
