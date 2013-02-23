@@ -66,6 +66,7 @@ fcgiwrap_sem=0
 jpeg_sem=0
 rserve_sem=0
 pdq_sem=0
+repfin_sem=0
 
 # Recording
 idn_done=0
@@ -278,6 +279,10 @@ do
 
             pdq)
                 pdq_sem=1
+            ;;
+
+            repfin)
+                repfin_sem=1
             ;;
 
             *)
@@ -625,7 +630,8 @@ case "$module" in
           rep3_sem == 0 && rep4_sem == 0 &&
           rep5_sem == 0 && rep6_sem == 0 && 
           jpeg_sem == 0 && fcgiwrap_sem == 0 && 
-          rserve_sem==0 && pdq_sem == 0 )); then
+          rserve_sem==0 && pdq_sem == 0 && 
+          repfin_sem == 0 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
@@ -743,6 +749,10 @@ case "$module" in
     elif (( pdq_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_pdq
+
+    elif (( repfin_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_fin
     fi
  ;;
 

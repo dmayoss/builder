@@ -4425,6 +4425,7 @@ cd ..
 # hostadm, sdr conf
 # rrdcached dirs
 # docroot setup
+# FastWebR setup
 
 build_rep_fin() {
 
@@ -4434,6 +4435,12 @@ step2=0
 step3=0
 step4=0
 step5=0
+step6=0
+step7=0
+
+# export iprefix
+export iprefix=${iprefix}
+
 
 cd $dir
 print "\n############################################################"
@@ -4601,9 +4608,55 @@ fi
 # there are 2 configs
 (( step6 = step6 / 2 ));
 
-# final check; all 6 steps
-(( rep_fin_done = step1 + step2 + step3 + step4 + step5 + step6 ))
-if (( rep_fin_done == 5 )); then
+
+# STEP 7
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 7 - Configuring FastRWeb configs ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# set the sym links
+if [[ -d ${iprefix}/R/lib64 ]]; then
+    cd ${iprefix}/R/lib64/R/library/FastRWeb
+else
+    cd ${iprefix}/R/lib/R/library/FastRWeb
+fi
+
+if [[ ! -d ${iprefix}/var/FastRWeb ]]; then
+    if [[ -f install.sh ]]; then
+        ${iprefix}/perl/bin/perl -pi -e \
+         's/\=\/var\/FastRWeb/\=$ENV{iprefix}\/var\/FastRWeb/' \
+         install.sh code/start
+
+        ${iprefix}/perl/bin/perl -pi -e \
+         's/\s\/var\/FastRWeb/ $ENV{iprefix}\/var\/FastRWeb/' \
+          code/rserve.conf
+
+         ${iprefix}/perl/bin/perl -pi -e \
+         's/\"\/var\/FastRWeb/\"$ENV{iprefix}\/var\/FastRWeb/' code/rserve.R
+    
+        if [[ ! -d ${iprefix}/var/FastRWeb ]]; then
+            mkdir ${iprefix}/var/FastRWeb
+        fi
+        ./install.sh
+
+        if (( $? != 0 )); then
+            print "Error: cannot run FastRWeb install.sh !" |\
+              tee -a ${BUILD_PATH}/${BUILD_LOG}
+            rm /var/tmp/build.${module}
+            exit 3
+        else
+           ((step7=step7+1))
+        fi
+    else
+        print "Error: cannot find install.sh FastRWeb !" |\
+          tee -a ${BUILD_PATH}/${BUILD_LOG}
+        exit 3
+    fi
+fi
+
+# final check; all 7 steps
+(( rep_fin_done = step1 + step2 + step3 + step4 + step5 + step6 + step7))
+if (( rep_fin_done == 7 )); then
    rep_fin_done=1
 else
    rep_fin_done=90
