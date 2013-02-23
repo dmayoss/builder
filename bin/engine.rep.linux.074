@@ -3231,7 +3231,7 @@ step3=0
 cd $dir
 print "\n############################################################"
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "iprefix=$iprefix"
+# print "iprefix=$iprefix"
 print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 ls *.tar.gz | read archive_file
 # Debug
@@ -4637,7 +4637,7 @@ if [[ ! -d ${iprefix}/var/FastRWeb ]]; then
         if [[ ! -d ${iprefix}/var/FastRWeb ]]; then
             mkdir ${iprefix}/var/FastRWeb
         fi
-        ./install.sh
+        ./install.sh >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
         if (( $? != 0 )); then
             print "Error: cannot run FastRWeb install.sh !" |\
