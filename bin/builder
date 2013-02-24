@@ -67,6 +67,7 @@ jpeg_sem=0
 rserve_sem=0
 pdq_sem=0
 repfin_sem=0
+ranalysis_sem=0
 
 # Recording
 idn_done=0
@@ -126,6 +127,7 @@ rep_wsscripts_done=0
 rep_tests_done=0
 rep_fin_done=0
 rep_rserve_done=0
+rep_ranalysis_done=0
 
 # Nginx
 nginx_all_sem=0
@@ -275,6 +277,10 @@ do
 
             rserve)
                 rserve_sem=1
+            ;;
+
+            ranalysis)
+                ranalysis_sem=1
             ;;
 
             pdq)
@@ -631,7 +637,7 @@ case "$module" in
           rep5_sem == 0 && rep6_sem == 0 && 
           jpeg_sem == 0 && fcgiwrap_sem == 0 && 
           rserve_sem==0 && pdq_sem == 0 && 
-          repfin_sem == 0 )); then
+          repfin_sem == 0 && ranalysis_sem==0 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
@@ -666,6 +672,7 @@ case "$module" in
         build_rep_rcairo
         build_rep_rggplot2
         build_rep_rserve
+        build_rep_ranalysis
         build_rep_pdq
         build_rep_fin
 
@@ -745,6 +752,10 @@ case "$module" in
     elif (( rserve_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_rserve
+
+    elif (( ranalysis_sem == 1 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_rep_ranalysis
 
     elif (( pdq_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
@@ -1199,6 +1210,14 @@ case "$module" in
     else
         if ((rep_rserve_done == 90));then
             printf "%-25s%-20s\n" "# R RServe SUBSYSTEM:" "not integrated"
+        fi
+    fi
+
+    if ((rep_ranalysis_done == 1));then
+        printf "%-25s%-20s\n" "# R PCA,TS SUBSYSTEM:" "built and integrated"
+    else
+        if ((rep_rserve_done == 90));then
+            printf "%-25s%-20s\n" "# R PCA,TS SUBSYSTEM:" "not integrated"
         fi
     fi
 

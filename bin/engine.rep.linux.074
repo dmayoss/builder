@@ -4419,6 +4419,59 @@ cd ..
 
 
 # ############################################################### #
+# Reporting: R module: ranalysis PCA, TimeSeries                  #
+# ############################################################### #
+build_rep_ranalysis() {
+dir=ranalysis
+step=0
+cnt=1
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# STEP
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+for module in sca survival Hmisc mvtnorm mnormt pbivnorm quadprog \
+    boot MASS chron zoo timeDate its tseries fracdiff leaps \
+    scatterplot3d randomForest
+do
+    print "Info: Step $cnt - Install $module for $dir ..." |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+    ls ${module}*.tar.gz | read archive_file
+
+    env PATH=${iprefix}/bin:$PATH \
+        PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+        ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+    if (( $? != 0 )); then
+        print "Error: configure $dir failed !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        ((step=step+1))
+    fi
+    ((cnt=cnt+1))
+done
+
+
+# final check; 1 step
+(( rep_ranalysis_done = step1 ))
+if (( rep_rserve_done == 2 )); then
+   rep_rserve_done=1
+else
+   rep_rserve_done=90
+fi
+
+cd ..
+
+}
+
+
+# ############################################################### #
 # Reporting: Finalize                                             #
 # ############################################################### #
 
