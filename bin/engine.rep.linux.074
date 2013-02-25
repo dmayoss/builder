@@ -4433,14 +4433,14 @@ print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 # STEP
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-for module in sca survival Hmisc mvtnorm mnormt pbivnorm quadprog \
+for rmod in sca survival Hmisc mvtnorm mnormt pbivnorm quadprog \
     boot MASS chron zoo timeDate its tseries fracdiff leaps \
     scatterplot3d randomForest
 do
-    print "Info: Step $cnt - Install $module for $dir ..." |\
+    print "Info: Step $cnt - Install $rmod for $dir ..." |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-    ls ${module}*.tar.gz | read archive_file
+    ls ${rmod}*.tar.gz | read archive_file
 
     env PATH=${iprefix}/bin:$PATH \
         PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
@@ -4457,13 +4457,12 @@ do
     ((cnt=cnt+1))
 done
 
-
 # final check; 1 step
-(( rep_ranalysis_done = step1 ))
-if (( rep_rserve_done == 2 )); then
-   rep_rserve_done=1
+(( rep_ranalysis_done = step ))
+if (( rep_ranalysis_done == 18 )); then
+   rep_ranalysis_done=1
 else
-   rep_rserve_done=90
+   rep_ranalysis_done=90
 fi
 
 cd ..

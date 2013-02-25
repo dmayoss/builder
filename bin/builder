@@ -1216,7 +1216,7 @@ case "$module" in
     if ((rep_ranalysis_done == 1));then
         printf "%-25s%-20s\n" "# R PCA,TS SUBSYSTEM:" "built and integrated"
     else
-        if ((rep_rserve_done == 90));then
+        if ((rep_analysis_done == 90));then
             printf "%-25s%-20s\n" "# R PCA,TS SUBSYSTEM:" "not integrated"
         fi
     fi
