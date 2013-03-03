@@ -533,18 +533,20 @@ sub process_pkg {
             
             my $catver = SemVer->parse($config_ver);
             my $version = $catver;
-            my $dirver;
+            my $dirver=0;
 
             while ($content =~ /"(\d)\.(\d+).*"/g) {
-                my $sitever = SemVer->parse("$1\.$2");
+                my $sitever = SemVer->new("$1\.$2\.0");
                 $dirver = max $sitever;
             }
+
+            $dirver =~ s/\.0$//;
 
             # we call another get for dir fetching within version
             my $glib_content = get $config_link . "$dirver/";
             die "Couldn't get $config_link" unless defined $glib_content;
 
-            while ($glib_content =~ /"glib\-(\d+)\.(\d+)\.(\d+)\.tar\.bz2.*"/g) {
+            while ($glib_content =~ /"glib\-(\d)\.(\d+)\.(\d)\.tar\.xz\.*"/g) {
                 my $sitever = SemVer->new("$1\.$2\.$3");
                 if ($catver < $sitever) {
                     $version = $sitever;
@@ -584,9 +586,11 @@ sub process_pkg {
             my $dirver;
 
             while ($content =~ /"(\d)\.(\d+).*"/g) {
-                my $sitever = SemVer->parse("$1\.$2");
+                my $sitever = SemVer->new("$1\.$2\.0");
                 $dirver = max $sitever;
             }
+
+            $dirver =~ s/\.0$//;
 
             # we call another get for dir fetching within version
             my $pango_content = get $config_link . "$dirver/";
