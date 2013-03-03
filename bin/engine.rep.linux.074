@@ -1941,8 +1941,8 @@ for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
            Test::Deep Devel::Size                                           \
            Logfile::Rotate Log::Log4perl Statistics::R Geo::IPfree          \
            Archive::Zip Time::HiRes Net::Ping::External \
-           Net::Ping::Network Net::IP XML::TreePP XML::SAX    \
-           XML::NamespaceSupport version SemVer
+           Net::Ping::Network Net::IP XML::SAX    \
+           XML::NamespaceSupport version SemVer CGI::FormBuilder Log::Handler
 do
 
     if [[ $lib == "MIME::Lite" ]]; then
@@ -1970,8 +1970,8 @@ do
 
 done
 
-# there are 66 perl modules install calls
-(( step6 = step6 / 66 ));
+# there are 67 perl modules install calls
+(( step6 = step6 / 67 ));
 
 
 # final check; all 6 steps
@@ -1994,6 +1994,106 @@ cd ..
 
 }
 
+
+# ############################################################### #
+# Reporting: Perl TemplateToolkit Module:  tt                     #
+# ############################################################### #
+
+build_rep_perltt() {
+
+dir=Template-Toolkit
+step1=0
+step2=0
+step3=0
+step4=0
+step5=0
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env LD_LIBRARY_PATH=${iprefix}/lib ${iprefix}/perl/bin/perl Makefile.PL TT_XS_DEFAULT=y TT_ACCEPT=y >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step2=1
+fi
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step3=1
+fi 
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step4=1
+fi
+
+#
+# final check; all 4 steps
+(( rep_perltt_done = step1 + step2 + step3 + step4 ))
+if (( rep_perltt_done == 4 )); then
+   rep_perltt_done=1
+else
+   rep_perltt_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi 
+cd ..
+
+}
 
 
 # ############################################################### #
