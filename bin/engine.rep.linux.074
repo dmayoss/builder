@@ -1927,21 +1927,21 @@ fi
 
 for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
            FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager              \
-           FCGI::Spawn IO::All HTTP::Async Term::ProgressBar                \
-           PerlIO::gzip Date::Manip Date::Calc PDF::Create                  \
+           IO::All HTTP::Async Term::ProgressBar                \
+           PerlIO::gzip Date::Manip Date::Calc                              \
            Statistics::Distributions Statistics::Frequency                  \
            Statistics::Shannon Statistics::GammaDistribution                \
-           Statistics::Basic HTML::Calendar::Simple HTML::Calendar::Monthly \
-           HTML::CalendarMonthSimple IO::Prompt Smart::Comments Net::Telnet \
-           Net::SSH::Expect Authen::SASL Email::Send Email::Valid MIME::Lite\
+           Statistics::Basic HTML::Calendar::Monthly \
+           HTML::CalendarMonthSimple Smart::Comments Net::Telnet \
+           Net::SSH::Expect Authen::SASL Email::Valid MIME::Lite\
            Text::CSV_XS Text::CSV Regexp::Common IO::Interactive            \
            Compress::Zlib Regexp::Log::DateRange Term::Prompt               \
            Net::Netmask Text::Autoformat Text::FormatTable Data::Dumper     \
            Perl::Critic Devel::Cover Devel::Cycle Data::Report        \
-           Test::Deep Devel::Size                                           \
-           Logfile::Rotate Log::Log4perl Statistics::R Geo::IPfree          \
+           Test::Deep Devel::Size IO::Async                                 \
+           Logfile::Rotate Log::Log4perl Geo::IPfree          \
            Archive::Zip Time::HiRes Net::Ping::External \
-           Net::Ping::Network Net::IP XML::SAX    \
+           Net::IP XML::SAX PDF::API2    \
            XML::NamespaceSupport version SemVer CGI::FormBuilder Log::Handler
 do
 
@@ -1970,8 +1970,8 @@ do
 
 done
 
-# there are 67 perl modules install calls
-(( step6 = step6 / 67 ));
+# there are 62 perl modules install calls
+(( step6 = step6 / 62 ));
 
 
 # final check; all 6 steps
