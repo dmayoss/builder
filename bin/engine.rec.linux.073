@@ -18,7 +18,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 0.6.6
+# VERSION: 0.7
 
 # ############################################################### #
 # SDR Engine: Linux                                               # 
@@ -427,15 +427,15 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
-${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: Bundle::LWP installation failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    (( step6 = step6 + 1))
-fi
+#${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#if (( $? != 0 )); then
+#    print "Error: Bundle::LWP installation failed !" |\
+#     tee -a ${BUILD_PATH}/${BUILD_LOG}
+#    rm /var/tmp/build.${module}
+#    exit 3
+#else
+#    (( step6 = step6 + 1))
+#fi
 
 
 ${iprefix}/perl/bin/perl -MCPAN -e 'install Sys::Statistics::Linux' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -448,14 +448,14 @@ else
     ((step6 = step6 + 1))
 fi
 
-# 28 module
-for lib in Expect Net::SSH::Expect PerlIO::gzip Date::Calc \
+# 24 module
+for lib in PerlIO::gzip Date::Calc \
    Net::Telnet Authen::SASL Email::Valid Text::CSV_XS JSON::XS \
    Text::CSV Regexp::Common Regexp::Log::DateRange Term::Prompt \
    Net::Netmask Text::Autoformat Text::FormatTable  \
-   XML::NamespaceSupport XML::SAX XML::Simple Net::SFTP::Foreign \
+   XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
    Data::Dumper Data::Report Log::Log4perl Logfile::Rotate \
-   Devel::NYTProf Proc::Daemon Proc::PID::File File::Tail
+   Proc::Daemon Proc::PID::File File::Tail
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if (( $? != 0 )); then
@@ -468,8 +468,8 @@ do
     fi
 done
 
-# there are 30 perl modules install calls 
-(( step6 = step6 / 30 ));
+# there are 26 perl modules install calls 
+(( step6 = step6 / 25 ));
 
 # final check; all 6 steps
 (( perl_done = step1 + step2 + step3 + step4 + step5 + step6 ))
@@ -1021,7 +1021,8 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
  
 #env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig:/usr/lib64/pkgconfig \
-env CFLAGS="-O3 -I${iprefix}/include" \
+env CFLAGS="-O3" \
+    CPPFLAGS="-I${iprefix}/include"   \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --with-ssl=${iprefix} --with-libidn=${iprefix} --with-libssh2=${iprefix} \
      --prefix=${iprefix} --enable-cookies --enable-nonblocking \
