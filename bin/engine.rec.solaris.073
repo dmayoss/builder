@@ -508,31 +508,29 @@ fi
 
 
 # STEP 6
-
-# STEP 6
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
-${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
-if (( $? != 0 )); then
-    print "Error: Bundle::LWP installation failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    (( step6 = step6 + 1))
-fi
+#${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#if (( $? != 0 )); then
+#    print "Error: Bundle::LWP installation failed !" |\
+#     tee -a ${BUILD_PATH}/${BUILD_LOG}
+#    rm /var/tmp/build.${module}
+#    exit 3
+#else
+#    (( step6 = step6 + 1))
+#fi
 
-# 28 modules
-for lib in Expect Net::SSH::Expect PerlIO::gzip Date::Calc \
+# 24 module
+for lib in PerlIO::gzip Date::Calc \
    Net::Telnet Authen::SASL Email::Valid Text::CSV_XS JSON::XS \
    Text::CSV Regexp::Common Regexp::Log::DateRange Term::Prompt \
    Net::Netmask Text::Autoformat Text::FormatTable  \
-   XML::NamespaceSupport XML::SAX XML::Simple Net::SFTP::Foreign \
+   XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
    Data::Dumper Data::Report Log::Log4perl Logfile::Rotate \
-   Devel::NYTProf Proc::Daemon Proc::PID::File File::Tail
+   Proc::Daemon Proc::PID::File File::Tail
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if (( $? != 0 )); then
@@ -545,8 +543,8 @@ do
     fi
 done
 
-# there are 29 perl modules install calls 
-(( step6 = step6 / 29 ));
+# there are 24 perl modules install calls 
+(( step6 = step6 / 24 ));
 
 
 # ############################################################### #
@@ -558,10 +556,10 @@ dir=kstat
 cd $dir
 
 # get the perl archive
-ls *.tar.gz | read build_file
+# ls *.tar.gz | read build_file
 
-archive=${build_file%%.tar*}
-extract_archive "$dir" "$archive"
+# archive=${build_file%%.tar*}
+# extract_archive "$dir" "$archive"
 
 #  Sun::Solaris::Exacct
 #  Sun::Solaris::Kstat
@@ -1271,7 +1269,8 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#env ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+${iprefix}/perl/bin/perl Makefile.PL LIBS="-L${iprefix}/lib" INC="-I${iprefix}/include/libxml2" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
@@ -1375,13 +1374,15 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+    PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig:/usr/lib/64/pkgconfig \
-    CC=cc CFLAGS="-m64 -xO3 -KPIC -I${iprefix}/include" \
+    CC=cc CFLAGS="-m64 -xO3 -KPIC" CPPFLAGS="-I${iprefix}/include" \
     LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/usr/lib/64 -R/usr/lib/64 \
     -L/usr/sfw/lib/64 -R/usr/sfw/lib/64" \
-    ./configure --prefix=${iprefix} --enable-cookies --enable-nonblocking \
-     --with-libidn >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ./configure --prefix=${iprefix} \
+    --with-ssl=${iprefix} --with-libidn=${iprefix} --with-libssh2=${iprefix} \
+    --enable-cookies --enable-nonblocking --disable-ldap --disable-ldaps >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 
 #/usr/bin/env PATH=/opt/sdr/bin:/opt/sdr/perl/bin:$PATH \
 #    PKG_CONFIG_PATH=/opt/sdr/lib/pkgconfig:/usr/lib/64/pkgconfig \
@@ -1868,7 +1869,7 @@ else
 fi
 
 # set the other bins
-cp sender sendHdw raw2day rotatelog ${iprefix}/bin
+cp sender raw2day rotatelog ${iprefix}/bin
 if (( $? != 0 )); then
     print "Error: cannot install additional bins !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
