@@ -62,7 +62,7 @@ This document will be updated at the same time with SDR project.
 
 =head1 AUTHOR
 
-Stefan Parvu, <lt>>Lsparvu@systemdatarecorder.orgE<gt>
+Stefan Parvu, sparvu@systemdatarecorder.org
 
 =cut
 
