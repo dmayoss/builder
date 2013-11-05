@@ -42,11 +42,17 @@ file as the software configuration.
 
 =head2 configuration
 
-catalog.conf - main configuration file for all software 
+catalog.conf - the main configuration file for all software 
 used by SDR software. This is a XML based configuration which keeps 
 tracks of all libraries and softare modoules used by SDR and their 
 revision number. This file is used by fetcher.
 
+=head2 sfw
+
+sfw - main configuration file for all software 
+used by SDR software. This is a XML based configuration which keeps 
+tracks of all libraries and softare modoules used by SDR and their 
+revision number. This file is used by fetcher.
 
 =head1 EXECUTION
 
