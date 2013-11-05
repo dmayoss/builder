@@ -40,12 +40,15 @@ Software update utility - checks all software used by SDR and their latest
 revisions from their main web sites. Uses catalog.conf, the main configuration
 file as the software configuration. 
 
-=head2 configuration
+=head2 etc
 
 catalog.conf - the main configuration file for all software 
 used by SDR software. This is a XML based configuration which keeps 
 tracks of all libraries and softare modoules used by SDR and their 
 revision number. This file is used by fetcher.
+
+Config.pm - CPAN configuration file. Will use the local CPAN
+distribution.
 
 =head2 sfw
 
