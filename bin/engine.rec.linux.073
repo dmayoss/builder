@@ -29,37 +29,77 @@
 # extract_archive                                                 #
 # ############################################################### #
 extract_archive() {
-# $1 module name
-# $2 dir build
 
-modfile=$1
-bfile=$2
+    # $1 module name
+    # $2 dir build
 
-# Debug
-# print "module name: $modfile"
-# print "archive dir: $bfile"
+    modfile=$1
+    bfile=$2
 
-if [[ -d $bfile ]]; then
-    print "Info: Step 1 - Extracting $bfile ..." |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    print "Warning: ${bfile} directory found, cleaning..." |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    # Debug
+    # print "module name: $modfile"
+    # print "archive dir: $bfile"
 
-    rm -rf ${bfile}
-    if (( $? != 0 )); then
-        print "Error: cannot clean. Check ${modfile} , ${bfile}" |\
+    if [[ -d $bfile ]]; then
+        print "Info: Step 1 - Extracting $bfile ..." |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
-        exit 3
-    fi 
-    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
-else
-    print "Info: Step 1 - Extracting $bfile ..." |\
-    tee -a ${BUILD_PATH}/${BUILD_LOG}
-    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
-fi
+        print "Warning: ${bfile} directory found, cleaning..." |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
 
+        rm -rf ${bfile}
+        if (( $? != 0 )); then
+            print "Error: cannot clean. Check ${modfile} , ${bfile}" |\
+             tee -a ${BUILD_PATH}/${BUILD_LOG}
+            exit 3
+        fi 
+        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
+    else
+        print "Info: Step 1 - Extracting $bfile ..." |\
+        tee -a ${BUILD_PATH}/${BUILD_LOG}
+        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
+    fi
 }
 
+
+# ############################################################### #
+# init_module                                                  #
+# ############################################################### #
+init_module() {
+
+    # $1 directory name
+    directory=$1
+
+    cd $directory
+    print "\n############################################################"
+    print "" >> ${BUILD_PATH}/${BUILD_LOG}
+    print "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    ls *.tar.gz | read archive_file
+    # Debug
+    # print "Archive: $archive_file"
+    # print "Dir: ${archive_file%%.tar*}"
+
+    dirarchive=${archive_file%%.tar*}
+
+    extract_archive "$directory" "$dirarchive"
+
+    cd ${archive_file%%.tar*}
+}
+
+
+# ############################################################### #
+# clean_module                                                  #
+# ############################################################### #
+clean_module() {
+    cd ..
+    rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    if (( $? != 0 )); then
+        print "Error: cleaning up $dirarchive !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 5
+    fi
+    cd ..
+}
 
 
 # ############################################################### #
@@ -73,26 +113,10 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -159,15 +183,7 @@ else
    rec_ssh2_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
+clean_module
 
 }
 
@@ -185,25 +201,11 @@ step3=0
 step4=0
 step5=0
 
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
 
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -289,17 +291,7 @@ else
    rec_perlssh2_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
-
+clean_module
 }
 
 
@@ -316,30 +308,13 @@ step4=0
 step5=0
 step6=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# get CPAN version
-print $dirarchive | sed 's/perl-//' | read cpanver
-
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
 
-# STEP 2
-cd ${archive_file%%.tar*}
+# get CPAN version
+print $dirarchive | sed 's/perl-//' | read cpanver
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure perl ..." |\
@@ -451,11 +426,9 @@ fi
 # 24 module
 for lib in PerlIO::gzip Date::Calc \
    Net::Telnet Authen::SASL Email::Valid Text::CSV_XS JSON::XS \
-   Text::CSV Regexp::Common Regexp::Log::DateRange Term::Prompt \
-   Net::Netmask Text::Autoformat Text::FormatTable  \
-   XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
-   Data::Dumper Data::Report Log::Log4perl Logfile::Rotate \
-   Proc::Daemon Proc::PID::File File::Tail
+   Text::CSV Regexp::Common Regexp::Log::DateRange \
+   UUID::Tiny XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
+   Data::Dumper Proc::Daemon Proc::PID::File File::Tail Devel::NYTProf
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if (( $? != 0 )); then
@@ -469,7 +442,7 @@ do
 done
 
 # there are 26 perl modules install calls 
-(( step6 = step6 / 25 ));
+(( step6 = step6 / 20 ));
 
 # final check; all 6 steps
 (( perl_done = step1 + step2 + step3 + step4 + step5 + step6 ))
@@ -479,17 +452,7 @@ else
    perl_done=90
 fi
 
-
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
+clean_module
 
 }
 
@@ -498,7 +461,6 @@ cd ..
 # ############################################################### #
 # Recording: openssl Build Phase                                  #
 # ############################################################### #
-
 build_rec_ossl() {
 dir=openssl
 step1=0
@@ -506,26 +468,10 @@ step2=0
 step3=0
 step4=0
 
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
-
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -606,17 +552,7 @@ else
    ossl_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
-
+clean_module
 }
 
 
@@ -630,26 +566,10 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -770,16 +690,7 @@ else
    idn_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
+clean_module
 }
 
 
@@ -793,26 +704,11 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
+cd $dir
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -870,23 +766,13 @@ else
    rec_libxml2_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
+clean_module
 }
 
 
 # ############################################################### #
 # Recording: Perl Module:  XML::LibXML                            #
 # ############################################################### #
-
 build_rec_xmllibxml() {
 
 dir=XML-LibXML
@@ -896,25 +782,10 @@ step3=0
 step4=0
 step5=0
 
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -971,18 +842,8 @@ else
    rec_perllxml_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
+clean_module
 }
-
 
 
 # ############################################################### #
@@ -995,26 +856,10 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -1107,16 +952,7 @@ else
    curl_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
+clean_module
 
 }
 
@@ -1146,33 +982,17 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
-# Debug
-# print "Archive: $archive_file"
-# print "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-env PATH=${iprefix}/bin:$PATH ${iprefix}/perl/bin/perl Makefile.PL
+env PATH=${iprefix}/bin:$PATH ${iprefix}/perl/bin/perl Makefile.PL >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 #sed -i.backup '/^LDFLAGS =/ {s/.*/& \-L\/lib64 \-L\/usr\/lib64 \-L\/opt\/sdr\/lib/}' Makefile
 # LDFLAGS =  -fstack-protector -L/usr/local/lib
 sed "s:^LDFLAGS =  -fstack-protector -L/usr/local/lib:LDFLAGS = -fstack-protector -L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib:" Makefile > Makefile.tmp
@@ -1262,17 +1082,7 @@ else
    wwwcurl_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
-
+clean_module
 }
 
 
@@ -1287,29 +1097,10 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir native" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-# get the idn archive
-ls *.tar.gz | read build_file
-# Debug
-# print "Archive: $build_file"
-# print "Dir: ${build_file%%.tar*}" 
-
-archive=${build_file%%.tar*}
-
-# STEP 1 
-extract_archive "$dir" "$archive"
-if (( $? == 0)); then 
+init_module "$dir"
+if (( $? == 0)); then
     step1=1
 fi
-    
-    
-# STEP 2
-cd ${build_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -1398,8 +1189,6 @@ else
 fi
 
 cd ../..
-
-
 }
 
 
@@ -1504,28 +1293,10 @@ step2=0
 step3=0
 step4=0
 
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-# get the idn archive
-ls *.tar.gz | read build_file
-# Debug
-# print "Archive: $build_file"
-# print "Dir: ${build_file%%.tar*}" 
-
-archive=${build_file%%.tar*}
-
-# STEP 1 
-extract_archive "$dir" "$archive"
+init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-
-
-# STEP 2
-cd ${build_file%%.tar*}
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
@@ -1587,31 +1358,13 @@ else
    sysstat_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
-    print "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi
-cd ..
-
+clean_module
 }
 
 
 # ############################################################### #
 # Recording: Scripts                                              #
 # ############################################################### #
-
-#webrec
-#sysrec
-#setenv
-#netrec
-#jvmrec
-#hdwrec
-#cpurec
-
 build_rec_scripts() {
 
 dir=scripts
@@ -1835,7 +1588,7 @@ done
 (( step1 = step1 / 6 ))
 
 # STEP 2
-# Check all shared libs if they are buill correctly
+# Check all shared libs if they are build correctly
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Check libs" |\
@@ -1868,4 +1621,3 @@ fi
 cd ..
 
 }
-

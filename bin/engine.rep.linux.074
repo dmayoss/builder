@@ -1914,7 +1914,7 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
-${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PERL_MM_USE_DEFAULT=1 ${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: Bundle::LWP installation failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1924,25 +1924,24 @@ else
     (( step6 = step6 + 1))
 fi
 
-
 for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
-           FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager              \
-           IO::All HTTP::Async Term::ProgressBar                \
+           FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager CGI::Session \
+           DBI IO::All HTML::Template Term::ProgressBar         \
            PerlIO::gzip Date::Manip Date::Calc                              \
            Statistics::Distributions Statistics::Frequency                  \
            Statistics::Shannon Statistics::GammaDistribution                \
-           Statistics::Basic HTML::Calendar::Monthly \
-           HTML::CalendarMonthSimple Smart::Comments Net::Telnet \
-           Net::SSH::Expect Authen::SASL Email::Valid MIME::Lite\
+           Statistics::Basic HTML::Calendar::Monthly                        \
+           HTML::CalendarMonthSimple Smart::Comments Net::Telnet            \
+           Net::SSH::Expect Authen::SASL Email::Valid MIME::Lite            \
            Text::CSV_XS Text::CSV Regexp::Common IO::Interactive            \
            Compress::Zlib Regexp::Log::DateRange Term::Prompt               \
            Net::Netmask Text::Autoformat Text::FormatTable Data::Dumper     \
-           Perl::Critic Devel::Cover Devel::Cycle Data::Report        \
-           Test::Deep Devel::Size IO::Async                                 \
-           Logfile::Rotate Log::Log4perl Geo::IPfree          \
-           Archive::Zip Time::HiRes Net::Ping::External \
-           Net::IP XML::SAX PDF::API2    \
-           XML::NamespaceSupport version SemVer CGI::FormBuilder Log::Handler
+           Perl::Critic Devel::Cover Devel::Cycle Data::Report              \
+           Test::Deep Devel::Size IO::Async CGI::FormBuilder                \
+           Logfile::Rotate Log::Log4perl Geo::IPfree Log::Handler           \
+           Archive::Zip Time::HiRes Net::Ping::External Tie::Array::CSV     \
+           Net::IP XML::SAX PDF::API2 PDF::Reuse Mail::Sender               \
+           HTML::Template::Pro XML::NamespaceSupport version SemVer
 do
 
     if [[ $lib == "MIME::Lite" ]]; then
@@ -1956,22 +1955,31 @@ do
             ((step6 = step6 + 1))
             continue
         fi
-    fi
-
-
-    ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    if (( $? != 0 )); then
-        print "Error: $lib installation failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        exit 3
+    elif [[ $lib == "Mail::Sender" ]]; then
+        env PERL_MM_USE_DEFAULT=1 \
+          ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
+          ${BUILD_PATH}/${BUILD_LOG} 2>&1
+        if (( $? != 0 )); then
+            tee -a ${BUILD_PATH}/${BUILD_LOG}
+            exit 3
+        else
+            ((step6 = step6 + 1))
+            continue
+        fi
     else
-        ((step6 = step6 + 1))
+        ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+        if (( $? != 0 )); then
+            print "Error: $lib installation failed !" |\
+             tee -a ${BUILD_PATH}/${BUILD_LOG}
+            exit 3
+        else
+            ((step6 = step6 + 1))
+        fi
     fi
-
 done
 
-# there are 62 perl modules install calls
-(( step6 = step6 / 62 ));
+# there are 68 perl modules install calls
+(( step6 = step6 / 68 ));
 
 
 # final check; all 6 steps
@@ -3368,9 +3376,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [[ ! -d ${iprefix}/ws/sbin ]]; then
-    mkdir ${iprefix}/ws/sbin
-fi
+#if [[ ! -d ${iprefix}/ws/sbin ]]; then
+#    mkdir ${iprefix}/ws/sbin
+#fi
 
 make iprefix=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
@@ -3446,7 +3454,7 @@ print "Info: Step 2 - Configure $dir ..." |\
 if [[ $PT_NAME == "i686" ]]; then
     env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
     CC=cc CFLAGS="-O3"                             \
-    ./configure --prefix=${iprefix}/ws --with-ipv6 \
+    ./configure --prefix=${iprefix} --with-ipv6    \
     --with-perl=${iprefix}/perl/bin                \
     --with-http_ssl_module                         \
     --with-http_stub_status_module                 \
@@ -3455,11 +3463,16 @@ if [[ $PT_NAME == "i686" ]]; then
     --with-http_gzip_static_module                 \
     --with-cc-opt="-I${iprefix}/include"           \
     --with-ld-opt="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    --add-module=upstream >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    --add-module=upstream \
+    --http-client-body-temp-path=logs/client_body_temp   \
+    --http-proxy-temp-path=logs/proxy_temp         \
+    --http-fastcgi-temp-path=logs/fastcgi_temp       \
+    --http-uwsgi-temp-path=logs/uwsgi_temp         \
+    --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
     env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
     CC=cc CFLAGS="-m64 -O3"                        \
-    ./configure --prefix=${iprefix}/ws --with-ipv6 \
+    ./configure --prefix=${iprefix} --with-ipv6    \
     --with-perl=${iprefix}/perl/bin                \
     --with-http_ssl_module                         \
     --with-http_stub_status_module                 \
@@ -3468,7 +3481,12 @@ else
     --with-http_gzip_static_module                 \
     --with-cc-opt="-I${iprefix}/include"          \
     --with-ld-opt="-m64 -L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    --add-module=upstream >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    --add-module=upstream \
+    --http-client-body-temp-path=logs/client_body_temp   \
+    --http-proxy-temp-path=logs/proxy_temp         \
+    --http-fastcgi-temp-path=logs/fastcgi_temp       \
+    --http-uwsgi-temp-path=logs/uwsgi_temp         \
+    --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
 if (( $? != 0 )); then
@@ -3571,6 +3589,7 @@ print "Info: Step 2 - Configure $dir ..." |\
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig      \
     CFLAGS="-std=gnu99 -O3 -I${iprefix}/include"  \
+    CPPFLAGS="-I${iprefix}/include -I${iprefix}/include/readline" \
     FFLAGS="-O3 -I${iprefix}/include"             \
     FCFLAGS="-O3 -I${iprefix}/include"            \
     CXXFLAGS="-O3 -I${iprefix}/include"           \
@@ -3678,7 +3697,7 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 1 - Installing nginx wrappers ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp *nginx* htpasswd ${iprefix}/ws/sbin
+cp *nginx* htpasswd ${iprefix}/sbin
 if (( $? != 0 )); then
     print "Error: cannot install nginx scripts !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -3701,68 +3720,6 @@ fi
 cd ../..
 
 }
-
-
-
-
-# ############################################################### #
-# Recording: Test Scripts                                         #
-# ############################################################### #
-test_rec_scripts() {
-
-dir=tests
-step1=0
-step2=0
-step3=0
-
-
-cd $dir
-print "\n############################################################"
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Testing SDR" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-# STEP 1
-# Check all recorders if they are sane and execute properly
-
-print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Info: Step 1 - Check recorders" |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-. /opt/sdr/bin/setenv
-for r in sys cpu net nic hdw zone
-do
-    print "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    print "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    if [[ $r == "nic" ]]; then
-        ${MONITOR_BIN}/${r}rec_x64 >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    else
-        ${MONITOR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    fi
-    
-    if (( $? != 0 )); then
-        print "Error: cannot run ${r}rec !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        ((step1=step1+1))
-    fi
-done
-
-(( step1 = step1 / 5 ))
-
-# final check; all 4 steps
-(( rep_tests_done = step1 ))
-if (( rep_tests_done == 1 )); then
-   rep_tests_done=1
-else
-   rep_tests_done=90
-fi
-
-cd ..
-
-}
-
 
 
 # ############################################################### #
@@ -4533,7 +4490,7 @@ print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 # STEP
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-for rmod in sca survival Hmisc mvtnorm mnormt pbivnorm quadprog \
+for rmod in Formula sca survival Hmisc mvtnorm mnormt pbivnorm quadprog \
     boot MASS chron zoo timeDate its tseries fracdiff leaps \
     scatterplot3d randomForest
 do
@@ -4559,7 +4516,7 @@ done
 
 # final check; 1 step
 (( rep_ranalysis_done = step ))
-if (( rep_ranalysis_done == 18 )); then
+if (( rep_ranalysis_done == 19 )); then
    rep_ranalysis_done=1
 else
    rep_ranalysis_done=90
@@ -4619,7 +4576,7 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Installing sdr.conf ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp etc/sdr etc/init.sdr etc/*.conf ${iprefix}/etc
+cp etc/sdr etc/init.sdr etc/*.xml ${iprefix}/etc
 if (( $? != 0 )); then
     print "Error: cannot install etc scripts !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -4647,14 +4604,14 @@ if [[ ! -d ${iprefix}/docroot ]]; then
     fi
 fi
 
-cd docroot
-wksp=$(pwd)
+# cd docroot
+# wksp=$(pwd)
 
-cd ${iprefix}/docroot
-tar xvf ${wksp}/content.tar >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+# cd ${iprefix}/docroot
+# tar xvf ${wksp}/content.tar >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
-cd ${wksp}
-cd ..
+# cd ${wksp}
+# cd ..
 
 
 # STEP 4
@@ -4731,11 +4688,11 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 6 - Installing nginx configs ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [[ -f ${iprefix}/ws/conf/nginx.conf ]]; then
-    cp ${iprefix}/ws/conf/nginx.conf ${iprefix}/ws/conf/nginx.conf.original
+if [[ -f ${iprefix}/conf/nginx.conf ]]; then
+    cp ${iprefix}/conf/nginx.conf ${iprefix}/conf/nginx.conf.original
 fi
 
-cp etc/nginx.conf ${iprefix}/ws/conf
+cp etc/nginx.conf ${iprefix}/conf
 if (( $? != 0 )); then
     print "Error: cannot setup nginx configs !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -4746,7 +4703,7 @@ else
 fi
 
 
-cp etc/htpasswd ${iprefix}/ws/conf
+cp etc/htpasswd ${iprefix}/conf
 if (( $? != 0 )); then
     print "Error: cannot setup nginx configs !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
