@@ -63,7 +63,7 @@ Building SDR software requires that you have a software
 
 =head1 FREE SOFTWARE LICENSE
 
-COPYRIGHT: Copyright (c) 2013 System Data Recorder
+Copyright (c) 2013 SystemDataRecorder
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
