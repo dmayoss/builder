@@ -5,7 +5,9 @@ Builder - SDR Development Tools
 =head1 CONTEXT
 
 These are the tools required to build, compile and package SDR 
-software. The package requires ksh93 and perl.
+software. The package requires ksh93 and perl. You should
+have access to all SDR Builder libraries used by SDR, available 
+separately.
 
 =head1 COMPONENTS
 
@@ -32,29 +34,43 @@ Solaris Recording Engine - describes what software components will
 be unpacked and compiled for SDR Recording Solaris module.
 This handles 64bit platforms only.
 
+=head2 fetcher
+
+Software update utility - checks all software used by SDR and their latest
+revisions from their main web sites. Uses catalog.conf, the main configuration
+file as the software configuration. 
+
+=head2 configuration
+
+catalog.conf - main configuration file for all software 
+used by SDR software. This is a XML based configuration which keeps 
+tracks of all libraries and softare modoules used by SDR and their 
+revision number. This file is used by fetcher.
+
+
 =head1 EXECUTION
 
 Building SDR software requires that you have a software
 
 =head1 FREE SOFTWARE LICENSE
 
-# COPYRIGHT: Copyright (c) 2013 System Data Recorder
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
-#  (http://www.gnu.org/copyleft/gpl.html)
+COPYRIGHT: Copyright (c) 2013 System Data Recorder
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+ (http://www.gnu.org/copyleft/gpl.html)
 
 =head1 NOTE
 
