@@ -18,7 +18,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 0.7
+# VERSION: 0.7.1
 
 # ############################################################### #
 # SDR Engine: Linux                                               # 
@@ -708,7 +708,6 @@ init_module "$dir"
 if (( $? == 0)); then
     step1=1
 fi
-cd $dir
 
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
