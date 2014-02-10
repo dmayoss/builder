@@ -1,6 +1,6 @@
 #!/usr/bin/ksh93 -p
 #
-#  SDR Development tools, builder the master engine script
+#  SDR Development tools, builder the master script engine 
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
