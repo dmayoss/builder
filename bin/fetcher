@@ -1,6 +1,10 @@
 #!/opt/sdr/report/perl/bin/perl -w
 
-# COPYRIGHT: Copyright (c) 2013 System Data Recorder
+#
+# SDR Development Tools
+# Fetcher 
+
+# COPYRIGHT: Copyright (c) 2014 Stefan Parvu www.systemdatarecorder.org
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
