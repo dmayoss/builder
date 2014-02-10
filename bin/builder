@@ -1,11 +1,8 @@
 #!/usr/bin/ksh93 -p
-
 #
-# SDR Development Tools
-# Builder - A master script, starts a suitable for a module on
-#           Linux, Solaris
-
-# COPYRIGHT: Copyright (c) 2014 Stefan Parvu 
+#  SDR Development tools, builder the master engine script
+#
+#  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
