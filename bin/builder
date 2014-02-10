@@ -434,12 +434,12 @@ case "$OS_NAME" in
          
 	 nginx)
 
-             iprefix=${iprefix:-/opt/nginx}
-             if [[ $iprefix == "/opt/nginx" ]]; then
-                 iuser=nginx
+             iprefix=${iprefix:-/opt/www}
+             if [[ $iprefix == "/opt/www" ]]; then
+                 iuser=www
              else
-                 if [[ $iprefix == "/opt/www" ]]; then
-                     iuser=www
+                 if [[ $iprefix == "/opt/nginx" ]]; then
+                     iuser=nginx
                  else
                      iuser=nobody
                  fi
@@ -527,12 +527,12 @@ case "$OS_NAME" in
          
 	 nginx)
 
-             iprefix=${iprefix:-/opt/nginx}
-             if [[ $iprefix == "/opt/nginx" ]]; then
-                 iuser=nginx
+             iprefix=${iprefix:-/opt/www}
+             if [[ $iprefix == "/opt/www" ]]; then
+                 iuser=www
              else
-                 if [[ $iprefix == "/opt/www" ]]; then
-                     iuser=www
+                 if [[ $iprefix == "/opt/nginx" ]]; then
+                     iuser=nginx
                  else
                      iuser=nobody
                  fi
@@ -549,6 +549,10 @@ case "$OS_NAME" in
                   . ${PWD}/engine.nginx.linux.12x
                  ;;
  
+                 1.4.*)
+                  . ${PWD}/engine.nginx.linux.14x
+                 ;;
+
                  *)
                    usage
                  ;;
