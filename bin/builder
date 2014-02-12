@@ -1,4 +1,4 @@
-#!/usr/bin/ksh93 -p
+#!/usr/bin/ksh93
 #
 #  SDR Development tools, builder the master script engine 
 #
@@ -26,10 +26,10 @@ cat << END
 USAGE: ${0##*/} [OPTIONS] rec|rep|nginx version
 OPTIONS:
   -h help
-  -a enable all pkgs: php, mariadb, pgsql
-  -d db type: mariadb | pgsql
-  -p prefix path
-  -t enable tests
+  -d database: mariadb | pgsql
+  -a all: enable php, pecl, memcached, libmcrypt
+  -p prefix
+  -t test mode
   -m module
 
 MODULES:
@@ -41,14 +41,14 @@ MODULES:
       builder rep 0.71                            # build reporting 0.71
       builder nginx 0.8.54                        # build nginx 0.8.54
       builder -p /opt/www nginx 1.2.6             # build nginx 0.8.54
-      builder -a -d mariadb nginx 1.4.4
+      builder -a -d mariadb nginx 1.4.5
 
       rec 0.73  - SDR Recording package, legacy release
       rec 0.74  - SDR Recording package, stable release
       rec 0.75  - SDR Recording package, beta release
       rep 0.75  - SDR Reporting package, beta release
       nginx 1.2.6 - NGINX HTTP Server, legacy release
-      nginx 1.4.4 - NGINX HTTP Server, stable release
+      nginx 1.4.5 - NGINX HTTP Server, stable release
 END
 exit 1
 }
@@ -58,8 +58,9 @@ exit 1
 # MAIN BODY #
 # ######### #
 
-## module ids
-# rec
+## modules
+
+## recording
 perl_sem=0
 lidn_sem=0
 lcrl_sem=0
@@ -72,7 +73,23 @@ ossl_sem=0
 syss_sem=0
 rec1_sem=0
 
-# rep
+idn_done=0
+perl_done=0
+ossl_done=0
+curl_done=0
+wrec_done=0
+recs_done=0
+nrec_done=0
+tests_done=0
+wwwcurl_done=0
+sysstat_done=0
+rec_ssh2_done=0
+rec_perlssh2_done=0
+libxml2_done=0
+perlxml_done=0
+##
+
+## reporting
 rep1_sem=0
 rep2_sem=0
 rep3_sem=0
@@ -88,31 +105,6 @@ repfin_sem=0
 ranalysis_sem=0
 perltt_sem=0
 
-# for nginx
-nginxall_sem=0
-nginxfin_sem=0
-php_sem=0
-mariadb_sem=0
-pgsql_sem=0
-
-# Recording
-idn_done=0
-perl_done=0
-ossl_done=0
-curl_done=0
-wrec_done=0
-recs_done=0
-nrec_done=0
-tests_done=0
-wwwcurl_done=0
-sysstat_done=0
-rec_ssh2_done=0
-rec_perlssh2_done=0
-libxml2_done=0
-perlxml_done=0
-
-
-# Reporting
 rep_idn_done=0
 rep_ssh2_done=0
 rep_perlssh2_done=0
@@ -155,8 +147,15 @@ rep_fin_done=0
 rep_rserve_done=0
 rep_ranalysis_done=0
 rep_perltt_done=0
+##
 
-# Nginx
+## nginx
+nginxall_sem=0
+nginxfin_sem=0
+php_sem=0
+mariadb_sem=0
+pgsql_sem=0
+
 ngx_perl_done=0
 ngx_conv_done=0
 ngx_libxml2_done=0
@@ -178,6 +177,7 @@ ngx_curl_done=0
 ngx_php_done=0
 ngx_event_done=0
 ngx_scripts_done=0
+##
 
 # Source Global SDR Settings
 PWD=$(dirname $0)
@@ -858,6 +858,7 @@ case "$module" in
 
     # build world
 
+    # all + mariadb
     if (( nginxall_sem == 1 && \
           mariadb_sem == 1 )); then
 
@@ -888,6 +889,7 @@ case "$module" in
         build_nginx_peclmcd
         build_nginx_fin
 
+    # all + pgsql
     elif (( nginxall_sem == 1 && \
             pgsql_sem == 1 )); then
 
@@ -919,68 +921,9 @@ case "$module" in
         build_nginx_peclmcd
         build_nginx_fin
 
-    # build http server
-    elif (( nginx_sem == 1 )); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_perl
-        build_nginx_ossl
-        build_nginx_gettext
-        build_nginx_iconv
-        build_nginx_gettext
-        build_nginx_libxml2
-        build_nginx_readline
-        build_nginx_libpng
-        build_nginx_freetype
-        build_nginx_fontconfig
-        build_nginx_gd
-        build_nginx_perlmods
-        build_nginx_pcre
-        build_nginx_fcgi
-        build_nginx_ws
-        build_nginx_fcgiwrap
-        build_nginx_fin
-
-    # build mariadb server
-    elif (( mariadb_sem == 1 )); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_mariadb
-
-    # build postgresql server
-    elif (( pgsql_sem == 1)); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_pgsql
-        build_nginx_dbdpg
-
-    # build php, pgsql, mariadb, others
-    elif (( php_sem == 1)); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_pgsql
-        build_nginx_dbdpg
-        build_nginx_event
-        build_nginx_idn
-        build_nginx_curl
-        build_nginx_mariadb
-        build_nginx_mcd
-        build_nginx_mcrypt
-        build_nginx_php
-        build_nginx_peclmcd
-
-    # finalise
-    elif (( nginxfin_sem == 1)); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_fin
-
-    fi
-
- ;;
-
- nginx)
-
-    # build world
-    if (( nginx_sem == 0 &&    \
-          nginxfin_sem == 0 && \
-          mariadb_sem == 0 &&  \
-          php_sem == 0 )); then
+    # nginx + mariadb
+    elif (( nginx_sem == 1 && \
+            mariadb_sem == 1 )); then
 
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
@@ -1003,10 +946,34 @@ case "$module" in
         build_nginx_idn
         build_nginx_curl
         build_nginx_mariadb
-        build_nginx_mcd
-        build_nginx_mcrypt
-        build_nginx_php
-        build_nginx_peclmcd
+        build_nginx_fin
+
+    # nginx + pgsql
+    elif (( nginx_sem == 1 && \
+            pgsql_sem == 1 )); then
+
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_nginx_perl
+        build_nginx_ossl
+        build_nginx_gettext
+        build_nginx_iconv
+        build_nginx_gettext
+        build_nginx_libxml2
+        build_nginx_readline
+        build_nginx_libpng
+        build_nginx_freetype
+        build_nginx_fontconfig
+        build_nginx_gd
+        build_nginx_perlmods
+        build_nginx_pcre
+        build_nginx_fcgi
+        build_nginx_ws
+        build_nginx_fcgiwrap
+        build_nginx_event
+        build_nginx_idn
+        build_nginx_curl
+        build_nginx_pgsql
+        build_nginx_dbdpg
         build_nginx_fin
 
     # build http server
