@@ -27,7 +27,7 @@ USAGE: ${0##*/} [OPTIONS] rec|rep|nginx version
 OPTIONS:
   -h help
   -d database: mariadb | pgsql
-  -a all: enable php, pecl, memcached, libmcrypt
+  -a all: php, pecl, memcached, libmcrypt
   -p prefix
   -t test mode
   -m module
