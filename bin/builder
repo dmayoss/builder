@@ -30,22 +30,25 @@ OPTIONS:
   -d db type: mariadb | pgsql
   -p prefix path
   -t enable tests
-  -m perl|openssl|idn|curl|wcurl|sysstat|nrec|webrec|scripts
-  -m rep1|rep2|rep3|rep4|rep5
-  -m nginx|nginxfin|mariadb|pgsql|php
+  -m module
+
+MODULES:
+   perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
+   scripts, rep1, rep2, rep3, rep4, rep5, nginx, nginxfin
+   mariadb, pgsql, php
 
   eg, builder rec 0.73                            # build recording 0.73
       builder rep 0.71                            # build reporting 0.71
       builder nginx 0.8.54                        # build nginx 0.8.54
       builder -p /opt/www nginx 1.2.6             # build nginx 0.8.54
-      builder -a -d mariadb -p /opt/www nginx 1.4.3
+      builder -a -d mariadb nginx 1.4.4
 
       rec 0.73  - SDR Recording package, legacy release
       rec 0.74  - SDR Recording package, stable release
       rec 0.75  - SDR Recording package, beta release
       rep 0.75  - SDR Reporting package, beta release
       nginx 1.2.6 - NGINX HTTP Server, legacy release
-      nginx 1.4.3 - NGINX HTTP Server, stable release
+      nginx 1.4.4 - NGINX HTTP Server, stable release
 END
 exit 1
 }
@@ -251,15 +254,14 @@ do
             ;;
 
             sysstat)
-                if [[ "$OS_NAME" != "Linux" ]]; then
-                    print "Error: sysstat is a Linux specific pkg !\n"
-                    exit 1
-                fi
-                syss_sem=1
+              if [[ "$OS_NAME" != "Linux" ]]; then
+                print "Error: sysstat is a Linux specific pkg !\n"
+                exit 1
+              fi
+              syss_sem=1
             ;;
 
             webrec)
-
                 wrec_sem=1
             ;;
 
@@ -340,7 +342,6 @@ do
             ;;
 
             pgsql)
-
                 pgsql_sem=1
             ;;
 
