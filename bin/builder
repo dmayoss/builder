@@ -858,8 +858,30 @@ case "$module" in
 
     # build world
 
+    if (( nginxall_sem == 0 && mariadb_sem == 0 && 
+          pgsql_sem == 0 && php_sem == 0 && nginxfin_sem == 0 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_nginx_perl
+        build_nginx_ossl
+        build_nginx_gettext
+        build_nginx_iconv
+        build_nginx_gettext
+        build_nginx_libxml2
+        build_nginx_readline
+        build_nginx_libpng
+        build_nginx_freetype
+        build_nginx_fontconfig
+        build_nginx_gd
+        build_nginx_perlmods
+        build_nginx_pcre
+        build_nginx_fcgi
+        build_nginx_ws
+        build_nginx_fcgiwrap
+        build_nginx_fin
+
+
     # all + mariadb
-    if (( nginxall_sem == 1 && \
+    elsif (( nginxall_sem == 1 && \
           mariadb_sem == 1 )); then
 
         print "" > ${BUILD_PATH}/${BUILD_LOG}
@@ -974,27 +996,6 @@ case "$module" in
         build_nginx_curl
         build_nginx_pgsql
         build_nginx_dbdpg
-        build_nginx_fin
-
-    # build http server
-    elif (( nginx_sem == 1 )); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_perl
-        build_nginx_ossl
-        build_nginx_gettext
-        build_nginx_iconv
-        build_nginx_gettext
-        build_nginx_libxml2
-        build_nginx_readline
-        build_nginx_libpng
-        build_nginx_freetype
-        build_nginx_fontconfig
-        build_nginx_gd
-        build_nginx_perlmods
-        build_nginx_pcre
-        build_nginx_fcgi
-        build_nginx_ws
-        build_nginx_fcgiwrap
         build_nginx_fin
 
     # build mariadb server
