@@ -577,13 +577,13 @@ case "$OS_NAME" in
 
 esac
 
-if [[ ! -d ${WORKSPACE}/build ]]; then
+if [[ ! -d ${WORKSPACE} ]]; then
     print "Error: Invalid workspace structure: build"
     exit 1
 fi
 
-if [[ -d ${WORKSPACE}/build/${module}/${version} ]]; then
-    cd ${WORKSPACE}/build/${module}/${version}
+if [[ -d ${WORKSPACE}/${module}/${version} ]]; then
+    cd ${WORKSPACE}/${module}/${version}
 else
     print "Error: Invalid workspace structure: wrong module/version"
     exit 1
