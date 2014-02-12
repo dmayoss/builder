@@ -858,7 +858,7 @@ case "$module" in
 
     # build world
 
-    if (( nginxall_sem == 0 && mariadb_sem == 0 && 
+    if (( nginxall_sem == 0 && mariadb_sem == 0 && \
           pgsql_sem == 0 && php_sem == 0 && nginxfin_sem == 0 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
@@ -881,7 +881,7 @@ case "$module" in
 
 
     # all + mariadb
-    elsif (( nginxall_sem == 1 && \
+    elif (( nginxall_sem == 1 && \
           mariadb_sem == 1 )); then
 
         print "" > ${BUILD_PATH}/${BUILD_LOG}
