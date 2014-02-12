@@ -22,7 +22,7 @@
 
 # ############################################################### #
 # NGINX Engine: Solaris                                           #
-#  Includes: PHP, MariaDB                                         #
+#  Includes: PHP, MariaDB, PostgreSQL                             #
 #    build_nginx_perl                                             #
 #    build_nginx_ossl                                             #
 #    build_nginx_gettext                                          #
@@ -128,149 +128,26 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure perl ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-sh Configure -Dcc='cc' -Doptimize='-xO3' -Duselargefiles -Duse64bitall \
-             -Dcf_by="support@systemdatarecorder.org"       \
-             -Dcf_email="support@systemdatarecorder.org"    \
-             -Dprefix=${iprefix}/perl -des >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [[ "$PT_NAME" == "x86_64" ]]; then
+   sh Configure -Doptimize='-O3' -Duselargefiles -Duse64bitall \
+   -Dcf_by="support@systemdatarecorder.org"       \
+   -Dcf_email="support@systemdatarecorder.org"    \
+   -Dprefix=${iprefix}/perl -des >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+   sh Configure -Doptimize='-O3' -Duselargefiles -Duse64bitint \
+   -Dcf_by="support@systemdatarecorder.org"       \
+   -Dcf_email="support@systemdatarecorder.org"    \
+   -Dprefix=${iprefix}/perl -des >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
+
 if (( $? != 0 )); then
     print "Error: configure perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
     exit 3
 else
-    # fix config.sh
-    # Workaround: Bug 32 - SDR Perl - Memory leak in Perl 5.10+
-    # on Solaris 10 with %ENV remove flag: -DPERL_USE_SAFE_PUTENV
-
-
-
-    # ################################################################## #
-    # fix ldflags
-    # ################################################################## #
-
-    print "Fixing ldflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [[ $PT_NAME == "i86pc" ]]; then
-        sed 's/^ldflags\=.*/ldflags\='\''\-m64 \-L\/lib\/64'\''/' config.sh > config.sh.tmp
-    else
-        sed 's/^ldflags\=.*/ldflags\='\''\-m64 \-L\/lib\/64 \-L\/usr\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
-    fi
-    if (( $? != 0 )); then
-        print "Error: fixing ldflags perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-
-    mv config.sh.tmp config.sh
-
-
-    # ################################################################## #
-    # fix lddflags
-    # ################################################################## #
-
-    print "Fixing ldflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [[ $PT_NAME == "i86pc" ]]; then
-        sed 's/^lddlflags\=.*/lddlflags\='\''\-G \-m64 \-L\/lib\/64'\''/' config.sh >> config.sh.tmp
-    else
-        sed 's/^lddlflags\=.*/lddlflags\='\''\-G \-m64 \-L\/lib\/64  \-L\/usr\/lib\/sparcv9'\''/' config.sh >> config.sh.tmp
-    fi
-    if (( $? != 0 )); then
-        print "Error: fixing ldflags perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-
-    mv config.sh.tmp config.sh
-
-
-    # ################################################################## #
-    # fix libspath
-    # ################################################################## #
-    # libspath=' /opt/sunstudio12.1/prod/lib/amd64 /lib/64 /usr/lib /usr/ccs/lib'
-
-    print "Fixing libspath..." >> ${BUILD_PATH}/${BUILD_LOG}
-
-    if [[ $PT_NAME == "i86pc" ]]; then
-        sed 's/^libspath\=.*/libspath\='\''\/lib\/64 \/usr\/lib\/64 \/usr\/ccs\/lib\/amd64'\''/' config.sh > config.sh.tmp
-    else
-        sed 's/^libspath\=.*/libspath\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
-    fi
-    if (( $? != 0 )); then
-        print "Error: fixing libpath perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-    mv config.sh.tmp config.sh
-
-
-
-    # ################################################################## #
-    # fix loclibpth
-    # ################################################################## #
-
-    print "Fixing loclibpth..." >> ${BUILD_PATH}/${BUILD_LOG} 
-
-    if [[ $PT_NAME == "i86pc" ]]; then
-        sed 's/\/opt\/sunstudio12.1\/prod\/lib\/amd64 \/amd64 \/lib\/64 \/64 \/usr\/local\/lib \/opt\/local\/lib \/usr\/gnu\/lib \/opt\/gnu\/lib \/usr\/GNU\/lib \/opt\/GNU\/lib/\/amd64 \/lib\/64 \/64 \/usr\/lib \/usr\/ccs\/lib \/usr\/sfw\/lib\/amd64/' config.sh > config.sh.tmp
-    else
-        sed 's/^loclibpth=.*/loclibpth\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
-    fi
-    if (( $? != 0 )); then
-        print "Error: fixing loclibpth perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-    mv config.sh.tmp config.sh
-   
-
-
-    # ################################################################## #
-    # fix ccflags
-    # ################################################################## #
-    print "Fixing ccflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [[ $PT_NAME == "i86pc" ]]; then
-        sed 's/\-xarch=generic64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64 \-DPERL_USE_SAFE_PUTENV/\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64/' config.sh > config.sh.tmp
-    else
-        sed 's/^ccflags\=.*/ccflags\='\''\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64'\''/' config.sh > config.sh.tmp
-    fi
-    if (( $? != 0 )); then
-        print "Error: fixing ccflags perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-    mv config.sh.tmp config.sh
-
-
-
-    # ################################################################## #
-    # fix cppflags
-    # ################################################################## #
-
-    print "Fixing cppflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    sed 's/\-xarch=generic64/\-m64/' config.sh > config.sh.tmp
-    if (( $? != 0 )); then
-        print "Error: fixing cppflags perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-    mv config.sh.tmp config.sh
- 
-    sh Configure -S >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    make depend >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    if (( $? != 0 )); then
-        print "Error: make depend perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step2=1
-    fi
+    step2=1
 fi
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -280,7 +157,6 @@ make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
     exit 3
 else
     step3=1
@@ -294,11 +170,11 @@ make test >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make test perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
     exit 3
 else
     step4=1
 fi
+
 
 # STEP 5
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -312,7 +188,6 @@ if [[ -d ${iprefix}/perl ]]; then
     if (( $? != 0 )); then
         print "Error: cleaning $dir directory" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
         exit 3
     fi
 fi
@@ -321,20 +196,20 @@ make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make install perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
     exit 3
 else
     step5=1
 fi
 
 
-
 # STEP 6
+
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
+
 print "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
-${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PERL_MM_USE_DEFAULT=1 ${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: Bundle::LWP installation failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -378,7 +253,6 @@ do
     fi
 done
 
-
 # there are 32 perl modules install calls 
 (( step6 = step6 / 32 ));
 
@@ -402,9 +276,8 @@ if (( $? != 0 )); then
     exit 5
 fi
 cd ..
-
-
 }
+
 
 # ############################################################### #
 # NGINX ALL: readline Build Phase                                 #
@@ -442,10 +315,11 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" \
-./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -453,7 +327,8 @@ if (( $? != 0 )); then
     exit 3
 else
     step2=1
-fi
+fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -540,19 +415,19 @@ cd ${archive_file%%.tar*}
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
- 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CXX="/usr/bin/CC -lCrun" CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    CXXFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" \
-    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+             -L/lib64 -L/usr/lib64" ./configure \
+            --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     exit 3
 else
     step2=1
-fi
+fi  
+
 
 
 # STEP 3
@@ -641,11 +516,12 @@ cd ${archive_file%%.tar*}
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
  
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
-    CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" ./configure \
- --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -654,6 +530,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -735,6 +612,7 @@ if (( $? == 0)); then
     step1=1
 fi
 
+
 # STEP 2
 cd ${archive_file%%.tar*}
 
@@ -742,14 +620,14 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [[ $PT_NAME == "i86pc" ]]; then
+if [[ "$PT_NAME" == "x86_64" ]]; then
     env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    ./Configure solaris64-x86_64-cc threads shared no-sse2 --prefix=${iprefix} \
-    --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+     ./Configure linux-x86_64 threads shared --prefix=${iprefix} \
+     --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
     env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    ./Configure solaris64-sparcv9-cc threads shared --prefix=${iprefix} \
-    --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+     ./Configure linux-elf threads shared --prefix=${iprefix} \
+     --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
 if (( $? != 0 )); then
@@ -766,48 +644,6 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-# fix xarch
-print "Fixing arch flag..." >> ${BUILD_PATH}/${BUILD_LOG}
-
-if [[ $PT_NAME == "i86pc" ]]; then
-    sed 's/\-xarch\=amd64/\-m64/g' Makefile > Makefile.tmp
-    sed 's/\-fast//g' Makefile.tmp > Makefile.tmp.1
-    mv Makefile.tmp.1 Makefile
-else
-    sed 's/\-xarch\=v9/\-m64/g' Makefile > Makefile.tmp
-    mv Makefile.tmp Makefile
-fi
-
-if (( $? != 0 )); then
-    print "Error: fixing xarch Makefile failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-fi
-
-
-
-print "Fixing SHARED_LDFLAGS flag..." >> ${BUILD_PATH}/${BUILD_LOG}
-
-# we change the delimiter of sed since we deal with paths
-if [[ $PT_NAME == "i86pc" ]]; then
-    sed "s:SHARED_LDFLAGS=-m64 -G -dy -z text:SHARED_LDFLAGS=-m64 -G -dy -z text -L${iprefix}/lib -R${iprefix}/lib:" Makefile > Makefile.tmp
-else
-    sed "s:SHARED_LDFLAGS=.*:SHARED_LDFLAGS=-m64 -G -dy -z text -L${iprefix}/lib -R${iprefix}/lib:" Makefile > Makefile.tmp
-fi
-
-
-#sed "s:SHARED_LDFLAGS=-m64 -G -dy -z text:SHARED_LDFLAGS=-m64 -G -dy -z text -L${iprefix}/lib -R${iprefix}/lib:" Makefile > Makefile.tmp
-
-if (( $? != 0 )); then
-    print "Error: fixing SHARED_LDFLAGS Makefile failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-fi
-mv Makefile.tmp Makefile
-
-
 
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
@@ -818,7 +654,6 @@ if (( $? != 0 )); then
 else
     step3=1
 fi 
-
 
 # STEP 4
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -834,6 +669,7 @@ if (( $? != 0 )); then
 else
     step4=1
 fi
+
 
 
 # final check; all 4 steps
@@ -895,10 +731,10 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
  
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/lib/64 -L/usr/lib/64 \
-      -L/usr/sfw/lib/amd64 -R/usr/sfw/lib/amd64" ./configure \
-    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -912,6 +748,11 @@ fi
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make $dir failed !" |\
@@ -921,6 +762,7 @@ if (( $? != 0 )); then
 else
     step3=1
 fi 
+
 
 # STEP 4
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -995,31 +837,14 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:$PATH \
-${iprefix}/perl/bin/perl Makefile.PL  >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+    CC=cc ${iprefix}/perl/bin/perl Makefile.PL  >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
-# LDFLAGS =  -m64 -L/lib/64 
-# we change the delimiter sed we deal with paths
-sed "s:LDFLAGS =  -m64 -L/lib/64:LDFLAGS = -m64 -L${iprefix}/lib -R${iprefix}/lib -L/lib/64 -L/usr/sfw/lib/amd64 -R/usr/sfw/lib/amd64:" Makefile > Makefile.tmp
+sed "s:LDFLAGS =  .*:LDFLAGS = -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
 mv Makefile.tmp Makefile
 
-# LDDLFLAGS =  -G -m64 -L/lib/64
-sed "s:LDDLFLAGS =  -G -m64 -L/lib/64:LDDLFLAGS = -G -m64 -L${iprefix}/lib -R${ipreifx}/lib -L/usr/sfw/lib/amd64 -R/usr/sfw/lib/amd64 -L/lib/64:" Makefile > Makefile.tmp
+sed "s:LDDLFLAGS.*:LDDLFLAGS = -G -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
 mv Makefile.tmp Makefile
-
-
-# CCFLAGS
-sed 's/^CCFLAGS.*/CCFLAGS \= \-m64/' Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
-
-if (( $? != 0 )); then
-    print "Error: configure $dir failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step2=1
-fi
 
 
 # STEP 3
@@ -1240,22 +1065,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:$PATH \
- ${iprefix}/perl/bin/perl Makefile.PL >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PATH=${iprefix}/bin:$PATH ${iprefix}/perl/bin/perl Makefile.PL  >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
-
-
-# fix Makefile
-
-# LDFLAGS =  -m64 -L/lib/64
-# we change the delimiter sed we deal with paths
-sed "s:LDFLAGS = -m64 -L/lib/64:LDFLAGS = -m64 -L${iprefix}/lib -R${iprefix}/lib -L/lib/64 -L/usr/postgres/8.3/lib/amd64 -R/usr/postgres/8.3/lib/amd64:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
-
-# LDDLFLAGS =  -G -m64 -L/lib/64
-sed "s:LDDLFLAGS = -G -m64 -L/lib/64:LDDLFLAGS = -G -m64 -L${iprefix}/lib -R${ipreifx}/lib -L/lib/64 -L/usr/postgres/8.3/lib/amd64 -R/usr/postgres/8.3/lib/amd64:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
-
+cp ../Makefile.good Makefile
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1264,6 +1076,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi
+
 
 
 # STEP 3
@@ -1355,12 +1168,12 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
  
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib \
-     -L/lib/64 -L/usr/lib/64 -L/usr/sfw/lib/amd64 \
-     -R/usr/sfw/lib/amd64" \
-    ./configure --disable-cpp --enable-utf8 --enable-unicode-properties \
-      --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure \
+    --disable-cpp --enable-utf8 --enable-unicode-properties \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1369,6 +1182,8 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -1458,12 +1273,11 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
  
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    CXX=CC CXXFLAGS="-xO3 -m64 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib \
-     -L/lib/64 -L/usr/lib/64 -L/usr/sfw/lib/amd64 \
-     -R/usr/sfw/lib/amd64" ./configure \
-     --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1471,12 +1285,30 @@ if (( $? != 0 )); then
     exit 3
 else
     step2=1
-fi  
+fi
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# if we are in gcc 4.4 and debian based system we might hit
+# Debian Bug report logs - #504963
+
+/usr/bin/lsb_release -i | sed 's/^Distributor ID://' | read distro
+if [[ $distro == "Ubuntu" ]]; then
+    # check gcc version   
+    gcc --version | head -1 | sed 's/^.* //' | read gccver
+
+    case "$gccver" in
+     4.4*)
+         # we are using gcc 4.4+
+         ${iprefix}/perl/bin/perl -pi -le 'print "#include <cstdio>" if $. == 24' libfcgi/fcgio.cpp     
+    esac
+fi
+
+
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make $dir failed !" |\
@@ -1486,6 +1318,8 @@ if (( $? != 0 )); then
 else
     step3=1
 fi 
+
+
 
 # STEP 4
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -1558,7 +1392,8 @@ cd ${archive_file%%.tar*}
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-env iprefix=${iprefix} make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+cp Makefile.Linux Makefile
+make iprefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1568,16 +1403,13 @@ else
     step2=1
 fi 
 
+
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [[ ! -d ${iprefix}/nginx/sbin ]]; then
-    mkdir ${iprefix}/nginx/sbin
-fi
-
-env iprefix=${iprefix} make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+make iprefix=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: make install fcgiwrap failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1586,6 +1418,7 @@ if (( $? != 0 )); then
 else
     step3=1
 fi
+
 
 # final check; all 3 steps
 (( ngx_fcgiw_done = step1 + step2 + step3 ))
@@ -1647,25 +1480,44 @@ cp -pr ../../upstream .
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
+if [[ $PT_NAME == "i686" ]]; then
+    env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
+    CC=cc CFLAGS="-O3"                             \
+    ./configure --prefix=${iprefix} --with-ipv6    \
+    --with-perl=${iprefix}/perl/bin                \
+    --with-http_ssl_module                         \
+    --with-http_stub_status_module                 \
+    --with-http_realip_module                      \
+    --with-http_flv_module                         \
+    --with-http_gzip_static_module                 \
+    --with-cc-opt="-I${iprefix}/include"           \
+    --with-ld-opt="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    --add-module=upstream \
+    --http-client-body-temp-path=logs/client_body_temp   \
+    --http-proxy-temp-path=logs/proxy_temp         \
+    --http-fastcgi-temp-path=logs/fastcgi_temp       \
+    --http-uwsgi-temp-path=logs/uwsgi_temp         \
+    --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+    env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
+    CC=cc CFLAGS="-m64 -O3"                        \
+    ./configure --prefix=${iprefix} --with-ipv6    \
+    --with-perl=${iprefix}/perl/bin                \
+    --with-http_ssl_module                         \
+    --with-http_stub_status_module                 \
+    --with-http_realip_module                      \
+    --with-http_flv_module                         \
+    --with-http_gzip_static_module                 \
+    --with-cc-opt="-I${iprefix}/include"          \
+    --with-ld-opt="-m64 -L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    --add-module=upstream \
+    --http-client-body-temp-path=logs/client_body_temp   \
+    --http-proxy-temp-path=logs/proxy_temp         \
+    --http-fastcgi-temp-path=logs/fastcgi_temp       \
+    --http-uwsgi-temp-path=logs/uwsgi_temp         \
+    --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
 
-# fix configure
-sed 's/\#\!\/bin\/sh/\#\!\/usr\/xpg4\/bin\/sh/' configure > configure.tmp
-mv configure.tmp configure
-chmod 755 configure
-
-env NGX_AUX=" src/os/unix/ngx_sunpro_amd64.il"       \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic"                   \
-    ./configure --prefix=${iprefix}/nginx --with-ipv6\
-    --with-perl=${iprefix}/perl/bin                  \
-    --with-http_ssl_module                           \
-    --with-http_stub_status_module                   \
-    --with-http_realip_module                        \
-    --with-http_flv_module                           \
-    --with-http_gzip_static_module                   \
-    --with-sha1=/usr/lib/amd64                       \
-    --with-cc-opt="-I ${iprefix}/include"            \
-    --with-ld-opt="-m64 -L${iprefix}/lib -R${iprefix}/lib -R/usr/lib/amd64 -R/lib/amd64" \
-    --add-module=upstream >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1674,6 +1526,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -1763,16 +1616,17 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
- CXX="/usr/bin/CC -lCrun" CXXPICFLAGS="-Kpic" \
- CXXFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
- LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/lib/64 -L/usr/lib/64 \
- -L/usr/sfw/lib/64 -R/usr/sfw/lib/64" \
- ./configure --prefix=${iprefix}/mariadb --exec-prefix=${iprefix}/mariadb \
- --enable-local-infile --with-big-tables --with-system-type="sun-solaris10" \
-  --with-mysqld-user=$iuser \
- --with-plugins=myisam,archive,heap,aria,xtradb \
- --with-aria-tmp-tables >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+# TO BE REPLACED WITH Linux Configure
+#env CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
+# CXX="/usr/bin/CC -lCrun" CXXPICFLAGS="-Kpic" \
+# CXXFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
+# LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/lib/64 -L/usr/lib/64 \
+# -L/usr/sfw/lib/64 -R/usr/sfw/lib/64" \
+# ./configure --prefix=${iprefix}/mariadb --exec-prefix=${iprefix}/mariadb \
+# --enable-local-infile --with-big-tables --with-system-type="sun-solaris10" \
+#  --with-mysqld-user=$iuser \
+# --with-plugins=myisam,archive,heap,aria,xtradb \
+# --with-aria-tmp-tables >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1870,10 +1724,17 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-env CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" \
-   ./configure --prefix=${iprefix} \
-    --enable-shared >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [[ "$PT_NAME" == "x86_64" ]]; then 
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+        -L/lib64 -L/usr/lib64" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+        -L/lib -L/usr/lib" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
 
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
@@ -1883,6 +1744,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -1972,10 +1834,17 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-
-env CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" ./configure \
-    --prefix=${iprefix}/mcd --enable-64bit >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [[ "$PT_NAME" == "x86_64" ]]; then 
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+        -L/lib64 -L/usr/lib64" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+        -L/lib -L/usr/lib" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
 
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
@@ -1985,6 +1854,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -2075,11 +1945,18 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
+if [[ "$PT_NAME" == "x86_64" ]]; then 
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+        -L/lib64 -L/usr/lib64" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+        -L/lib -L/usr/lib" ./configure \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" \
-    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -2088,6 +1965,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -2175,13 +2053,13 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/usr/lib/64 -R/usr/lib/64 \
-    -L/usr/sfw/lib/64 -R/usr/sfw/lib/64" \
-    ./configure --prefix=${iprefix} --enable-cookies --enable-nonblocking \
-     --with-libidn >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    CC=cc CFLAGS="-O3" \
+    CPPFLAGS="-I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure --enable-cookies --enable-nonblocking \
+    --with-libidn --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -2190,6 +2068,7 @@ if (( $? != 0 )); then
 else
     step2=1
 fi  
+
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -2277,9 +2156,11 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-
-env CC=cc CFLAGS="-m64 -xO3 -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" \
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+    CC=cc CFLAGS="-O3" \
+    CPPFLAGS="-I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" \
     ./configure --prefix=${iprefix} --disable-posix-threads \
     --enable-dynamic-loading  \
     --with-included-algos=cast-128,gost,rijndael-128,twofish,arcfour,cast-256,loki97,rijndael-192,saferplus,wake,blowfish-compat,des,rijndael-256,serpent,xtea,blowfish,enigma,rc2,tripledes >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -2380,10 +2261,10 @@ print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/usr/lib/64 -R/usr/lib/64 \
-    -L/usr/sfw/lib/64 -R/usr/sfw/lib/64" \
-    ./configure --prefix=${iprefix}/php --with-mysql=${iprefix}/mariadb \
+    CC=cc CFLAGS="-O3" \
+    CPPFLAGS="-I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure --prefix=${iprefix}/php --with-mysql=${iprefix}/mariadb \
      --with-mysqli=${iprefix}/mariadb/bin/mysql_config \
      --with-gd=${iprefix} --with-curl=${iprefix} --with-pear --enable-libxml \
      --enable-fpm --enable-zip --with-zlib --enable-mbstring --with-mcrypt=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -2483,10 +2364,11 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/php/bin:${iprefix}/perl/bin:$PATH \
-    CC=cc CFLAGS="-m64 -xO3 -Kpic -I${iprefix}/include" \
-    LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib" \
-    ./configure --prefix=${iprefix} --enable-memcache >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+    CC=cc CFLAGS="-O3" \
+    CPPFLAGS="-I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure --prefix=${iprefix} --enable-memcache >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
