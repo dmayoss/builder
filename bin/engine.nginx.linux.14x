@@ -220,7 +220,7 @@ else
 fi
 
 for lib in CGI FCGI CGI::Simple CGI::Minimal FCGI::ProcManager \
-    IO::All HTTP::Async Email::Valid MIME::Lite Date::Format Date::Parse \
+    Email::Valid MIME::Lite Date::Format Date::Parse \
     Date::Calc Date::Manip HTML::Parser HTML::Entities Digest::SHA DateTime \
     DateTime::Timezone DBI Template Email::Send Email::MIME \
     Email::MIME::Encodings Email::MIME::Modifier \
@@ -253,8 +253,8 @@ do
     fi
 done
 
-# there are 32 perl modules install calls 
-(( step6 = step6 / 32 ));
+# there are 30 perl modules install calls 
+(( step6 = step6 / 30 ));
 
 
 # final check; all 6 steps
