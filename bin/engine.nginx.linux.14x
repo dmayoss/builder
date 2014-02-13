@@ -101,7 +101,7 @@ step5=0
 step6=0
 
 cd $dir
-print "\n##################################################"
+print "\n############################################################"
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 ls *.tar.gz | read archive_file
@@ -292,7 +292,7 @@ step4=0
 
 
 cd $dir
-print "\n##################################################"
+print "\n############################################################"
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 ls *.tar.gz | read archive_file
@@ -393,7 +393,7 @@ step4=0
 
 
 cd $dir
-print "\n##################################################"
+print "\n############################################################"
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 ls *.tar.gz | read archive_file
@@ -479,6 +479,408 @@ fi
 cd ..
 
 }
+
+
+# ############################################################### #
+# NGINX ALL: libxml2 Build Phase                                  #
+# ############################################################### #
+build_nginx_libxml2() {
+dir=libxml2
+step1=0
+step2=0
+step3=0
+step4=0
+
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/lib64 -L/usr/lib64" ./configure --with-python=no \
+    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+(( ngx_libxml2_done = step1 + step2 + step3 + step4 ))
+if (( ngx_libxml2_done == 4 )); then
+   ngx_libxml2_done=1
+else
+   ngx_libxml2_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
+# ############################################################### #
+# NGINX ALL: libpng Build Phase                                   #
+# ############################################################### #
+build_nginx_libpng() {
+dir=libpng
+step1=0
+step2=0
+step3=0
+step4=0
+
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
+    CFLAGS="-O3 -I${iprefix}/include"                        \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+(( ngx_libpng_done = step1 + step2 + step3 + step4 ))
+if (( ngx_libpng_done == 4 )); then
+   ngx_libpng_done=1
+else
+   ngx_libpng_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
+# ############################################################### #
+# NGINX ALL: freetype Build Phase                                 #
+# ############################################################### #
+build_nginx_freetype() {
+dir=freetype
+step1=0
+step2=0
+step3=0
+step4=0
+
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
+    CFLAGS="-O3 -I${iprefix}/include"                        \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+(( ngx_freetype_done = step1 + step2 + step3 + step4 ))
+if (( ngx_freetype_done == 4 )); then
+   ngx_freetype_done=1
+else
+   ngx_freetype_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
+# ############################################################### #
+# NGINX ALL: fontconfig Build Phase                               #
+# ############################################################### #
+build_nginx_fontconfig() {
+dir=fontconfig
+step1=0
+step2=0
+step3=0
+step4=0
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
+    CFLAGS="-O3 -I${iprefix}/include"                        \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} --enable-libxml2 --with-freetype-config=${iprefix}/bin/freetype-config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+(( ngx_fontconfig_done = step1 + step2 + step3 + step4 ))
+if (( ngx_fontconfig_done == 4 )); then
+   ngx_fontconfig_done=1
+else
+   ngx_fontconfig_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
 
 
 # ############################################################### #
