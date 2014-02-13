@@ -1151,9 +1151,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
@@ -1242,11 +1242,11 @@ print "Info: Step 2 - Configure $dir ..." |\
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     CC=cc ${iprefix}/perl/bin/perl Makefile.PL  >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
-sed "s:LDFLAGS =  .*:LDFLAGS = -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
+#sed "s:LDFLAGS =  .*:LDFLAGS = -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
+#mv Makefile.tmp Makefile
 
-sed "s:LDDLFLAGS.*:LDDLFLAGS = -G -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
+#sed "s:LDDLFLAGS.*:LDDLFLAGS = -G -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
+#mv Makefile.tmp Makefile
 
 
 # STEP 3
