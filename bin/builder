@@ -35,7 +35,7 @@ OPTIONS:
 MODULES:
    perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
    scripts, rep1, rep2, rep3, rep4, rep5, nginx, nginxfin
-   mariadb, pgsql, php
+   mariadb, pgsql, php, ngxfin
 
   eg, builder rec 0.73                            # build recording 0.73
       builder rep 0.71                            # build reporting 0.71
@@ -329,7 +329,7 @@ do
                 repfin_sem=1
             ;;
 
-            nginxfin)
+            ngxfin)
                 nginxfin_sem=1
             ;;
                    
