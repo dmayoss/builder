@@ -2855,7 +2855,7 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 1 - Installing nginx wrappers ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp sbin/*nginx* htpasswd ${iprefix}/sbin
+cp sbin/*nginx* sbin/htpasswd ${iprefix}/sbin
 if (( $? != 0 )); then
     print "Error: cannot install nginx scripts !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
