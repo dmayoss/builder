@@ -900,7 +900,7 @@ case "$module" in
         build_nginx_ws
         build_nginx_fcgiwrap
         build_nginx_pgsql
-        #build_nginx_dbdpg
+        build_nginx_dbdpg
         build_nginx_fin
 
     # nginx + mariadb
