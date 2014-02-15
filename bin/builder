@@ -879,6 +879,53 @@ case "$module" in
         build_nginx_fcgiwrap
         build_nginx_fin
 
+    # nginx + pgsql
+    elif (( nginxall_sem == 0 && mariadb_sem == 0 && \
+            pgsql_sem == 1 && php_sem == 0 && nginxfin_sem == 0 )); then
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_nginx_perl
+        build_nginx_ossl
+        build_nginx_gettext
+        build_nginx_iconv
+        build_nginx_gettext
+        build_nginx_libxml2
+        build_nginx_readline
+        build_nginx_libpng
+        build_nginx_freetype
+        build_nginx_fontconfig
+        build_nginx_gd
+        build_nginx_perlmods
+        build_nginx_pcre
+        build_nginx_fcgi
+        build_nginx_ws
+        build_nginx_fcgiwrap
+        build_nginx_pgsql
+        #build_nginx_dbdpg
+        build_nginx_fin
+
+    # nginx + mariadb
+    elif (( nginxall_sem == 0 && mariadb_sem == 1 && \
+            pgsql_sem == 0 && php_sem == 0 && nginxfin_sem == 0 )); then
+
+        print "" > ${BUILD_PATH}/${BUILD_LOG}
+        build_nginx_perl
+        build_nginx_ossl
+        build_nginx_gettext
+        build_nginx_iconv
+        build_nginx_gettext
+        build_nginx_libxml2
+        build_nginx_readline
+        build_nginx_libpng
+        build_nginx_freetype
+        build_nginx_fontconfig
+        build_nginx_gd
+        build_nginx_perlmods
+        build_nginx_pcre
+        build_nginx_fcgi
+        build_nginx_ws
+        build_nginx_fcgiwrap
+        build_nginx_pgsql
+        build_nginx_fin
 
     # all + mariadb
     elif (( nginxall_sem == 1 && \
@@ -941,61 +988,6 @@ case "$module" in
         build_nginx_mcrypt
         build_nginx_php
         build_nginx_peclmcd
-        build_nginx_fin
-
-    # nginx + mariadb
-    elif (( nginx_sem == 1 && \
-            mariadb_sem == 1 )); then
-
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_perl
-        build_nginx_ossl
-        build_nginx_gettext
-        build_nginx_iconv
-        build_nginx_gettext
-        build_nginx_libxml2
-        build_nginx_readline
-        build_nginx_libpng
-        build_nginx_freetype
-        build_nginx_fontconfig
-        build_nginx_gd
-        build_nginx_perlmods
-        build_nginx_pcre
-        build_nginx_fcgi
-        build_nginx_ws
-        build_nginx_fcgiwrap
-        build_nginx_event
-        build_nginx_idn
-        build_nginx_curl
-        build_nginx_mariadb
-        build_nginx_fin
-
-    # nginx + pgsql
-    elif (( nginx_sem == 1 && \
-            pgsql_sem == 1 )); then
-
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_perl
-        build_nginx_ossl
-        build_nginx_gettext
-        build_nginx_iconv
-        build_nginx_gettext
-        build_nginx_libxml2
-        build_nginx_readline
-        build_nginx_libpng
-        build_nginx_freetype
-        build_nginx_fontconfig
-        build_nginx_gd
-        build_nginx_perlmods
-        build_nginx_pcre
-        build_nginx_fcgi
-        build_nginx_ws
-        build_nginx_fcgiwrap
-        build_nginx_event
-        build_nginx_idn
-        build_nginx_curl
-        build_nginx_pgsql
-        build_nginx_dbdpg
         build_nginx_fin
 
     # build mariadb server
