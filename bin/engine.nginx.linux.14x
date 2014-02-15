@@ -3112,6 +3112,25 @@ if [[ ! -d ${iprefix}/docroot ]]; then
     fi
 fi
 
+
+# STEP 5
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 5 - Installing fastcgi temp dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+if [[ ! -d ${iprefix}/var/fastcgi_temp ]]; then
+
+    mkdir -p ${iprefix}/var/fastcgi_temp
+    if (( $? != 0 )); then
+        print "Error: cannot install fastcgi_temp !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step5=1
+    fi
+fi
+
 # set smf directory
 #cp -pr smf ${iprefix}/nginx/
 #if (( $? != 0 )); then
@@ -3124,9 +3143,9 @@ fi
 #fi
 
 
-# final check; all 4 steps
-(( ngx_scripts_done = step1 + step2 + step3 + step4))
-if (( ngx_scripts_done == 4 )); then
+# final check; all 5 steps
+(( ngx_scripts_done = step1 + step2 + step3 + step4 + step5))
+if (( ngx_scripts_done == 5 )); then
    ngx_scripts_done=1
 else
    ngx_scripts_done=90
