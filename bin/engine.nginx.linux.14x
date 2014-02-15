@@ -2834,14 +2834,12 @@ cd ..
 # ############################################################### #
 # NGINX: pgsql Build Phase                                        #
 # ############################################################### #
-
 build_nginx_pgsql() {
 dir=pgsql
 step1=0
 step2=0
 step3=0
 step4=0
-
 
 cd $dir
 print "\n############################################################"
@@ -2869,9 +2867,8 @@ print "Info: Step 2 - Configure $dir ..." |\
 
 
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib -L/lib64 -L/usr/lib64" \           
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib -L/lib64 -L/usr/lib64" \
     ./configure --prefix=${iprefix}/pgsql --with-openssl --with-libs=${iprefix}/lib >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}

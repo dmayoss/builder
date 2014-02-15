@@ -599,9 +599,9 @@ print "# SDR Build Engine                                              #"
 print "#################################################################"
 print "# Start  : $(date)"
 print "# Target : ${OS_NAME} ${PT_NAME}"
-if ((nginx_all_sem == 1 && mariadb_sem == 1 )); then
+if ((nginxall_sem == 1 && mariadb_sem == 1 )); then
     print "# Module : $module, mariadb, php"
-elif (( nginx_all_sem == 1 && mariadb_sem == 1 )); then
+elif (( nginxall_sem == 1 && mariadb_sem == 1 )); then
     print "# Module : $module, pgsql, php"
 else
     print "# Module : $module"
@@ -857,7 +857,6 @@ case "$module" in
  nginx)
 
     # build world
-
     if (( nginxall_sem == 0 && mariadb_sem == 0 && \
           pgsql_sem == 0 && php_sem == 0 && nginxfin_sem == 0 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
@@ -928,9 +927,7 @@ case "$module" in
         build_nginx_fin
 
     # all + mariadb
-    elif (( nginxall_sem == 1 && \
-          mariadb_sem == 1 )); then
-
+    elif (( nginxall_sem == 1 && mariadb_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -959,9 +956,7 @@ case "$module" in
         build_nginx_fin
 
     # all + pgsql
-    elif (( nginxall_sem == 1 && \
-            pgsql_sem == 1 )); then
-
+    elif (( nginxall_sem == 1 && pgsql_sem == 1 )); then
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -1000,20 +995,6 @@ case "$module" in
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_pgsql
         build_nginx_dbdpg
-
-    # build php, pgsql, mariadb, others
-    elif (( php_sem == 1)); then
-        print "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_nginx_pgsql
-        build_nginx_dbdpg
-        build_nginx_event
-        build_nginx_idn
-        build_nginx_curl
-        build_nginx_mariadb
-        build_nginx_mcd
-        build_nginx_mcrypt
-        build_nginx_php
-        build_nginx_peclmcd
 
     # finalise
     elif (( nginxfin_sem == 1)); then
