@@ -1101,7 +1101,7 @@ cd ..
 # ############################################################### #
 
 build_nginx_gd() {
-dir=gd
+dir=libgd
 step1=0
 step2=0
 step3=0
@@ -1151,9 +1151,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-#/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-#/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-#/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
