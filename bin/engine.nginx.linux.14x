@@ -3082,7 +3082,7 @@ fi
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Info: Step 2 - Installing startup scripts ..." |\
+print "Info: Step 2 - Installing config scripts ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 cp conf/* ${iprefix}/conf
 if (( $? != 0 )); then
