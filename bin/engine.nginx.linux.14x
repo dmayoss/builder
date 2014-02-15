@@ -3040,6 +3040,8 @@ build_nginx_fin() {
 dir=ws-scripts
 step1=0
 step2=0
+step3=0
+step4=0
 
 
 cd $dir
@@ -3080,7 +3082,21 @@ fi
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
-print "Info: Step 3 - Installing docroot ..." |\
+print "Info: Step 2 - Installing startup scripts ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+cp conf/* ${iprefix}/conf
+if (( $? != 0 )); then
+    print "Error: cannot install nginx startup scripts !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step2=1
+fi
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Installing docroot ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 if [[ ! -d ${iprefix}/docroot ]]; then
@@ -3092,7 +3108,7 @@ if [[ ! -d ${iprefix}/docroot ]]; then
         rm /var/tmp/build.${module}
         exit 3
     else
-        step3=1
+        step4=1
     fi
 fi
 
@@ -3108,9 +3124,9 @@ fi
 #fi
 
 
-# final check; all 3 steps
-(( ngx_scripts_done = step1 + step2 + step3))
-if (( ngx_scripts_done == 3 )); then
+# final check; all 4 steps
+(( ngx_scripts_done = step1 + step2 + step3 + step4))
+if (( ngx_scripts_done == 4 )); then
    ngx_scripts_done=1
 else
    ngx_scripts_done=90
