@@ -160,6 +160,7 @@ ngx_perl_done=0
 ngx_conv_done=0
 ngx_libxml2_done=0
 ngx_libpng_done=0
+ngx_libjpeg_done=0
 ngx_freetype_done=0
 ngx_fontconfig_done=0
 ngx_ossl_done=0
@@ -867,6 +868,7 @@ case "$module" in
         build_nginx_gettext
         build_nginx_libxml2
         build_nginx_readline
+        build_nginx_libjpeg
         build_nginx_libpng
         build_nginx_freetype
         build_nginx_fontconfig
@@ -889,6 +891,7 @@ case "$module" in
         build_nginx_gettext
         build_nginx_libxml2
         build_nginx_readline
+        build_nginx_libjpeg
         build_nginx_libpng
         build_nginx_freetype
         build_nginx_fontconfig
@@ -914,6 +917,7 @@ case "$module" in
         build_nginx_gettext
         build_nginx_libxml2
         build_nginx_readline
+        build_nginx_libjpeg
         build_nginx_libpng
         build_nginx_freetype
         build_nginx_fontconfig
@@ -936,6 +940,7 @@ case "$module" in
         build_nginx_gettext
         build_nginx_libxml2
         build_nginx_readline
+        build_nginx_libjpeg
         build_nginx_libpng
         build_nginx_freetype
         build_nginx_fontconfig
@@ -965,6 +970,7 @@ case "$module" in
         build_nginx_gettext
         build_nginx_libxml2
         build_nginx_readline
+        build_nginx_libjpeg
         build_nginx_libpng
         build_nginx_freetype
         build_nginx_fontconfig
