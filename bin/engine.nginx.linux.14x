@@ -1380,7 +1380,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 5 - Install CPAN GD modules..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-for lib in GD::Text GD::Graph Chart::Base Template::Plugin::GD::Image
+for lib in GD::Text GD::Graph Chart::Base Template::Plugin::GD::Image \
+    PatchReader Test::Taint File::MimeInfo Encode-Detect TheSchwartz \
+    Daemon-Generic HTML::FormatText::WithLinks
 do
     env PERL_MM_USE_DEFAULT=1 \
       ${NGXAL_PERLBIN}/perl -MCPAN -e 'install "'$lib'"' >> \
@@ -1393,13 +1395,13 @@ do
         fi
 done
 
-# there are 4 perl modules install calls
-(( step5 = step5 / 4 ));
+# there are 11 perl modules install calls
+(( step5 = step5 / 11 ));
 
 
 #
 # final check; all 5 steps
-(( ngx_perlmodules_done = step1 + step2 + step3 + step4 + step5))
+(( ngx_perlmodules_done = step1 + step2 + step3 + step4 + step5 ))
 if (( ngx_perlmodules_done == 5 )); then
    ngx_perlmodules_done=1
 else
