@@ -228,7 +228,7 @@ for lib in CGI FCGI CGI::Simple CGI::Minimal FCGI::ProcManager \
     URI Email::MIME::Attachment::Stripper Email::Reply HTML::Scrubber \
     MIME::Parser Authen::SASL Captcha::reCAPTCHA Archive::Tar Geo::ReadGRIB \
     Net::Wire10 HTML::TreeBuilder::XPath XML::NamespaceSupport \
-    XML::SAX XML::Simple
+    XML::SAX XML::Simple Math::Random::ISAAC
 do
     if [[ $lib == "MIME::Lite" ]]; then
         env PERL_MM_USE_DEFAULT=1 \
@@ -254,8 +254,8 @@ do
     fi
 done
 
-# there are 30 perl modules install calls 
-(( step6 = step6 / 30 ));
+# there are 31 perl modules install calls 
+(( step6 = step6 / 31 ));
 
 
 # final check; all 6 steps
@@ -568,6 +568,107 @@ if (( ngx_libxml2_done == 4 )); then
    ngx_libxml2_done=1
 else
    ngx_libxml2_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
+# ############################################################### #
+# NGINX ALL: libjpeg Build Phase                                  #
+# ############################################################### #
+build_nginx_libjpeg() {
+dir=libjpeg
+step1=0
+step2=0
+step3=0
+step4=0
+
+
+cd $dir
+print "\n############################################################"
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+ls *.tar.gz | read archive_file
+# Debug
+# print "Archive: $archive_file"
+# print "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if (( $? == 0)); then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
+    CFLAGS="-O3 -I${iprefix}/include"                        \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if (( $? != 0 )); then
+    print "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+
+# STEP 3
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# STEP 4
+print "" >> ${BUILD_PATH}/${BUILD_LOG}
+print "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if (( $? != 0 )); then
+    print "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+(( ngx_libjpeg_done = step1 + step2 + step3 + step4 ))
+if (( ngx_libjpeg_done == 4 )); then
+   ngx_libjpeg_done=1
+else
+   ngx_libjpeg_done=90
 fi
 
 cd ..
@@ -1242,13 +1343,6 @@ print "Info: Step 2 - Configure $dir ..." |\
 
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     CC=cc ${iprefix}/perl/bin/perl Makefile.PL  >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
-#sed "s:LDFLAGS =  .*:LDFLAGS = -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
-#mv Makefile.tmp Makefile
-
-#sed "s:LDDLFLAGS.*:LDDLFLAGS = -G -L${iprefix}/lib -R${iprefix}/lib -L/lib/64:" Makefile > Makefile.tmp
-#mv Makefile.tmp Makefile
-
 
 # STEP 3
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
