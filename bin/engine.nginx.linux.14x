@@ -1233,12 +1233,13 @@ cd ${archive_file%%.tar*}
 print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
- 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
+    PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
     -L/lib64 -L/usr/lib64" ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
+ 
 if (( $? != 0 )); then
     print "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1253,9 +1254,9 @@ print "" >> ${BUILD_PATH}/${BUILD_LOG}
 print "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#/bin/sh config/missing --run aclocal-1.9 -I config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#/bin/sh config/missing --run automake-1.9 --foreign >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#/bin/sh config/missing --run autoconf >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if (( $? != 0 )); then
