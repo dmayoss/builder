@@ -1381,8 +1381,8 @@ print "Info: Step 5 - Install CPAN GD modules..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 for lib in GD::Text GD::Graph Chart::Base Template::Plugin::GD::Image \
-    PatchReader Test::Taint File::MimeInfo Encode-Detect TheSchwartz \
-    Daemon-Generic HTML::FormatText::WithLinks
+    PatchReader Test::Taint File::MimeInfo Encode::Detect TheSchwartz \
+    Daemon::Generic HTML::FormatText::WithLinks
 do
     env PERL_MM_USE_DEFAULT=1 \
       ${NGXAL_PERLBIN}/perl -MCPAN -e 'install "'$lib'"' >> \
