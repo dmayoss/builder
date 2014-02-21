@@ -408,8 +408,8 @@ case "$OS_NAME" in
                   . ${PWD}/engine.rec.solaris.074
                   ;;
 
-                 0.75*)
-                  . ${PWD}/engine.rec.solaris.075
+                 1.0*)
+                  . ${PWD}/engine.rec.solaris.10x
                   ;;
                
                  *)
@@ -427,6 +427,10 @@ case "$OS_NAME" in
              case "$version" in
                  0.74)
                   . ${PWD}/engine.rep.solaris.074
+                  ;;
+
+                 1.0x)
+                  . ${PWD}/engine.rep.solaris.10x
                   ;;
 
                  *)
@@ -498,8 +502,8 @@ case "$OS_NAME" in
                   . ${PWD}/engine.rec.linux.074
                   ;;
 
-                 0.75*)
-                  . ${PWD}/engine.rec.linux.075
+                 1.0*)
+                  . ${PWD}/engine.rec.linux.10x
                   ;;
 
                  *)
@@ -520,9 +524,10 @@ case "$OS_NAME" in
                   . ${PWD}/engine.rep.linux.074
                   ;;
                
-                 0.75*)
-                  . ${PWD}/engine.rep.linux.075
+                 1.0*)
+                  . ${PWD}/engine.rep.linux.10x
                   ;;
+
                  *)
                    usage
                  ;;
