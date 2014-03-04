@@ -326,11 +326,13 @@ if [[ "$PT_NAME" == "x86_64" ]]; then
     sh Configure -Doptimize='-O3' -Duselargefiles -Duse64bitall \
         -Dcf_by="support@systemdatarecorder.org"       \
         -Dcf_email="support@systemdatarecorder.org"    \
+        -Dman1direxp="none" -Dman3direxp="none"        \
         -Dprefix=${iprefix}/perl -des >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
     sh Configure -Doptimize='-O3' -Duselargefiles -Duse64bitint \
         -Dcf_by="support@systemdatarecorder.org"       \
         -Dcf_email="support@systemdatarecorder.org"    \
+        -Dman1direxp="none" -Dman3direxp="none"        \
         -Dprefix=${iprefix}/perl -des >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
