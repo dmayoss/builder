@@ -20,7 +20,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 0.7.1
+# VERSION: 1.0
 
 # ############################################################### #
 # SDR Engine: Linux                                               # 
@@ -1409,7 +1409,7 @@ print "Info: Step 2 - Installing recorders ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ls *rec | wc -l | read nrecs
-if (( nrecs != 8 )); then
+if (( nrecs != 9 )); then
     print "Error: wrong no. of recorders, check workspace !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
