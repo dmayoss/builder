@@ -436,7 +436,7 @@ fi
 #do
 
 for lib in Digest::SHA XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
-   Proc::Daemon Proc::PID::File File::Tail
+   Proc::Daemon Proc::PID::File File::Tail List::MoreUtils
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if (( $? != 0 )); then
@@ -449,9 +449,8 @@ do
     fi
 done
 
-# there are 25 perl modules install calls 
-#(( step6 = step6 / 20 ));
-(( step6 = step6 / 7 ));
+# there are 8 perl modules install calls 
+(( step6 = step6 / 8 ));
 
 # final check; all 6 steps
 (( perl_done = step1 + step2 + step3 + step4 + step5 + step6 ))
