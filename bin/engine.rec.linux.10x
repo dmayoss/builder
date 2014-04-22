@@ -1413,7 +1413,7 @@ print "Info: Step 2 - Installing recorders ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ls *rec | wc -l | read nrecs
-if (( nrecs != 9 )); then
+if (( nrecs != 10 )); then
     print "Error: wrong no. of recorders, check workspace !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
