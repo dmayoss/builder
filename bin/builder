@@ -631,8 +631,8 @@ case "$module" in
         print "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rec_perl
         build_rec_ossl
-        build_rec_ssh2
-        build_rec_perlssh2
+        # build_rec_ssh2
+        # build_rec_perlssh2
         build_rec_idn
         build_rec_libxml2
         build_rec_xmllibxml
