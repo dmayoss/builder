@@ -435,8 +435,8 @@ fi
 #   Data::Dumper Proc::Daemon Proc::PID::File File::Tail
 #do
 
-for lib in Digest::SHA XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
-   Proc::Daemon Proc::PID::File File::Tail List::MoreUtils
+for lib in Digest::SHA XML::NamespaceSupport XML::SAX Proc::Daemon \
+           Proc::PID::File File::Tail List::MoreUtils Session::Token
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if (( $? != 0 )); then
