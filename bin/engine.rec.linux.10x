@@ -436,7 +436,8 @@ fi
 #do
 
 for lib in Digest::SHA XML::NamespaceSupport XML::SAX Proc::Daemon \
-           Proc::PID::File File::Tail List::MoreUtils Session::Token
+           Proc::PID::File File::Tail List::MoreUtils Session::Token \
+           Data::UUID
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if (( $? != 0 )); then
