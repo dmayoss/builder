@@ -26,8 +26,6 @@ HOSTNAME=$(uname -n)
 
 NGINX_PERLBIN=/opt/nginx/perl/bin
 NGXAL_PERLBIN=/opt/www/perl/bin
-SDR_PERLBIN=/opt/sdr/perl/bin
-SDRREP_PERLBIN=/opt/sdr/report/perl/bin
 BUILD_PATH=/opt/build/log
 
 
@@ -65,7 +63,9 @@ SDR_LIB=${SDR_PATH}/lib
 SDR_LOG=${SDR_PATH}/log
 SDR_RAW=${SDR_LOG}/raw
 SDR_DAILY=${SDR_LOG}/daily
+SDR_PERLBIN=${SDR_PATH}/perl/bin
 SDRREP_ROOT=${SDR_PATH}/report
+SDRREP_PERLBIN=${SDRREP_ROOT}/perl/bin
 SDRREP_BIN=${SDRREP_ROOT}/rrd/bin
 SDRREP_DOCROOT=${SDRREP_ROOT}/docroot
 SDRREP_DB=${SDRREP_ROOT}/db
