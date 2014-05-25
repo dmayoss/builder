@@ -2039,15 +2039,15 @@ do
     print "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
     #if [[ $r == "nic" ]]; then
     #    if [[ $PT_NAME == "i86pc" ]]; then
-    #        ${MONITOR_BIN}/${r}rec_x64 >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    #        ${SDR_BIN}/${r}rec_x64 >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #    else
-    #        ${MONITOR_BIN}/${r}rec_sparcv9 >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    #        ${SDR_BIN}/${r}rec_sparcv9 >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #    fi
     #else
-    #    ${MONITOR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    #    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #fi
     
-    ${MONITOR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     
     if (( $? != 0 )); then
         print "Error: cannot run ${r}rec !" |\

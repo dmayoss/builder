@@ -1579,7 +1579,7 @@ do
     print "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     print "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
     #if [[ $r == "jvm" ]]; then
-    #    ${MONITOR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    #    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #else
     ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #fi
