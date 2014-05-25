@@ -20,7 +20,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.0
+# VERSION: 1.1
 
 usage() {
 
@@ -481,6 +481,102 @@ case "$OS_NAME" in
          ;;
         esac
     ;;
+
+    Linux)
+
+        # get workspace user id
+        WORKSPACE_USER=$(/usr/bin/id -un)
+
+        case "$module" in
+         rec)
+
+             iprefix=${iprefix:-/opt/sdr}
+             iuser=sdr
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+
+             case "$version" in
+                 0.73*)
+                  . ${PWD}/engine.rec.linux.073
+                  ;;
+               
+                 0.74*)
+                  . ${PWD}/engine.rec.linux.074
+                  ;;
+
+                 1.0*)
+                  . ${PWD}/engine.rec.linux.10x
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+         rep)
+
+             iprefix=${iprefix:-/opt/sdr/report}
+             iuser=sdr
+             
+             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+
+             case "$version" in
+                 0.74*)
+                  . ${PWD}/engine.rep.linux.074
+                  ;;
+               
+                 1.0*)
+                  . ${PWD}/engine.rep.linux.10x
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+         
+	 nginx)
+
+             iprefix=${iprefix:-/opt/www}
+             if [[ $iprefix == "/opt/www" ]]; then
+                 iuser=www
+             else
+                 if [[ $iprefix == "/opt/nginx" ]]; then
+                     iuser=nginx
+                 else
+                     iuser=nobody
+                 fi
+             fi
+
+             WORKSPACE=~${WORKSPACE_USER}/workspace/nginx
+
+             case "$version" in
+                 0.8.54)
+                  . ${PWD}/engine.nginx.linux.0854
+                  ;;
+
+                 1.2.*)
+                  . ${PWD}/engine.nginx.linux.12x
+                 ;;
+ 
+                 1.4.*)
+                  . ${PWD}/engine.nginx.linux.14x
+                 ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+         *)
+            usage
+         ;;
+        esac
+
+    ;;
+
 
     Linux)
 
