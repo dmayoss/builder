@@ -82,7 +82,7 @@ COREREC_RAW=${SDR_RAW}/corerec.sdrd
 ZONEREC_RAW=${SDR_RAW}/zonerec.sdrd
 
 
-WEBREC_LOG=${MONITOR_RAW}/webrec.log
+WEBREC_LOG=${SDR_RAW}/webrec.log
 
 
 #############################
@@ -102,4 +102,4 @@ ZONEADM_BIN=/usr/sbin/zoneadm
 #############################
 
 
-export HOSTNAME REPORT_ROOT REPORT_BIN REPORT_DOCROOT MONITOR_PATH MONITOR_BIN MONITOR_LOG MONITOR_RAW SDR_PERLBIN SDRREP_PERLBIN
+export HOSTNAME SDR_PATH SDR_BIN SDR_PERLBIN

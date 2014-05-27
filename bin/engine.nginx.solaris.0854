@@ -2139,9 +2139,9 @@ do
     print "" >> ${BUILD_LOG}/${module}.${version}.log 2>&1
     print "Executing ${r}rec" | tee -a ${BUILD_LOG}/${module}.${version}.log
     if [[ $r == "nic" ]]; then
-        ${MONITOR_BIN}/${r}rec_x64 >> ${BUILD_LOG}/${module}.${version}.log 2>&1
+        ${SDR_BIN}/${r}rec_x64 >> ${BUILD_LOG}/${module}.${version}.log 2>&1
     else
-        ${MONITOR_BIN}/${r}rec >> ${BUILD_LOG}/${module}.${version}.log 2>&1
+        ${SDR_BIN}/${r}rec >> ${BUILD_LOG}/${module}.${version}.log 2>&1
     fi
     
     if (( $? != 0 )); then
