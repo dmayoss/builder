@@ -183,7 +183,7 @@ ngx_scripts_done=0
 ##
 
 # Source Global SDR Settings
-PWD=$(dirname $0)
+PWD=`dirname $0`
 . ${PWD}/setenv
 
 while getopts ":ahm:p:d:t" arg
@@ -391,7 +391,7 @@ case "$OS_NAME" in
     SunOS)
          
         # get workspace user id
-        WORKSPACE_USER=$(/usr/xpg4/bin/id -un)
+        WORKSPACE_USER=`/usr/xpg4/bin/id -un`
 
 	# source here the engine for Solaris
         case "$module" in
@@ -484,7 +484,7 @@ case "$OS_NAME" in
     Linux)
 
         # get workspace user id
-        WORKSPACE_USER=$(/usr/bin/id -un)
+        WORKSPACE_USER=`/usr/bin/id -un`
 
         case "$module" in
          rec)
@@ -580,7 +580,7 @@ case "$OS_NAME" in
     FreeBSD)
 
         # get workspace user id
-        WORKSPACE_USER=$(/usr/bin/id -un)
+        WORKSPACE_USER=`/usr/bin/id -un`
 
         case "$module" in
          rec)
@@ -700,12 +700,12 @@ echo "#################################################################"
 
 case "$module" in
  rec)
-    if (( perl_sem == 0 && ossl_sem == 0 && \
-          lidn_sem == 0 && syss_sem == 0 && \
-          lcrl_sem == 0 && lwcl_sem == 0 && \
-          wrec_sem == 0 && nrec_sem == 0 && \
-          recs_sem == 0 && test_sem == 0 && \
-          rec1_sem == 0 ));then
+    if [ "$perl_sem" -eq 0 -a "$ossl_sem" -eq 0     \
+          -a "$lidn_sem" -eq 0 -a "$syss_sem" -eq 0 \
+          -a "$lcrl_sem" -eq 0 -a "$lwcl_sem" -eq 0 \
+          -a "$wrec_sem" -eq 0 -a "$nrec_sem" -eq 0 \
+          -a "$recs_sem" -eq 0 -a "$test_sem" -eq 0 \
+          -a "$rec1_sem" -eq 0 ];then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rec_perl
         build_rec_ossl
@@ -716,73 +716,67 @@ case "$module" in
         build_rec_xmllibxml
         build_rec_curl
         build_rec_wcurl
-        if [[ ${OS_NAME} == "Linux" ]]; then
+        if [ "${OS_NAME}" -eq "Linux" ]; then
             build_rec_sysstat
         fi
    
-        # nicrec native went unmaintained
-        #if [[ ${OS_NAME} == "SunOS" ]]; then
-        #    build_rec_nrec
-        #fi
-
         build_rec_webrec
         build_rec_scripts
         test_rec_scripts
     else
-        if (( perl_sem == 1 )); then
+        if [ "$perl_sem" -eq 1 ]; then
           echo "" > ${BUILD_PATH}/${BUILD_LOG}
           build_rec_perl
         fi
 
-        if (( ossl_sem == 1 )); then
+        if [ "$ossl_sem" -eq 1 ]; then
           echo "" > ${BUILD_PATH}/${BUILD_LOG}
           build_rec_ossl
         fi
      
-        if (( rec1_sem == 1 )); then
+        if [ "$rec1_sem" -eq 1 ]; then
           echo "" > ${BUILD_PATH}/${BUILD_LOG}
-          #build_rec_ssh2
           build_rec_perlssh2
         fi
 
-        if (( lidn_sem == 1 )); then
+        if [ "$lidn_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             build_rec_idn
         fi
 
-        if (( lcrl_sem == 1 )); then
+        if [ "$lcrl_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             build_rec_curl
         fi
 
-        if (( lwcl_sem == 1 )); then
+        if [ "$lwcl_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             build_rec_wcurl
         fi
 
-        if (( syss_sem == 1 )); then
-            if [[ ${OS_NAME} == "Linux" ]]; then
+        if [ "$syss_sem" -eq 1 ]; then
+            if [ "${OS_NAME}" -eq "Linux" ]; then
                 echo "" > ${BUILD_PATH}/${BUILD_LOG}
                 build_rec_sysstat
             fi
         fi
 
-        if (( nrec_sem == 1 )); then
+        if [ "$nrec_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             build_rec_nrec
         fi
 
-        if (( wrec_sem == 1 )); then
+        if [ "$wrec_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             build_rec_webrec
         fi
 
-        if (( recs_sem == 1 )); then
+        if [ "$recs_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             build_rec_scripts
         fi
 
-        if (( test_sem == 1 )); then
+        if [ "$test_sem" -eq 1 ]; then
             echo "" > ${BUILD_PATH}/${BUILD_LOG}
             test_rec_scripts
         fi
@@ -793,13 +787,13 @@ case "$module" in
 
  rep)
 
-    if (( rep1_sem == 0 && rep2_sem == 0 && 
-          rep3_sem == 0 && rep4_sem == 0 &&
-          rep5_sem == 0 && rep6_sem == 0 && 
-          jpeg_sem == 0 && fcgiwrap_sem == 0 && 
-          rserve_sem==0 && pdq_sem == 0 && 
-          repfin_sem == 0 && ranalysis_sem==0 &&
-          perltt_sem == 0 && nginx_sem == 0)); then
+    if [ "$rep1_sem" -eq 0 -a "$rep2_sem" -eq 0  \
+          -a "$rep3_sem" -eq 0 -a "$rep4_sem" -eq 0 \
+          -a "$rep5_sem" -eq 0 -a "$rep6_sem" -eq 0 \ 
+          -a "$jpeg_sem" -eq 0 -a "$fcgiwrap_sem" -eq 0 \
+          -a "$rserve_sem"-eq 0 -a "$pdq_sem" -eq 0 \
+          -a "$repfin_sem" -eq 0 -a "$ranalysis_sem"-eq 0 \
+          -a "$perltt_sem" -eq 0 -a "$nginx_sem" -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
@@ -838,7 +832,7 @@ case "$module" in
         build_rep_pdq
         build_rep_fin
 
-    elif (( rep1_sem == 1 )); then
+    elif [ "$rep1_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
@@ -863,7 +857,7 @@ case "$module" in
         build_rep_ws_scripts
         build_rep_fin
 
-    elif (( rep2_sem == 1 )); then
+    elif [ "$rep2_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_ffi
         build_rep_glib
@@ -885,55 +879,55 @@ case "$module" in
         build_rep_pango
         build_rep_rrd
 
-    elif (( rep3_sem == 1 )); then
+    elif [ "$rep3_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         # build_rep_R
         build_rep_rcairo
         build_rep_rggplot2
 
-    elif (( rep4_sem == 1 )); then
+    elif [ "$rep4_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_pdq
 
-    elif (( rep5_sem == 1 )); then
+    elif [ "$rep5_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_rggplot2
 
-    elif (( rep6_sem == 1 )); then
+    elif [ "$rep6_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_fin
 
-    elif (( nginx_sem == 1 )); then
+    elif [ "$nginx_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_ws
         build_rep_fcgiwrap
         build_rep_ws_scripts
 
-    elif (( perltt_sem == 1 )); then
+    elif [ "$perltt_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perltt
 
-    elif (( fcgiwrap_sem == 1 )); then
+    elif [ "$fcgiwrap_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_fcgiwrap
 
-    elif (( jpeg_sem == 1 )); then
+    elif [ "$jpeg_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_libjpeg
 
-    elif (( rserve_sem == 1 )); then
+    elif [ "$rserve_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_rserve
 
-    elif (( ranalysis_sem == 1 )); then
+    elif [ "$ranalysis_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_ranalysis
 
-    elif (( pdq_sem == 1 )); then
+    elif [ "$pdq_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_pdq
 
-    elif (( repfin_sem == 1 )); then
+    elif [ "$repfin_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_fin
     fi
@@ -943,8 +937,8 @@ case "$module" in
  nginx)
 
     # build world
-    if (( nginxall_sem == 0 && mariadb_sem == 0 && \
-          pgsql_sem == 0 && php_sem == 0 && nginxfin_sem == 0 )); then
+    if [ nginxall_sem -eq 0 -a mariadb_sem -eq 0 -a \
+          pgsql_sem -eq 0 -a php_sem -eq 0 -a nginxfin_sem -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -966,8 +960,8 @@ case "$module" in
         build_nginx_fin
 
     # nginx + pgsql
-    elif (( nginxall_sem == 0 && mariadb_sem == 0 && \
-            pgsql_sem == 1 && php_sem == 0 && nginxfin_sem == 0 )); then
+    elif [ nginxall_sem -eq 0 -a mariadb_sem -eq 0 -a \
+            pgsql_sem -eq 1 -a php_sem -eq 0 -a nginxfin_sem -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -991,8 +985,8 @@ case "$module" in
         build_nginx_fin
 
     # nginx + mariadb
-    elif (( nginxall_sem == 0 && mariadb_sem == 1 && \
-            pgsql_sem == 0 && php_sem == 0 && nginxfin_sem == 0 )); then
+    elif [ nginxall_sem -eq 0 -a mariadb_sem -eq 1 -a \
+            pgsql_sem -eq 0 -a php_sem -eq 0 -a nginxfin_sem -eq 0 ]; then
 
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
@@ -1016,7 +1010,7 @@ case "$module" in
         build_nginx_fin
 
     # all + mariadb
-    elif (( nginxall_sem == 1 && mariadb_sem == 1 )); then
+    elif [ nginxall_sem -eq 1 -a mariadb_sem -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -1046,7 +1040,7 @@ case "$module" in
         build_nginx_fin
 
     # all + pgsql
-    elif (( nginxall_sem == 1 && pgsql_sem == 1 )); then
+    elif [ nginxall_sem -eq 1 -a pgsql_sem -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -1077,18 +1071,18 @@ case "$module" in
         build_nginx_fin
 
     # build mariadb server
-    elif (( mariadb_sem == 1 )); then
+    elif [ mariadb_sem -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_mariadb
 
     # build postgresql server
-    elif (( pgsql_sem == 1)); then
+    elif [ pgsql_sem -eq 1]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_pgsql
         build_nginx_dbdpg
 
     # finalise
-    elif (( nginxfin_sem == 1)); then
+    elif [ nginxfin_sem -eq 1]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_fin
 
@@ -1106,118 +1100,118 @@ esac
 # FINAL INTEGRATION MESSAGE
 
 echo "#################################################################"
-echo "%-25s\n" "# SUMMARY"
-echo "%-25s%-20s\n" "# Target:"  "${OS_NAME} ${PT_NAME}"
-echo "%-25s%-20s\n" "# Compiler:" "${COMPILER}"
-echo "%-25s%-20s\n" "# Built on:" "${OS_NAME} ${KERNEL}"
-echo "%-25s%-20s\n" "# SDR Module:"  "${module}"
-echo "%-25s%-20s\n" "# Version:" "${version}"
-echo "%-25s%-20s\n" "# Build Date:" "$(date)"
+echo "# SUMMARY"
+echo "# Target:  ${OS_NAME} ${PT_NAME}"
+echo "# Compiler: ${COMPILER}"
+echo "# Built on: ${OS_NAME} ${KERNEL}"
+echo "# SDR Module: ${module}"
+echo "# Version: ${version}"
+echo "# Build Date: "$(date)"
 
 case "$module" in
 
  rec)
 
-    if ((perl_done == 1));then
-        echo "%-25s%-20s\n" "# PERL SUBSYSTEM:" "built and integrated"
+    if [perl_done -eq 1];then
+        echo "# PERL SUBSYSTEM: built and integrated"
     else
-        if ((perl_done == 90));then
-            echo "%-25s%-20s\n" "# PERL SUBSYSTEM:" "not integrated"
+        if [perl_done -eq 90];then
+            echo "# PERL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((ossl_done == 1));then
-        echo "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "built and integrated"
+    if [ossl_done -eq 1];then
+        echo "# OPENSSL SUBSYSTEM: built and integrated"
     else
-        if ((ossl_done == 90));then
-            echo "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "not integrated"
+        if [ossl_done -eq 90];then
+            echo "# OPENSSL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rec_ssh2_done == 1));then
-        echo "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "built and integrated"
+    if [rec_ssh2_done -eq 1];then
+        echo "# LIBSSH2 SUBSYSTEM: built and integrated"
     else
-        if ((rec_ssh2_done == 90));then
-            echo "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "not integrated"
+        if [rec_ssh2_done -eq 90];then
+            echo "# LIBSSH2 SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rec_perlssh2_done == 1));then
-        echo "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "built and integrated"
+    if [rec_perlssh2_done -eq 1];then
+        echo "# Net::SSH2 SUBSYSTEM: built and integrated"
     else
-        if ((rec_perlssh2_done == 90));then
-            echo "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "not integrated"
+        if [rec_perlssh2_done -eq 90];then
+            echo "# Net::SSH2 SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((idn_done == 1));then
-        echo "%-25s%-20s\n" "# IDN SUBSYSTEM:" "built and integrated"
+    if [idn_done -eq 1];then
+        echo "# IDN SUBSYSTEM: built and integrated"
     else
-        if ((idn_done == 90));then
-            echo "%-25s%-20s\n" "# IDN SUBSYSTEM:" "not integrated"
+        if [idn_done -eq 90];then
+            echo "# IDN SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((curl_done == 1));then
-        echo "%-25s%-20s\n" "# CURL SUBSYSTEM:" "built and integrated"
+    if [curl_done -eq 1];then
+        echo "# CURL SUBSYSTEM: built and integrated"
     else
-        if ((curl_done == 90));then
-            echo "%-25s%-20s\n" "# CURL SUBSYSTEM:" "not integrated"
+        if [curl_done -eq 90];then
+            echo "# CURL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [[ "$OS_NAME" == "Linux" ]]; then
-        if ((sysstat_done == 1));then
-            echo "%-25s%-20s\n" "# SYSSTAT SUBSYSTEM:" "built and integrated"
+    if [[ "$OS_NAME" -eq "Linux" ]]; then
+        if [sysstat_done -eq 1];then
+            echo "# SYSSTAT SUBSYSTEM: built and integrated"
         else
-            if ((sysstat_done == 90));then
-                echo "%-25s%-20s\n" "# SYSSTAT SUBSYSTEM:" "not integrated"
+            if [sysstat_done -eq 90];then
+                echo "# SYSSTAT SUBSYSTEM: not integrated"
             fi
         fi
     fi
 
-    if ((wwwcurl_done == 1));then
-        echo "%-25s%-20s\n" "# WCURL SUBSYSTEM:" "built and integrated"
+    if [wwwcurl_done -eq 1];then
+        echo "# WCURL SUBSYSTEM: built and integrated"
     else
-        if ((wwwcurl_done == 90));then
-            echo "%-25s%-20s\n" "# WCURL SUBSYSTEM:" "not integrated"
+        if [wwwcurl_done -eq 90];then
+            echo "# WCURL SUBSYSTEM: not integrated"
         fi
     fi
 
 
-    if [[ "$OS_NAME" == "Linux" ]]; then
-        if ((nrec_done == 1));then
-            echo "%-25s%-20s\n" "# NICREC SUBSYSTEM:" "built and integrated"
+    if [[ "$OS_NAME" -eq "Linux" ]]; then
+        if [nrec_done -eq 1];then
+            echo "# NICREC SUBSYSTEM: built and integrated"
         else
-            if ((nrec_done == 90));then
-                echo "%-25s%-20s\n" "# NICREC SUBSYSTEM:" "not integrated"
+            if [nrec_done -eq 90];then
+                echo "# NICREC SUBSYSTEM: not integrated"
             fi
         fi
     fi
 
 
-    if ((wrec_done == 1));then
-        echo "%-25s%-20s\n" "# WEBREC SUBSYSTEM:" "built and integrated"
+    if [wrec_done -eq 1];then
+        echo "# WEBREC SUBSYSTEM: built and integrated"
     else
-        if ((wrec_done == 90));then
-            echo "%-25s%-20s\n" "# WEBREC SUBSYSTEM:" "not integrated"
+        if [wrec_done -eq 90];then
+            echo "# WEBREC SUBSYSTEM: not integrated"
         fi
     fi
 
 
-    if ((recs_done == 1));then
-        echo "%-25s%-20s\n" "# RECORDERS:" "built and integrated"
+    if [recs_done -eq 1];then
+        echo "# RECORDERS: built and integrated"
     else
-        if ((recs_done == 90));then
-            echo "%-25s%-20s\n" "# RECORDERS:" "not integrated"
+        if [recs_done -eq 90];then
+            echo "# RECORDERS: not integrated"
         fi
     fi
 
-    if ((tests_done == 1));then
-        echo "%-25s%-20s\n" "# TESTS:" "ok"
+    if [tests_done -eq 1];then
+        echo "# TESTS: ok"
     else
-        if ((tests_done == 90));then
-            echo "%-25s%-20s\n" "# TESTS:" "failed"
+        if [tests_done -eq 90];then
+            echo "# TESTS: failed"
         fi
     fi
 
@@ -1225,299 +1219,299 @@ case "$module" in
 
  rep)
 
-    if ((rep_perl_done == 1));then
-        echo "%-25s%-20s\n" "# PERL SUBSYSTEM:" "built and integrated"
+    if [rep_perl_done -eq 1];then
+        echo "# PERL SUBSYSTEM: built and integrated"
     else
-        if ((rep_perl_done == 90));then
-            echo "%-25s%-20s\n" "# PERL SUBSYSTEM:" "not integrated"
+        if [rep_perl_done -eq 90];then
+            echo "# PERL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_ossl_done == 1));then
-        echo "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "built and integrated"
+    if [rep_ossl_done -eq 1];then
+        echo "# OPENSSL SUBSYSTEM: built and integrated"
     else
-        if ((rep_perl_done == 90));then
-            echo "%-25s%-20s\n" "# OPENSSL SUBSYSTEM:" "not integrated"
+        if [rep_perl_done -eq 90];then
+            echo "# OPENSSL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_gett_done == 1));then
-        echo "%-25s%-20s\n" "# GETTEXT SUBSYSTEM:" "built and integrated"
+    if [rep_gett_done -eq 1];then
+        echo "# GETTEXT SUBSYSTEM built and integrated"
     else
-        if ((rep_gett_done == 90));then
-            echo "%-25s%-20s\n" "# GETTEXT SUBSYSTEM:" "not integrated"
+        if [rep_gett_done -eq 90];then
+            echo "# GETTEXT SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_iconv_done == 1));then
-        echo "%-25s%-20s\n" "# ICONV SUBSYSTEM:" "built and integrated"
+    if [rep_iconv_done -eq 1];then
+        echo "# ICONV SUBSYSTEM built and integrated"
     else
-        if ((rep_iconv_done == 90));then
-            echo "%-25s%-20s\n" "# ICONV SUBSYSTEM:" "not integrated"
+        if [rep_iconv_done -eq 90];then
+            echo "# ICONV SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_libxml2_done == 1));then
-        echo "%-25s%-20s\n" "# LIBXML2 SUBSYSTEM:" "built and integrated"
+    if [rep_libxml2_done -eq 1];then
+        echo "# LIBXML2 SUBSYSTEM built and integrated"
     else
-        if ((rep_libxml2_done == 90));then
-            echo "%-25s%-20s\n" "# LIBXML2 SUBSYSTEM:" "not integrated"
+        if [rep_libxml2_done -eq 90];then
+            echo "# LIBXML2 SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_perllxml_done == 1));then
-        echo "%-25s%-20s\n" "# XML::LIBXML SUBSYSTEM:" "built and integrated"
+    if [rep_perllxml_done -eq 1];then
+        echo "# XML::LIBXML SUBSYSTEM built and integrated"
     else
-        if ((rep_perllxml_done == 90));then
-            echo "%-25s%-20s\n" "# XML::LIBXML SUBSYSTEM:" "not integrated"
+        if [rep_perllxml_done -eq 90];then
+            echo "# XML::LIBXML SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_rdln_done == 1));then
-        echo "%-25s%-20s\n" "# READLINE SUBSYSTEM:" "built and integrated"
+    if [rep_rdln_done -eq 1];then
+        echo "# READLINE SUBSYSTEM built and integrated"
     else
-        if ((rep_rdln_done == 90));then
-            echo "%-25s%-20s\n" "# READLINE SUBSYSTEM:" "not integrated"
+        if [rep_rdln_done -eq 90];then
+            echo "# READLINE SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_idn_done == 1));then
-        echo "%-25s%-20s\n" "# LIBIDN SUBSYSTEM:" "built and integrated"
+    if [rep_idn_done -eq 1];then
+        echo "# LIBIDN SUBSYSTEM built and integrated"
     else
-        if ((rep_idn_done == 90));then
-            echo "%-25s%-20s\n" "# LIBIDN SUBSYSTEM:" "not integrated"
+        if [rep_idn_done -eq 90];then
+            echo "# LIBIDN SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_curl_done == 1));then
-        echo "%-25s%-20s\n" "# LIBCURL SUBSYSTEM:" "built and integrated"
+    if [rep_curl_done -eq 1];then
+        echo "# LIBCURL SUBSYSTEM built and integrated"
     else
-        if ((rep_curl_done == 90));then
-            echo "%-25s%-20s\n" "# LIBCURL SUBSYSTEM:" "not integrated"
+        if [rep_curl_done -eq 90];then
+            echo "# LIBCURL SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_ssh2_done == 1));then
-        echo "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "built and integrated"
+    if [rep_ssh2_done -eq 1];then
+        echo "# LIBSSH2 SUBSYSTEM built and integrated"
     else
-        if ((rep_ssh2_done == 90));then
-            echo "%-25s%-20s\n" "# LIBSSH2 SUBSYSTEM:" "not integrated"
+        if [rep_ssh2_done -eq 90];then
+            echo "# LIBSSH2 SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_perlssh2_done == 1));then
-        echo "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "built and integrated"
+    if [rep_perlssh2_done -eq 1];then
+        echo "# Net::SSH2 SUBSYSTEM built and integrated"
     else
-        if ((rep_perlssh2_done == 90));then
-            echo "%-25s%-20s\n" "# Net::SSH2 SUBSYSTEM:" "not integrated"
+        if [rep_perlssh2_done -eq 90];then
+            echo "# Net::SSH2 SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_gd_done == 1));then
-        echo "%-25s%-20s\n" "# GD SUBSYSTEM:" "built and integrated"
+    if [rep_gd_done -eq 1];then
+        echo "# GD SUBSYSTEM built and integrated"
     else
-        if ((rep_gd_done == 90));then
-            echo "%-25s%-20s\n" "# GD SUBSYSTEM:" "not integrated"
+        if [rep_gd_done -eq 90];then
+            echo "# GD SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_perlmodules_done == 1));then
-        echo "%-25s%-20s\n" "# PERLMODS SUBSYSTEM:" "built and integrated"
+    if [rep_perlmodules_done -eq 1];then
+        echo "# PERLMODS SUBSYSTEM built and integrated"
     else
-        if ((rep_perlmodules_done == 90));then
-            echo "%-25s%-20s\n" "# PERLMODS SUBSYSTEM:" "not integrated"
+        if [rep_perlmodules_done -eq 90];then
+            echo "# PERLMODS SUBSYSTEM not integrated"
         fi
     fi
 
-   if ((rep_wcurl_done == 1));then
-        echo "%-25s%-20s\n" "# WWWCurl SUBSYSTEM:" "built and integrated"
+   if [rep_wcurl_done -eq 1];then
+        echo "# WWWCurl SUBSYSTEM built and integrated"
     else
-        if ((rep_wcurl_done == 90));then
-            echo "%-25s%-20s\n" "# WWWCurl SUBSYSTEM:" "not integrated"
+        if [rep_wcurl_done -eq 90];then
+            echo "# WWWCurl SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_dbdpg_done == 1));then
-        echo "%-25s%-20s\n" "# DBDPG SUBSYSTEM:" "built and integrated"
+    if [rep_dbdpg_done -eq 1];then
+        echo "# DBDPG SUBSYSTEM built and integrated"
     else
-        if ((rep_dbdpg_done == 90));then
-            echo "%-25s%-20s\n" "# DBDPG SUBSYSTEM:" "not integrated"
+        if [rep_dbdpg_done -eq 90];then
+            echo "# DBDPG SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_pcre_done == 1));then
-        echo "%-25s%-20s\n" "# PCRE SUBSYSTEM:" "built and integrated"
+    if [rep_pcre_done -eq 1];then
+        echo "# PCRE SUBSYSTEM built and integrated"
     else
-        if ((rep_pcre_done == 90));then
-            echo "%-25s%-20s\n" "# PCRE SUBSYSTEM:" "not integrated"
+        if [rep_pcre_done -eq 90];then
+            echo "# PCRE SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_fcgi_done == 1));then
-        echo "%-25s%-20s\n" "# FCGI SUBSYSTEM:" "built and integrated"
+    if [rep_fcgi_done -eq 1];then
+        echo "# FCGI SUBSYSTEM built and integrated"
     else
-        if ((rep_fcgi_done == 90));then
-            echo "%-25s%-20s\n" "# FCGI SUBSYSTEM:" "not integrated"
+        if [rep_fcgi_done -eq 90];then
+            echo "# FCGI SUBSYSTEM not integrated"
         fi
     fi
 
-    if ((rep_fcgiw_done == 1));then
-        echo "%-25s%-20s\n" "# FCGIW SUBSYSTEM:" "built and integrated"
+    if [rep_fcgiw_done -eq 1];then
+        echo "# FCGIW SUBSYSTEM: built and integrated"
     else
-        if ((rep_fcgiw_done == 90));then
-            echo "%-25s%-20s\n" "# FCGIW SUBSYSTEM:" "not integrated"
+        if [rep_fcgiw_done -eq 90];then
+            echo "# FCGIW SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_ws_done == 1));then
-        echo "%-25s%-20s\n" "# NGINX SUBSYSTEM:" "built and integrated"
+    if [rep_ws_done -eq 1];then
+        echo "# NGINX SUBSYSTEM: built and integrated"
     else
-        if ((rep_ws_done == 90));then
-            echo "%-25s%-20s\n" "# NGINX SUBSYSTEM:" "not integrated"
+        if [rep_ws_done -eq 90];then
+            echo "# NGINX SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_wsscripts_done == 1));then
-        echo "%-25s%-20s\n" "# NGINX START SUBSYSTEM:" "built and integrated"
+    if [rep_wsscripts_done -eq 1];then
+        echo "# NGINX START SUBSYSTEM: built and integrated"
     else
-        if ((rep_wsscripts_done == 90));then
-            echo "%-25s%-20s\n" "# NGINX START SUBSYSTEM:" "not integrated"
+        if [rep_wsscripts_done -eq 90];then
+            echo "# NGINX START SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_pkgc_done == 1));then
-        echo "%-25s%-20s\n" "# PKGCONFIG SUBSYSTEM:" "built and integrated"
+    if [rep_pkgc_done -eq 1];then
+        echo "# PKGCONFIG SUBSYSTEM: built and integrated"
     else
-        if ((rep_pkgc_done == 90));then
-            echo "%-25s%-20s\n" "# PKGCONFIG SUBSYSTEM:" "not integrated"
+        if [rep_pkgc_done -eq 90];then
+            echo "# PKGCONFIG SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_pixm_done == 1));then
-        echo "%-25s%-20s\n" "# PIXMAN SUBSYSTEM:" "built and integrated"
+    if [rep_pixm_done -eq 1];then
+        echo "# PIXMAN SUBSYSTEM: built and integrated"
     else
-        if ((rep_pixm_done == 90));then
-            echo "%-25s%-20s\n" "# PIXMAN SUBSYSTEM:" "not integrated"
+        if [rep_pixm_done -eq 90];then
+            echo "# PIXMAN SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_libpng_done == 1));then
-        echo "%-25s%-20s\n" "# LIBPNG SUBSYSTEM:" "built and integrated"
+    if [rep_libpng_done -eq 1];then
+        echo "# LIBPNG SUBSYSTEM: built and integrated"
     else
-        if ((rep_libpnbg_done == 90));then
-            echo "%-25s%-20s\n" "# LIBPNG SUBSYSTEM:" "not integrated"
+        if [rep_libpnbg_done -eq 90];then
+            echo "# LIBPNG SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_libjpeg_done == 1));then
-        echo "%-25s%-20s\n" "# LIBJPEG SUBSYSTEM:" "built and integrated"
+    if [rep_libjpeg_done -eq 1];then
+        echo "# LIBJPEG SUBSYSTEM: built and integrated"
     else
-        if ((rep_libjpeg_done == 90));then
-            echo "%-25s%-20s\n" "# LIBJPEG SUBSYSTEM:" "not integrated"
+        if [rep_libjpeg_done -eq 90];then
+            echo "# LIBJPEG SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_harfbuzz_done == 1));then
-        echo "%-25s%-20s\n" "# HARFBUZZ SUBSYSTEM:" "built and integrated"
+    if [rep_harfbuzz_done -eq 1];then
+        echo "# HARFBUZZ SUBSYSTEM: built and integrated"
     else
-        if ((rep_harfbuzz_done == 90));then
-            echo "%-25s%-20s\n" "# HARFBUZZ SUBSYSTEM:" "not integrated"
+        if [rep_harfbuzz_done -eq 90];then
+            echo  "# HARFBUZZ SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_ffi_done == 1));then
-        echo "%-25s%-20s\n" "# FFI SUBSYSTEM:" "built and integrated"
+    if [rep_ffi_done -eq 1];then
+        echo  "# FFI SUBSYSTEM: built and integrated"
     else
-        if ((rep_ffi_done == 90));then
-            echo "%-25s%-20s\n" "# FFI SUBSYSTEM:" "not integrated"
+        if [rep_ffi_done -eq 90];then
+            echo  "# FFI SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_glib_done == 1));then
-        echo "%-25s%-20s\n" "# GLIB SUBSYSTEM:" "built and integrated"
+    if [rep_glib_done -eq 1];then
+        echo  "# GLIB SUBSYSTEM: built and integrated"
     else
-        if ((rep_glib_done == 90));then
-            echo "%-25s%-20s\n" "# GLIB SUBSYSTEM:" "not integrated"
+        if [rep_glib_done -eq 90];then
+            echo  "# GLIB SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_cairo__done == 1));then
-        echo "%-25s%-20s\n" "# CAIRO SUBSYSTEM:" "built and integrated"
+    if [rep_cairo__done -eq 1];then
+        echo  "# CAIRO SUBSYSTEM: built and integrated"
     else
-        if ((rep_cairo_done == 90));then
-            echo "%-25s%-20s\n" "# CAIRO SUBSYSTEM:" "not integrated"
+        if [rep_cairo_done -eq 90];then
+            echo  "# CAIRO SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_pango_done == 1));then
-        echo "%-25s%-20s\n" "# PANGO SUBSYSTEM:" "built and integrated"
+    if [rep_pango_done -eq 1];then
+        echo  "# PANGO SUBSYSTEM: built and integrated"
     else
-        if ((rep_pango_done == 90));then
-            echo "%-25s%-20s\n" "# PANGO SUBSYSTEM:" "not integrated"
+        if [rep_pango_done -eq 90];then
+            echo  "# PANGO SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_rrd_done == 1));then
-        echo "%-25s%-20s\n" "# RRD SUBSYSTEM:" "built and integrated"
+    if [rep_rrd_done -eq 1];then
+        echo  "# RRD SUBSYSTEM: built and integrated"
     else
-        if ((rep_rrd_done == 90));then
-            echo "%-25s%-20s\n" "# RRD SUBSYSTEM:" "not integrated"
+        if [rep_rrd_done -eq 90];then
+            echo  "# RRD SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_rsts_done == 1));then
-        echo "%-25s%-20s\n" "# R SUBSYSTEM:" "built and integrated"
+    if [rep_rsts_done -eq 1];then
+        echo  "# R SUBSYSTEM: built and integrated"
     else
-        if ((rep_rsts_done == 90));then
-            echo "%-25s%-20s\n" "# R SUBSYSTEM:" "not integrated"
+        if [rep_rsts_done -eq 90];then
+            echo  "# R SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_rcairo_done == 1));then
-        echo "%-25s%-20s\n" "# R CAIRO SUBSYSTEM:" "built and integrated"
+    if [rep_rcairo_done -eq 1];then
+        echo  "# R CAIRO SUBSYSTEM: built and integrated"
     else
-        if ((rep_rcairo_done == 90));then
-            echo "%-25s%-20s\n" "# R CAIRO SUBSYSTEM:" "not integrated"
+        if [rep_rcairo_done -eq 90];then
+            echo  "# R CAIRO SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_rggplot2_done == 1));then
-        echo "%-25s%-20s\n" "# R GGPLOT2 SUBSYSTEM:" "built and integrated"
+    if [rep_rggplot2_done -eq 1];then
+        echo  "# R GGPLOT2 SUBSYSTEM: built and integrated"
     else
-        if ((rep_rggplot2_done == 90));then
-            echo "%-25s%-20s\n" "# R GGPLOT2 SUBSYSTEM:" "not integrated"
+        if [rep_rggplot2_done -eq 90];then
+            echo  "# R GGPLOT2 SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_rserve_done == 1));then
-        echo "%-25s%-20s\n" "# R Rserve SUBSYSTEM:" "built and integrated"
+    if [rep_rserve_done -eq 1];then
+        echo  "# R Rserve SUBSYSTEM: built and integrated"
     else
-        if ((rep_rserve_done == 90));then
-            echo "%-25s%-20s\n" "# R RServe SUBSYSTEM:" "not integrated"
+        if [rep_rserve_done -eq 90];then
+            echo  "# R RServe SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_ranalysis_done == 1));then
-        echo "%-25s%-20s\n" "# R PCA,TS SUBSYSTEM:" "built and integrated"
+    if [rep_ranalysis_done -eq 1];then
+        echo  "# R PCA,TS SUBSYSTEM: built and integrated"
     else
-        if ((rep_analysis_done == 90));then
-            echo "%-25s%-20s\n" "# R PCA,TS SUBSYSTEM:" "not integrated"
+        if [rep_analysis_done -eq 90];then
+            echo  "# R PCA,TS SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_pdq_done == 1));then
-        echo "%-25s%-20s\n" "# PDQ SUBSYSTEM:" "built and integrated"
+    if [rep_pdq_done -eq 1];then
+        echo  "# PDQ SUBSYSTEM: built and integrated"
     else
-        if ((rep_pdq_done == 90));then
-            echo "%-25s%-20s\n" "# PDQ SUBSYSTEM:" "not integrated"
+        if [rep_pdq_done -eq 90];then
+            echo  "# PDQ SUBSYSTEM: not integrated"
         fi
     fi
 
-    if ((rep_fin_done == 1));then
-        echo "%-25s%-20s\n" "# FINALIZE:" "done"
+    if [rep_fin_done -eq 1];then
+        echo  "# FINALIZE: done"
     else
-        if ((rep_pdq_done == 90));then
-            echo "%-25s%-20s\n" "# FINALIZE:" "not done"
+        if [rep_pdq_done -eq 90];then
+            echo  "# FINALIZE: not done"
         fi
     fi
 
