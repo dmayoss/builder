@@ -89,7 +89,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -199,7 +199,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -256,8 +256,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_curl_done = step1 + step2 + step3 + step4 ]
-if [ rep_curl_done -eq 4 ]; then
+rep_curl_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_curl_done -eq 4 ]; then
    rep_curl_done=1
 else
    rep_curl_done=90
@@ -270,12 +270,10 @@ if [ $? != 0 ]; then
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 5
-fi 
+fi
 cd ..
 
-
 }
-
 
 
 
@@ -303,7 +301,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -363,8 +361,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_pkgc_done = step1 + step2 + step3 + step4 ]
-if [ rep_pkgc_done -eq 4 ]; then
+rep_pkgc_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_pkgc_done -eq 4 ]; then
    rep_pkgc_done=1
 else
    rep_pkgc_done=90
@@ -464,8 +462,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_libjpeg_done = step1 + step2 + step3 + step4 ]
-if [ rep_libjpeg_done -eq 4 ]; then
+rep_libjpeg_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_libjpeg_done -eq 4 ]; then
    rep_libjpeg_done=1
 else
    rep_libjpeg_done=90
@@ -508,7 +506,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -564,8 +562,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_libpng_done = step1 + step2 + step3 + step4 ]
-if [ rep_libpng_done -eq 4 ]; then
+rep_libpng_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_libpng_done -eq 4 ]; then
    rep_libpng_done=1
 else
    rep_libpng_done=90
@@ -609,7 +607,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -665,8 +663,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_freetype_done = step1 + step2 + step3 + step4 ]
-if [ rep_freetype_done -eq 4 ]; then
+rep_freetype_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_freetype_done -eq 4 ]; then
    rep_freetype_done=1
 else
    rep_freetype_done=90
@@ -711,7 +709,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -766,8 +764,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_fontconfig_done = step1 + step2 + step3 + step4 ]
-if [ rep_fontconfig_done -eq 4 ]; then
+rep_fontconfig_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_fontconfig_done -eq 4 ]; then
    rep_fontconfig_done=1
 else
    rep_fontconfig_done=90
@@ -866,8 +864,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_pixm_done = step1 + step2 + step3 + step4 ]
-if [ rep_pixm_done -eq 4 ]; then
+rep_pixm_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_pixm_done -eq 4 ]; then
    rep_pixm_done=1
 else
    rep_pixm_done=90
@@ -910,7 +908,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -968,8 +966,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_cairo_done = step1 + step2 + step3 + step4 ]
-if [ rep_cairo_done -eq 4 ]; then
+rep_cairo_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_cairo_done -eq 4 ]; then
    rep_cairo_done=1
 else
    rep_cairo_done=90
@@ -1066,8 +1064,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_harfbuzz_done = step1 + step2 + step3 + step4 ]
-if [ rep_harfbuzz_done -eq 4 ]; then
+rep_harfbuzz_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_harfbuzz_done -eq 4 ]; then
    rep_harfbuzz_done=1
 else
    rep_harfbuzz_done=90
@@ -1109,7 +1107,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1163,8 +1161,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_ffi_done = step1 + step2 + step3 + step4 ]
-if [ rep_ffi_done -eq 4 ]; then
+rep_ffi_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_ffi_done -eq 4 ]; then
    rep_ffi_done=1
 else
    rep_ffi_done=90
@@ -1268,8 +1266,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_glib_done = step1 + step2 + step3 + step4 ]
-if [ rep_glib_done -eq 4 ]; then
+rep_glib_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_glib_done -eq 4 ]; then
    rep_glib_done=1
 else
    rep_glib_done=90
@@ -1312,7 +1310,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1380,8 +1378,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_pango_done = step1 + step2 + step3 + step4 ]
-if [ rep_pango_done -eq 4 ]; then
+rep_pango_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_pango_done -eq 4 ]; then
    rep_pango_done=1
 else
    rep_pango_done=90
@@ -1424,7 +1422,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
