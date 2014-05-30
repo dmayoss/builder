@@ -452,8 +452,8 @@ echo "Info: Step 2 - Configure $dir ..." |\
 if [ "$PT_NAME" = "x86_64" ]; then
     env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \                                                                                                                                                        ./Configure BSD-x86_64 threads shared --prefix=${iprefix} \                                                                                                                                                        --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
-    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-     ./Configure linux-elf threads shared --prefix=${iprefix} \
+    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
+     ./Configure BSD-x86-elf threads shared --prefix=${iprefix} \
      --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
