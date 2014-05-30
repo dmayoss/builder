@@ -696,7 +696,7 @@ echo "# Start  : $(date)"
 echo "# Target : ${OS_NAME} ${PT_NAME}"
 if [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
     echo "# Module : $module, mariadb, php"
-elif [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
+elif [ $nginxall_sem -eq 1 -a $pgsql_sem -eq 1 ]; then
     echo "# Module : $module, pgsql, php"
 else
     echo "# Module : $module"
