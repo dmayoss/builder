@@ -908,7 +908,7 @@ step3=0
 step4=0
 
 init_module "$dir"
-if [ $? == 0 ]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1001,7 +1001,7 @@ fi
 #
 # final check; all 4 steps
 wwwcurl_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ "$wwwcurl_done" == 4 ]; then
+if [ "$wwwcurl_done" -eq 4 ]; then
    wwwcurl_done=1
 else
    wwwcurl_done=90
@@ -1217,7 +1217,7 @@ step3=0
 step4=0
 
 init_module "$dir"
-if [ $? == 0 ]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
