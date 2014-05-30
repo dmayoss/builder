@@ -43,21 +43,17 @@ extract_archive() {
     # echo "archive dir: $bfile"
 
     if [ -d $bfile ]; then
-        echo "Info: Step 1 - Extracting $bfile ..." |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        echo "Warning: ${bfile} directory found, cleaning..." |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+        echo "Warning: ${bfile} directory found, cleaning..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
         rm -rf ${bfile}
         if [ $? != 0 ]; then
-            echo "Error: cannot clean. Check ${modfile} , ${bfile}" |\
-             tee -a ${BUILD_PATH}/${BUILD_LOG}
+            echo "Error: cannot clean. Check ${modfile} , ${bfile}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         fi 
         gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
     else
-        echo "Info: Step 1 - Extracting $bfile ..." |\
-        tee -a ${BUILD_PATH}/${BUILD_LOG}
+        echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
         gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
     fi
 }
@@ -70,12 +66,13 @@ init_module() {
     directory=$1
 
     cd $directory
-    echo "\n############################################################"
+    echo "############################################################"
     echo "" >> ${BUILD_PATH}/${BUILD_LOG}
     echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    ls *.tar.gz | read archive_file
+    archive_file=`ls *.tar.gz`
     # Debug
-    # echo "Archive: $archive_file"
+    #echo "Directory: $directory"
+    #echo "Archive: $archive_file"
     # echo "Dir: ${archive_file%%.tar*}"
 
     dirarchive=${archive_file%%.tar*}
@@ -298,7 +295,7 @@ step5=0
 step6=0
 
 init_module "$dir"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -309,7 +306,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure perl ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" -eq "x86_64" ]; then
+if [ "$PT_NAME" == "x86_64" ]; then
     sh Configure -Doptimize='-O3' -Duselargefiles -Duse64bitall \
         -Dcf_by="support@systemdatarecorder.org"       \
         -Dcf_email="support@systemdatarecorder.org"    \

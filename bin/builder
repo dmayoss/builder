@@ -257,7 +257,7 @@ do
             ;;
 
             sysstat)
-              if [ "$OS_NAME" -ne "Linux" ]; then
+              if [ "$OS_NAME" != "Linux" ]; then
                 echo "Error: sysstat is a Linux specific pkg !\n"
                 exit 1
               fi
@@ -373,14 +373,22 @@ version=$2
 module=$1
 
 
+# check workspace variable
+
+if [ ! -z "$WORKSPACE_BUILDER" ]; then
+   WORKSPACE="${WORKSPACE_BUILDER}"
+else
+   usage
+fi
+
+
 # Status File
 STATFILE="build.${module}.${PT_NAME}.${HOSTNAME}"
 BUILD_LOG="${module}.${PT_NAME}.${HOSTNAME}.${version}.log"
 
 # status file
 if [ -f /var/tmp/${STATFILE} ]; then
-    echo "Error: builder already working, module: ${module}, \
-      host: ${HOSTNAME}, plat: ${PT_NAME}, ver: ${version}"
+    echo "Error: already running, status file: build.${module}.${PT_NAME}.${HOSTNAME}"
     exit 1
 else
     touch /var/tmp/${STATFILE}
@@ -390,16 +398,14 @@ fi
 case "$OS_NAME" in
     SunOS)
          
-        # get workspace user id
-        WORKSPACE_USER=`/usr/xpg4/bin/id -un`
-
 	# source here the engine for Solaris
         case "$module" in
 	 rec)
+
              iprefix=${iprefix:-/opt/sdr}
              iuser=sdr
 
-             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
              case "$version" in
                  0.73*)
                   . ${PWD}/engine.rec.solaris.073
@@ -423,7 +429,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/report}
              iuser=sdr
 
-             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
 
              case "$version" in
                  0.74)
@@ -444,10 +450,10 @@ case "$OS_NAME" in
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
-             if [ "$iprefix" -eq "/opt/www" ]; then
+             if [ "$iprefix" == "/opt/www" ]; then
                  iuser=www
              else
-                 if [ "$iprefix" -eq "/opt/nginx" ]; then
+                 if [ "$iprefix" == "/opt/nginx" ]; then
                      iuser=nginx
                  else
                      iuser=nobody
@@ -483,16 +489,18 @@ case "$OS_NAME" in
 
     Linux)
 
-        # get workspace user id
-        WORKSPACE_USER=`/usr/bin/id -un`
-
         case "$module" in
          rec)
 
              iprefix=${iprefix:-/opt/sdr}
              iuser=sdr
 
-             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+
+
+             #echo "Debug: iprefix=$iprefix"
+             #echo "       iuser=$iuser"
+             #echo "       workspace=$WORKSPACE"
 
              case "$version" in
                  0.73*)
@@ -518,7 +526,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/report}
              iuser=sdr
              
-             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
 
              case "$version" in
                  0.74*)
@@ -538,10 +546,10 @@ case "$OS_NAME" in
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
-             if [ "$iprefix" -eq "/opt/www" ]; then
+             if [ "$iprefix" == "/opt/www" ]; then
                  iuser=www
              else
-                 if [ "$iprefix" -eq "/opt/nginx" ]; then
+                 if [ "$iprefix" == "/opt/nginx" ]; then
                      iuser=nginx
                  else
                      iuser=nobody
@@ -579,16 +587,13 @@ case "$OS_NAME" in
 
     FreeBSD)
 
-        # get workspace user id
-        WORKSPACE_USER=`/usr/bin/id -un`
-
         case "$module" in
          rec)
 
              iprefix=${iprefix:-/opt/sdr}
              iuser=sdr
 
-             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
 
              case "$version" in
                  1.0*)
@@ -606,7 +611,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/report}
              iuser=sdr
              
-             WORKSPACE=~${WORKSPACE_USER}/workspace/SDR
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
 
              case "$version" in
                  1.0*)
@@ -622,17 +627,17 @@ case "$OS_NAME" in
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
-             if [ "$iprefix" -eq "/opt/www" ]; then
+             if [ "$iprefix" == "/opt/www" ]; then
                  iuser=www
              else
-                 if [ "$iprefix" -eq "/opt/nginx" ]; then
+                 if [ "$iprefix" == "/opt/nginx" ]; then
                      iuser=nginx
                  else
                      iuser=nobody
                  fi
              fi
 
-             WORKSPACE=~${WORKSPACE_USER}/workspace/nginx
+             WORKSPACE="${WORKSPACE_BUILDER}/nginx"
 
              case "$version" in
                  1.4.*)
@@ -673,7 +678,7 @@ else
 fi
 
 
-if [ "$OS_NAME" -eq "SunOS" ]; then
+if [ "$OS_NAME" == "SunOS" ]; then
     start=`nawk 'BEGIN{print srand()}'`
 else
     start=`date +%s`
@@ -687,7 +692,7 @@ echo "# Start  : $(date)"
 echo "# Target : ${OS_NAME} ${PT_NAME}"
 if [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
     echo "# Module : $module, mariadb, php"
-elif [ $nginxall_sem -eq 1 -q $mariadb_sem -eq 1 ]; then
+elif [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
     echo "# Module : $module, pgsql, php"
 else
     echo "# Module : $module"
@@ -716,7 +721,7 @@ case "$module" in
         build_rec_xmllibxml
         build_rec_curl
         build_rec_wcurl
-        if [ "${OS_NAME}" -eq "Linux" ]; then
+        if [ "${OS_NAME}" == "Linux" ]; then
             build_rec_sysstat
         fi
    
@@ -755,7 +760,7 @@ case "$module" in
         fi
 
         if [ "$syss_sem" -eq 1 ]; then
-            if [ "${OS_NAME}" -eq "Linux" ]; then
+            if [ "${OS_NAME}" == "Linux" ]; then
                 echo "" > ${BUILD_PATH}/${BUILD_LOG}
                 build_rec_sysstat
             fi
