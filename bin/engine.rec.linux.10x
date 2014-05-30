@@ -408,16 +408,8 @@ if [ $? -ne 0 ]; then
     rm /var/tmp/build.${module}
     exit 3
 else
-    [step6 = step6 + 1]
+    step6=`expr $step6 + 1`
 fi
-
-# 24 module
-#for lib in PerlIO::gzip Date::Calc \
-#   Net::Telnet Authen::SASL Email::Valid Text::CSV_XS JSON::XS \
-#   Text::CSV Regexp::Common Regexp::Log::DateRange \
-#   Digest::SHA XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
-#   Data::Dumper Proc::Daemon Proc::PID::File File::Tail
-#do
 
 for lib in Digest::SHA XML::NamespaceSupport XML::SAX Proc::Daemon \
            Proc::PID::File File::Tail List::MoreUtils Session::Token \

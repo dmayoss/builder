@@ -390,34 +390,16 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
-#${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-#if [ $? -ne 0 ]; then
-#    echo "Error: Bundle::LWP installation failed !" |\
-#     tee -a ${BUILD_PATH}/${BUILD_LOG}
-#    rm /var/tmp/build.${module}
-#    exit 3
-#else
-#    [ step6 = step6 + 1]
-#fi
 
-
-${iprefix}/perl/bin/perl -MCPAN -e 'install Sys::Statistics::Linux' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+${iprefix}/perl/bin/perl -MCPAN -e 'install BSD::Sysctl' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
-    echo "Error: Sys::Statistics::Linux installation failed !" |\
+    echo "Error: BSD::Sysctl installation failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
 else
-    [step6 = step6 + 1]
+    step6=`expr $step6 + 1`
 fi
-
-# 24 module
-#for lib in PerlIO::gzip Date::Calc \
-#   Net::Telnet Authen::SASL Email::Valid Text::CSV_XS JSON::XS \
-#   Text::CSV Regexp::Common Regexp::Log::DateRange \
-#   Digest::SHA XML::NamespaceSupport XML::SAX Net::SFTP::Foreign \
-#   Data::Dumper Proc::Daemon Proc::PID::File File::Tail
-#do
 
 for lib in Digest::SHA XML::NamespaceSupport XML::SAX Proc::Daemon \
            Proc::PID::File File::Tail List::MoreUtils Session::Token \
