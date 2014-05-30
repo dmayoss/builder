@@ -51,10 +51,10 @@ extract_archive() {
             echo "Error: cannot clean. Check ${modfile} , ${bfile}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         fi 
-        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
+        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     else
         echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
-        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
+        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     fi
 }
 
