@@ -701,7 +701,6 @@ elif [ $nginxall_sem -eq 1 -a $pgsql_sem -eq 1 ]; then
 else
     echo "# Module : $module"
 fi
-echo "# Module : $module"
 echo "# Version: $version"
 echo "#################################################################"
 
