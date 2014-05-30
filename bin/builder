@@ -51,6 +51,10 @@ MODULES:
       rep 0.75  - SDR Reporting package, beta release
       nginx 1.2.6 - NGINX HTTP Server, legacy release
       nginx 1.4.5 - NGINX HTTP Server, stable release
+
+NOTES:
+   Make sure you have defined WORKSPACE_BUILDER variable before running
+   builder.
 END
 exit 1
 }

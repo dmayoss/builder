@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  SDR Development tools, Linux recording engine 
+#  SDR Development tools, FreeBSD recording engine 
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
@@ -23,7 +23,7 @@
 # VERSION: 1.1
 
 # ############################################################### #
-# SDR Engine: Linux                                               # 
+# SDR Engine: FreeBSD                                               # 
 # ############################################################### #
 
 
