@@ -945,8 +945,8 @@ case "$module" in
  nginx)
 
     # build world
-    if [ nginxall_sem -eq 0 -a mariadb_sem -eq 0 -a \
-          pgsql_sem -eq 0 -a php_sem -eq 0 -a nginxfin_sem -eq 0 ]; then
+    if [ $nginxall_sem -eq 0 -a $mariadb_sem -eq 0 -a \
+          $pgsql_sem -eq 0 -a $php_sem -eq 0 -a $nginxfin_sem -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -968,8 +968,8 @@ case "$module" in
         build_nginx_fin
 
     # nginx + pgsql
-    elif [ nginxall_sem -eq 0 -a mariadb_sem -eq 0 -a \
-            pgsql_sem -eq 1 -a php_sem -eq 0 -a nginxfin_sem -eq 0 ]; then
+    elif [ $nginxall_sem -eq 0 -a $mariadb_sem -eq 0 -a \
+            $pgsql_sem -eq 1 -a $php_sem -eq 0 -a $nginxfin_sem -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -993,8 +993,8 @@ case "$module" in
         build_nginx_fin
 
     # nginx + mariadb
-    elif [ nginxall_sem -eq 0 -a mariadb_sem -eq 1 -a \
-            pgsql_sem -eq 0 -a php_sem -eq 0 -a nginxfin_sem -eq 0 ]; then
+    elif [ $nginxall_sem -eq 0 -a $mariadb_sem -eq 1 -a \
+            $pgsql_sem -eq 0 -a $php_sem -eq 0 -a $nginxfin_sem -eq 0 ]; then
 
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
@@ -1018,7 +1018,7 @@ case "$module" in
         build_nginx_fin
 
     # all + mariadb
-    elif [ nginxall_sem -eq 1 -a mariadb_sem -eq 1 ]; then
+    elif [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -1048,7 +1048,7 @@ case "$module" in
         build_nginx_fin
 
     # all + pgsql
-    elif [ nginxall_sem -eq 1 -a pgsql_sem -eq 1 ]; then
+    elif [ $nginxall_sem -eq 1 -a $pgsql_sem -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_perl
         build_nginx_ossl
@@ -1079,18 +1079,18 @@ case "$module" in
         build_nginx_fin
 
     # build mariadb server
-    elif [ mariadb_sem -eq 1 ]; then
+    elif [ $mariadb_sem -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_mariadb
 
     # build postgresql server
-    elif [ pgsql_sem -eq 1]; then
+    elif [ $pgsql_sem -eq 1]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_pgsql
         build_nginx_dbdpg
 
     # finalise
-    elif [ nginxfin_sem -eq 1]; then
+    elif [ $nginxfin_sem -eq 1]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_nginx_fin
 
@@ -1371,154 +1371,154 @@ case "$module" in
         fi
     fi
 
-    if [rep_ws_done -eq 1];then
+    if [ $rep_ws_done -eq 1 ];then
         echo "# NGINX SUBSYSTEM: built and integrated"
     else
-        if [rep_ws_done -eq 90];then
+        if [ $rep_ws_done -eq 90 ];then
             echo "# NGINX SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_wsscripts_done -eq 1];then
+    if [ $rep_wsscripts_done -eq 1 ];then
         echo "# NGINX START SUBSYSTEM: built and integrated"
     else
-        if [rep_wsscripts_done -eq 90];then
+        if [ $rep_wsscripts_done -eq 90 ];then
             echo "# NGINX START SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_pkgc_done -eq 1];then
+    if [ $rep_pkgc_done -eq 1 ];then
         echo "# PKGCONFIG SUBSYSTEM: built and integrated"
     else
-        if [rep_pkgc_done -eq 90];then
+        if [ $rep_pkgc_done -eq 90 ];then
             echo "# PKGCONFIG SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_pixm_done -eq 1];then
+    if [ $rep_pixm_done -eq 1 ];then
         echo "# PIXMAN SUBSYSTEM: built and integrated"
     else
-        if [rep_pixm_done -eq 90];then
+        if [ $rep_pixm_done -eq 90 ];then
             echo "# PIXMAN SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_libpng_done -eq 1];then
+    if [ $rep_libpng_done -eq 1 ];then
         echo "# LIBPNG SUBSYSTEM: built and integrated"
     else
-        if [rep_libpnbg_done -eq 90];then
+        if [ $rep_libpnbg_done -eq 90 ];then
             echo "# LIBPNG SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_libjpeg_done -eq 1];then
+    if [ $rep_libjpeg_done -eq 1 ];then
         echo "# LIBJPEG SUBSYSTEM: built and integrated"
     else
-        if [rep_libjpeg_done -eq 90];then
+        if [ $rep_libjpeg_done -eq 90 ];then
             echo "# LIBJPEG SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_harfbuzz_done -eq 1];then
+    if [ $rep_harfbuzz_done -eq 1 ];then
         echo "# HARFBUZZ SUBSYSTEM: built and integrated"
     else
-        if [rep_harfbuzz_done -eq 90];then
+        if [ $rep_harfbuzz_done -eq 90 ];then
             echo  "# HARFBUZZ SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_ffi_done -eq 1];then
+    if [ $rep_ffi_done -eq 1 ];then
         echo  "# FFI SUBSYSTEM: built and integrated"
     else
-        if [rep_ffi_done -eq 90];then
+        if [ $rep_ffi_done -eq 90 ];then
             echo  "# FFI SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_glib_done -eq 1];then
+    if [ $rep_glib_done -eq 1 ];then
         echo  "# GLIB SUBSYSTEM: built and integrated"
     else
-        if [rep_glib_done -eq 90];then
+        if [ $rep_glib_done -eq 90 ];then
             echo  "# GLIB SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_cairo__done -eq 1];then
+    if [ $rep_cairo_done -eq 1 ];then
         echo  "# CAIRO SUBSYSTEM: built and integrated"
     else
-        if [rep_cairo_done -eq 90];then
+        if [ $rep_cairo_done -eq 90 ];then
             echo  "# CAIRO SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_pango_done -eq 1];then
+    if [ $rep_pango_done -eq 1 ];then
         echo  "# PANGO SUBSYSTEM: built and integrated"
     else
-        if [rep_pango_done -eq 90];then
+        if [ $rep_pango_done -eq 90 ];then
             echo  "# PANGO SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_rrd_done -eq 1];then
+    if [ $rep_rrd_done -eq 1 ];then
         echo  "# RRD SUBSYSTEM: built and integrated"
     else
-        if [rep_rrd_done -eq 90];then
+        if [ $rep_rrd_done -eq 90 ];then
             echo  "# RRD SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_rsts_done -eq 1];then
+    if [ $rep_rsts_done -eq 1 ];then
         echo  "# R SUBSYSTEM: built and integrated"
     else
-        if [rep_rsts_done -eq 90];then
+        if [ $rep_rsts_done -eq 90 ];then
             echo  "# R SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_rcairo_done -eq 1];then
+    if [ $rep_rcairo_done -eq 1 ];then
         echo  "# R CAIRO SUBSYSTEM: built and integrated"
     else
-        if [rep_rcairo_done -eq 90];then
+        if [ $rep_rcairo_done -eq 90 ];then
             echo  "# R CAIRO SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_rggplot2_done -eq 1];then
+    if [ $rep_rggplot2_done -eq 1 ];then
         echo  "# R GGPLOT2 SUBSYSTEM: built and integrated"
     else
-        if [rep_rggplot2_done -eq 90];then
+        if [ $rep_rggplot2_done -eq 90 ];then
             echo  "# R GGPLOT2 SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_rserve_done -eq 1];then
+    if [ $rep_rserve_done -eq 1 ];then
         echo  "# R Rserve SUBSYSTEM: built and integrated"
     else
-        if [rep_rserve_done -eq 90];then
+        if [ $rep_rserve_done -eq 90 ];then
             echo  "# R RServe SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_ranalysis_done -eq 1];then
+    if [ $rep_ranalysis_done -eq 1 ];then
         echo  "# R PCA,TS SUBSYSTEM: built and integrated"
     else
-        if [rep_analysis_done -eq 90];then
+        if [ $rep_analysis_done -eq 90 ];then
             echo  "# R PCA,TS SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_pdq_done -eq 1];then
+    if [ $rep_pdq_done -eq 1 ];then
         echo  "# PDQ SUBSYSTEM: built and integrated"
     else
-        if [rep_pdq_done -eq 90];then
+        if [ $rep_pdq_done -eq 90 ];then
             echo  "# PDQ SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [rep_fin_done -eq 1];then
+    if [ $rep_fin_done -eq 1] ;then
         echo  "# FINALIZE: done"
     else
-        if [rep_pdq_done -eq 90];then
+        if [ $rep_pdq_done -eq 90 ];then
             echo  "# FINALIZE: not done"
         fi
     fi
@@ -1531,7 +1531,7 @@ echo "#################################################################"
 
 elapsed=0
 end=0
-if [ "$OS_NAME" -eq "SunOS" ]; then
+if [ "$OS_NAME" = "SunOS" ]; then
     end=`nawk 'BEGIN{print srand()}'`
 else
     end=`date +%s`
