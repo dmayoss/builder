@@ -703,7 +703,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env LD_LIBRARY_PATH=${iprefix}/lib ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
