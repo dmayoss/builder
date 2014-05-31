@@ -4373,7 +4373,7 @@ fi
 rep_rggplot2_done=`expr $step1 + $step2 + $step3 + $step4 + $step5  + \
                        $step6 + $step7 + $step8 + $step9 + $step10 + \
                        $step11 + $step12 + $step13 + $step14      + \
-                       $step15 + $step16 + $step17 ]
+                       $step15 + $step16 + $step17`
 if [ $rep_rggplot2_done -eq 17 ]; then
    rep_rggplot2_done=1
 else
