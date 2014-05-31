@@ -1914,15 +1914,6 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
-env PERL_MM_USE_DEFAULT=1 ${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
-    echo "Error: Bundle::LWP installation failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step6=`expr $step6 + 1`
-fi
 
 for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
            FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager CGI::Session \
@@ -1978,13 +1969,13 @@ do
     fi
 done
 
-# there are 68 perl modules install calls
-step6=`expr $step6 / 68`
+# there are 67 perl modules install calls
+step6=`expr $step6 / 67`
 
 
 # final check; all 6 steps
 rep_perl_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6`
-if [ $rep_perl_done -eq 6 ]; then
+if [ "$rep_perl_done" -eq 6 ]; then
    rep_perl_done=1
 else
    rep_perl_done=90
@@ -1992,7 +1983,7 @@ fi
 
 cd ..
 rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: cleaning up $dirarchive !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
