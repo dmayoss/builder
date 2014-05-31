@@ -800,7 +800,7 @@ case "$module" in
           -a "$rep5_sem" -eq 0 -a "$rep6_sem" -eq 0 \
           -a "$jpeg_sem" -eq 0 -a "$fcgiwrap_sem" -eq 0 \
           -a "$rserve_sem" -eq 0 -a "$pdq_sem" -eq 0 \
-          -a "$repfin_sem" -eq 0 -a "$ranalysis_sem"-eq 0 \
+          -a "$repfin_sem" -eq 0 -a "$ranalysis_sem" -eq 0 \
           -a "$perltt_sem" -eq 0 -a "$nginx_sem" -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
