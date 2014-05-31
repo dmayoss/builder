@@ -80,7 +80,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -153,8 +153,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_idn_done = step1 + step2 + step3 + step4 ]
-if [ rep_idn_done -eq 4 ]; then
+rep_idn_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_idn_done -eq 4 ]; then
    rep_idn_done=1
 else
    rep_idn_done=90
@@ -190,7 +190,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -292,7 +292,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -316,7 +316,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 #    LDFLAGS="-m64 -L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
 #    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
     GLIB_CFLAGS="-I${iprefix}/include/glib-2.0 -I${iprefix}/include/glib-2.0/glib" \
     GLIB_LIBS="-lglib-2.0" CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
@@ -396,7 +396,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -418,7 +418,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     PATH=${iprefix}/bin:$PATH \
-    CFLAGS="-O3 -I${iprefix}/include"                        \
+    CC=cc CFLAGS="-O3 -I${iprefix}/include"                        \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -497,7 +497,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -518,7 +518,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
-    CFLAGS="-O3 -I${iprefix}/include"                        \
+    CC=cc CFLAGS="-O3 -I${iprefix}/include"                        \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -598,7 +598,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -619,7 +619,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
-    CFLAGS="-O3 -I${iprefix}/include"                        \
+    CC=cc CFLAGS="-O3 -I${iprefix}/include"                        \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -700,7 +700,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -801,7 +801,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -899,7 +899,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1001,7 +1001,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1010,7 +1010,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1098,7 +1098,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1196,7 +1196,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1301,7 +1301,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1334,7 +1334,7 @@ if [ $? -eq 0 ]; then
     done
 fi
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
-    CFLAGS="-O3 -fPIC -I${iprefix}/include" \
+    CC=cc CFLAGS="-O3 -fPIC -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} --without-x >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? != 0 ]; then
@@ -1413,7 +1413,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1479,8 +1479,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_rrd_done = step1 + step2 + step3 + step4 ]
-if [ rep_rrd_done -eq 4 ]; then
+rep_rrd_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_rrd_done -eq 4 ]; then
    rep_rrd_done=1
 else
    rep_rrd_done=90
@@ -1603,7 +1603,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1612,7 +1612,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1667,8 +1667,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_gett_done = step1 + step2 + step3 + step4 ]
-if [ rep_gett_done -eq 4 ]; then
+rep_gett_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_gett_done -eq 4 ]; then
    rep_gett_done=1
 else
    rep_gett_done=90
@@ -1701,7 +1701,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1710,7 +1710,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1722,7 +1722,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" = "x86_64" ]; then
+if [ "$PT_NAME" = "amd64" ]; then
     env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
      ./Configure linux-x86_64 threads shared --prefix=${iprefix} \
      --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -1774,8 +1774,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_ossl_done = step1 + step2 + step3 + step4 ]
-if [ rep_ossl_done -eq 4 ]; then
+rep_ossl_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_ossl_done -eq 4 ]; then
    rep_ossl_done=1
 else
    rep_ossl_done=90
@@ -1813,7 +1813,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -1825,7 +1825,7 @@ echo $dirarchive | sed 's/perl-//' | read cpanver
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -1836,7 +1836,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure perl ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" = "x86_64" ]; then
+if [ "$PT_NAME" = "amd64" ]; then
    sh Configure -Doptimize='-O3' -Duselargefiles -Duse64bitall \
    -Dcf_by="support@systemdatarecorder.org"       \
    -Dcf_email="support@systemdatarecorder.org"    \
@@ -1921,7 +1921,7 @@ if [ $? != 0 ]; then
     rm /var/tmp/build.${module}
     exit 3
 else
-    [ step6 = step6 + 1]
+    step6=`expr $step6 + 1`
 fi
 
 for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
@@ -1944,7 +1944,7 @@ for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
            HTML::Template::Pro XML::NamespaceSupport version SemVer
 do
 
-    if [ $lib = "MIME::Lite" ]; then
+    if [ "$lib" = "MIME::Lite" ]; then
         env PERL_MM_USE_DEFAULT=1 \
           ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
           ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -1952,7 +1952,7 @@ do
             tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         else
-            [step6 = step6 + 1]
+            step6=`expr $step6 + 1`
             continue
         fi
     elif [ $lib = "Mail::Sender" ]; then
@@ -1973,18 +1973,18 @@ do
              tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         else
-            [step6 = step6 + 1]
+            step6=`expr $step6 + 1`
         fi
     fi
 done
 
 # there are 68 perl modules install calls
-[ step6 = step6 / 68 ];
+step6=`expr $step6 / 68`
 
 
 # final check; all 6 steps
-[ rep_perl_done = step1 + step2 + step3 + step4 + step5 + step6 ]
-if [ rep_perl_done -eq 6 ]; then
+rep_perl_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6`
+if [ $rep_perl_done -eq 6 ]; then
    rep_perl_done=1
 else
    rep_perl_done=90
@@ -2020,7 +2020,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2029,7 +2029,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -2084,8 +2084,8 @@ fi
 
 #
 # final check; all 4 steps
-[ rep_perltt_done = step1 + step2 + step3 + step4 ]
-if [ rep_perltt_done -eq 4 ]; then
+rep_perltt_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_perltt_done -eq 4 ]; then
    rep_perltt_done=1
 else
    rep_perltt_done=90
@@ -2120,7 +2120,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2185,8 +2185,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_iconv_done = step1 + step2 + step3 + step4 ]
-if [ rep_iconv_done -eq 4 ]; then
+rep_iconv_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_iconv_done -eq 4 ]; then
    rep_iconv_done=1
 else
    rep_iconv_done=90
@@ -2222,7 +2222,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2231,7 +2231,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -2287,8 +2287,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_libxml2_done = step1 + step2 + step3 + step4 ]
-if [ rep_libxml2_done -eq 4 ]; then
+rep_libxml2_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_libxml2_done -eq 4 ]; then
    rep_libxml2_done=1
 else
    rep_libxml2_done=90
@@ -2324,7 +2324,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2389,8 +2389,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_rdln_done = step1 + step2 + step3 + step4 ]
-if [ rep_rdln_done -eq 4 ]; then
+rep_rdln_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_rdln_done -eq 4 ]; then
    rep_rdln_done=1
 else
    rep_rdln_done=90
@@ -2425,7 +2425,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2495,8 +2495,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_gd_done = step1 + step2 + step3 + step4 ]
-if [ rep_gd_done -eq 4 ]; then
+rep_gd_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_gd_done -eq 4 ]; then
    rep_gd_done=1
 else
    rep_gd_done=90
@@ -2509,7 +2509,7 @@ if [ $? != 0 ]; then
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 5
-fi 
+fi
 cd ..
 
 }
@@ -2532,7 +2532,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2541,7 +2541,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -2626,18 +2626,18 @@ do
             tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         else
-            [step5 = step5 + 1]
+            step5=`expr $step5 + 1`
         fi
 done
 
 # there are 4 perl modules install calls
-[ step5 = step5 / 4 ];
+step5=`expr $step5 / 4`
 
 
 #
 # final check; all 5 steps
-[ rep_perlmodules_done = step1 + step2 + step3 + step4 + step5]
-if [ rep_perlmodules_done -eq 5 ]; then
+rep_perlmodules_done=`expr $step1 + $step2 + $step3 + $step4 + $step5`
+if [ $rep_perlmodules_done -eq 5 ]; then
    rep_perlmodules_done=1
 else
    rep_perlmodules_done=90
@@ -2673,7 +2673,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2737,8 +2737,8 @@ fi
 
 #
 # final check; all 4 steps
-[ rep_perllxml_done = step1 + step2 + step3 + step4 ]
-if [ rep_perllxml_done -eq 4 ]; then
+rep_perllxml_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_perllxml_done -eq 4 ]; then
    rep_perllxml_done=1
 else
    rep_perllxml_done=90
@@ -2775,7 +2775,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2840,8 +2840,8 @@ fi
 
 #
 # final check; all 4 steps
-[ rep_dbdpg_done = step1 + step2 + step3 + step4 ]
-if [ rep_dbdpg_done -eq 4 ]; then
+rep_dbdpg_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_dbdpg_done -eq 4 ]; then
    rep_dbdpg_done=1
 else
    rep_dbdpg_done=90
@@ -2876,7 +2876,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -2943,8 +2943,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_pcre_done = step1 + step2 + step3 + step4 ]
-if [ rep_pcre_done -eq 4 ]; then
+rep_pcre_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_pcre_done -eq 4 ]; then
    rep_pcre_done=1
 else
    rep_pcre_done=90
@@ -2979,7 +2979,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3062,8 +3062,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_fcgi_done = step1 + step2 + step3 + step4 ]
-if [ rep_fcgi_done -eq 4 ]; then
+rep_fcgi_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_fcgi_done -eq 4 ]; then
    rep_fcgi_done=1
 else
    rep_fcgi_done=90
@@ -3099,7 +3099,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3119,7 +3119,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" = "x86_64" ]; then
+if [ "$PT_NAME" = "amd64" ]; then
     env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
      LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
       -L/lib64 -L/usr/lib64" \
@@ -3174,8 +3174,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_ssh2_done = step1 + step2 + step3 + step4 ]
-if [ rep_ssh2_done -eq 4 ]; then
+rep_ssh2_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_ssh2_done -eq 4 ]; then
    rep_ssh2_done=1
 else
    rep_ssh2_done=90
@@ -3211,7 +3211,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3306,8 +3306,8 @@ fi
 
 #
 # final check; all 5 steps
-[ rep_perlssh2_done = step1 + step2 + step3 + step4 + step5 ]
-if [ rep_perlssh2_done -eq 5 ]; then
+rep_perlssh2_done=`expr $step1 + $step2 + $step3 + $step4 + $step5`
+if [ $rep_perlssh2_done -eq 5 ]; then
    rep_perlssh2_done=1
 else
    rep_perlssh2_done=90
@@ -3341,7 +3341,7 @@ echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 # echo "iprefix=$iprefix"
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3391,8 +3391,8 @@ else
 fi
 
 # final check; all 3 steps
-[ rep_fcgiw_done = step1 + step2 + step3 ]
-if [ rep_fcgiw_done -eq 3 ]; then
+rep_fcgiw_done=`expr $step1 + $step2 + $step3`
+if [ $rep_fcgiw_done -eq 3 ]; then
    rep_fcgiw_done=1
 else
    rep_fcgiw_done=90
@@ -3428,7 +3428,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3451,7 +3451,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $PT_NAME = "i686" ]; then
+if [ $PT_NAME = "amd64" ]; then
     env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
     CC=cc CFLAGS="-O3"                             \
     ./configure --prefix=${iprefix} --with-ipv6    \
@@ -3529,8 +3529,8 @@ else
 fi
 
 # final check; all 4 steps
-[ rep_ws_done = step1 + step2 + step3 + step4 ]
-if [ rep_ws_done -eq 4 ]; then
+rep_ws_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_ws_done -eq 4 ]; then
    rep_ws_done=1
 else
    rep_ws_done=90
@@ -3565,7 +3565,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3586,7 +3586,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig      \
     CFLAGS="-std=gnu99 -O3 -I${iprefix}/include"  \
     CPPFLAGS="-I${iprefix}/include -I${iprefix}/include/readline" \
@@ -3650,8 +3650,8 @@ else
 fi    
 
 # final check; all 4 steps
-[ rep_rsts_done = step1 + step2 + step3 + step4 ]
-if [ rep_rsts_done -eq 4 ]; then
+rep_rsts_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_rsts_done -eq 4 ]; then
    rep_rsts_done=1
 else
    rep_rsts_done=90
@@ -3709,8 +3709,8 @@ fi
 
 
 # final check; all 2 steps
-[ rep_wsscripts_done = step1 ]
-if [ rep_wsscripts_done -eq 1 ]; then
+rep_wsscripts_done=$step1
+if [ $rep_wsscripts_done -eq 1 ]; then
    rep_wsscripts_done=1
 else
    rep_wsscripts_done=90
@@ -3840,8 +3840,8 @@ fi
 
 
 # final check; all 4 steps
-[ rep_pdq_done = step1 + step2 + step3 + step4 + step5 ]
-if [ rep_pdq_done -eq 5 ]; then
+rep_pdq_done=`expr $step1 + $step2 + $step3 + $step4 + $step5`
+if [ $rep_pdq_done -eq 5 ]; then
    rep_pdq_done=1
 else
    rep_pdq_done=90
@@ -3868,7 +3868,7 @@ cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-ls *.tar.gz | read archive_file
+archive_file=`ls *.tar.gz`
 # Debug
 # echo "Archive: $archive_file"
 # echo "Dir: ${archive_file%%.tar*}"
@@ -3877,7 +3877,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -3934,8 +3934,8 @@ fi
 
 #
 # final check; all 4 steps
-[ rep_wcurl_done = step1 + step2 + step3 + step4 ]
-if [ rep_wcurl_done -eq 4 ]; then
+rep_wcurl_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_wcurl_done -eq 4 ]; then
    rep_wcurl_done=1
 else
    rep_wcurl_done=90
@@ -3971,7 +3971,7 @@ echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls *.tar.gz | read archive_file    
+archive_file=`ls *.tar.gz`
 
 # STEP 1
 
@@ -3979,7 +3979,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Install $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -3994,8 +3994,8 @@ fi
 
 #
 # final check; 1 step
-[ rep_rcairo_done = step1 ]
-if [ rep_rcairo_done -eq 1 ]; then
+rep_rcairo_done=$step1
+if [ $rep_rcairo_done -eq 1 ]; then
    rep_rcairo_done=1
 else
    rep_rcairo_done=90
@@ -4044,8 +4044,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Install iterators $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls iterator*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls iterator*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4064,8 +4064,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install itertools $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls itertool*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls itertool*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4084,8 +4084,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Install plyr $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls plyr*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig  \
+archive_file=`ls plyr*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4104,8 +4104,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 4 - Install reshape $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls reshape*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls reshape*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4124,8 +4124,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 5 - Install RColorBrewer $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls RColorBrewer*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls RColorBrewer*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4144,8 +4144,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 6 - Install digest $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls digest*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls digest*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4164,8 +4164,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 7 - Install colorspace $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls colorspace*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls colorspace*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4183,8 +4183,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 8 - Install proto $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls proto*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls proto*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4202,8 +4202,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 9 - Install stringr $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls stringr*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls stringr*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4221,8 +4221,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 10 - Install reshape2 $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls reshape2*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls reshape2*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4240,8 +4240,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 11 - Install dichromat $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls dichromat*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls dichromat*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4259,8 +4259,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 12 - Install munsell  $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls munsell*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls munsell*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4278,8 +4278,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 13 - Install labeling $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls labeling*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls labeling*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4297,8 +4297,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 14 - Install scales $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls scales*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls scales*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4316,8 +4316,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 15 - Install memoise $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls memoise*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls memoise*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4335,8 +4335,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 16 - Install gtable $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls gtable*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls gtable*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4354,8 +4354,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 17 - Install ggplot2 $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls ggplot*.tar.gz | read archive_file
-env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
+archive_file=`ls ggplot*.tar.gz`
+env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig CC=cc \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? != 0 ]; then
@@ -4370,11 +4370,11 @@ fi
 
 #
 # final check; 1 step
-[ rep_rggplot2_done = step1 + step2 + step3 + step4 + step5  + \
-                       step6 + step7 + step8 + step9 + step10 + \
-                       step11 + step12 + step13 + step14      + \
-                       step15 + step16 + step17 ]
-if [ rep_rggplot2_done -eq 17 ]; then
+rep_rggplot2_done=`expr $step1 + $step2 + $step3 + $step4 + $step5  + \
+                       $step6 + $step7 + $step8 + $step9 + $step10 + \
+                       $step11 + $step12 + $step13 + $step14      + \
+                       $step15 + $step16 + $step17 ]
+if [ $rep_rggplot2_done -eq 17 ]; then
    rep_rggplot2_done=1
 else
    rep_rggplot2_done=90
@@ -4404,8 +4404,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Install Rserve $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls Rserve_*.tar.gz | read archive_file
-env PATH=${iprefix}/bin:$PATH \
+archive_file=`ls Rserve_*.tar.gz`
+env PATH=${iprefix}/bin:$PATH CC=cc \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL --configure-vars="LIBS=-L${iprefix}/lib CPPFLAGS=-I${iprefix}/include" $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4426,7 +4426,7 @@ echo "Info: Step 2 - Install FastRWeb $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ls FastRWeb*.tar.gz | read archive_file
-env PATH=${iprefix}/bin:$PATH \
+env PATH=${iprefix}/bin:$PATH CC=cc \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4446,8 +4446,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Install XML $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls XML*.tar.gz | read archive_file
-env PATH=${iprefix}/bin:$PATH \
+archive_file=`ls XML*.tar.gz`
+env PATH=${iprefix}/bin:$PATH CC=cc \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig  \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4463,8 +4463,8 @@ fi
 
 
 # final check; 1 step
-[ rep_rserve_done = step1 + step2 + step3 ]
-if [ rep_rserve_done -eq 3 ]; then
+rep_rserve_done=`expr $step1 + $step2 + $step3`
+if [ $rep_rserve_done -eq 3 ]; then
    rep_rserve_done=1
 else
    rep_rserve_done=90
@@ -4497,9 +4497,9 @@ do
     echo "Info: Step $cnt - Install $rmod for $dir ..." |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-    ls ${rmod}*.tar.gz | read archive_file
+    archive_file=`ls ${rmod}*.tar.gz`
 
-    env PATH=${iprefix}/bin:$PATH \
+    env PATH=${iprefix}/bin:$PATH CC=cc \
         PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
         ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -4509,14 +4509,14 @@ do
         rm /var/tmp/build.${module}
         exit 3
     else
-        [step=step+1]
+        step=`expr $step + 1`
     fi
-    [cnt=cnt+1]
+    cnt=`expr $cnt + 1`
 done
 
 # final check; 1 step
-[ rep_ranalysis_done = step ]
-if [ rep_ranalysis_done -eq 19 ]; then
+rep_ranalysis_done=$step
+if [ $rep_ranalysis_done -eq 19 ]; then
    rep_ranalysis_done=1
 else
    rep_ranalysis_done=90
@@ -4628,12 +4628,12 @@ do
         rm /var/tmp/build.${module}
         exit 3
     else
-        [step4=step4+1]
+        step4=`expr $step4 + 1`
     fi
 done
 
 # there are 7 dbs to setup
-[ step4 = step4 / 7 ];
+step4=`expr $step4 / 7`
 
 
 
@@ -4651,7 +4651,7 @@ if [ ! -d ${iprefix}/var/cache/rrdcached/journal ]; then
         rm /var/tmp/build.${module}
         exit 3
     else
-        [step5=step5+1]
+        step5=`expr $step5 + 1`
     fi
 fi
 
@@ -4663,7 +4663,7 @@ if [ ! -d ${iprefix}/var/log ]; then
         rm /var/tmp/build.${module}
         exit 3
     else
-        [step5=step5+1]
+        step5=`expr $step5 + 1`
     fi
 fi
 
@@ -4675,12 +4675,12 @@ if [ ! -d ${iprefix}/var/run ]; then
         rm /var/tmp/build.${module}
         exit 3
     else
-        [step5=step5+1]
+        step5=`expr $step5 + 1`
     fi
 fi
 
 # there are 3 var dirs to setup
-[ step5 = step5 / 3 ];
+$step5 =`expr $step5 / 3` 
 
 
 # STEP 6
@@ -4699,7 +4699,7 @@ if [ $? != 0 ]; then
     rm /var/tmp/build.${module}
     exit 3
 else
-    [step6=step6+1]
+    step6=`expr $step6 + 1`
 fi
 
 
@@ -4710,12 +4710,12 @@ if [ $? != 0 ]; then
     rm /var/tmp/build.${module}
     exit 3
 else
-    [step6=step6+1]
+    step6=`expr $step6 + 1`
 fi  
 
 
 # there are 2 configs
-[ step6 = step6 / 2 ];
+step6=`expr $step6 / 2`;
 
 
 # STEP 7
@@ -4754,7 +4754,7 @@ if [ ! -d ${iprefix}/var/FastRWeb ]; then
             rm /var/tmp/build.${module}
             exit 3
         else
-           [step7=step7+1]
+           step7=`expr $step7 + 1`
         fi
     else
         echo "Error: cannot find install.sh FastRWeb !" |\
@@ -4764,8 +4764,8 @@ if [ ! -d ${iprefix}/var/FastRWeb ]; then
 fi
 
 # final check; all 7 steps
-[ rep_fin_done = step1 + step2 + step3 + step4 + step5 + step6 + step7]
-if [ rep_fin_done -eq 7 ]; then
+rep_fin_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6 + $step7`
+if [ "$rep_fin_done" -eq 7 ]; then
    rep_fin_done=1
 else
    rep_fin_done=90
