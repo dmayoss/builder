@@ -724,7 +724,7 @@ case "$module" in
         build_rec_xmllibxml
         build_rec_curl
         build_rec_wcurl
-        if [ "${OS_NAME}" == "Linux" ]; then
+        if [ "${OS_NAME}" = "Linux" ]; then
             build_rec_sysstat
         fi
    
@@ -763,7 +763,7 @@ case "$module" in
         fi
 
         if [ "$syss_sem" -eq 1 ]; then
-            if [ "${OS_NAME}" == "Linux" ]; then
+            if [ "${OS_NAME}" = "Linux" ]; then
                 echo "" > ${BUILD_PATH}/${BUILD_LOG}
                 build_rec_sysstat
             fi
@@ -797,7 +797,7 @@ case "$module" in
 
     if [ "$rep1_sem" -eq 0 -a "$rep2_sem" -eq 0  \
           -a "$rep3_sem" -eq 0 -a "$rep4_sem" -eq 0 \
-          -a "$rep5_sem" -eq 0 -a "$rep6_sem" -eq 0 \ 
+          -a "$rep5_sem" -eq 0 -a "$rep6_sem" -eq 0 \
           -a "$jpeg_sem" -eq 0 -a "$fcgiwrap_sem" -eq 0 \
           -a "$rserve_sem"-eq 0 -a "$pdq_sem" -eq 0 \
           -a "$repfin_sem" -eq 0 -a "$ranalysis_sem"-eq 0 \
