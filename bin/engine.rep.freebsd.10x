@@ -1723,16 +1723,16 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 if [ "$PT_NAME" = "amd64" ]; then
-    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-     ./Configure linux-x86_64 threads shared --prefix=${iprefix} \
-     --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    /usr/bin/env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
+         ./Configure BSD-x86_64 threads shared --prefix=${iprefix} \
+          --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
-    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
-     ./Configure linux-elf threads shared --prefix=${iprefix} \
+    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
+     ./Configure BSD-x86-elf threads shared --prefix=${iprefix} \
      --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -1763,7 +1763,7 @@ echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: make install perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -1848,7 +1848,7 @@ else
    -Dprefix=${iprefix}/perl -des >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: configure perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     exit 3
@@ -1874,7 +1874,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 4 - Make test perl..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 make test >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: make test perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     exit 3
@@ -1891,7 +1891,7 @@ if [ -d ${iprefix}/perl ]; then
     echo "Warning: perl directory found, cleaning it..." |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm -rf ${iprefix}/perl
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]; then
         echo "Error: cleaning $dir directory" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         exit 3
@@ -1899,7 +1899,7 @@ if [ -d ${iprefix}/perl ]; then
 fi
  
 make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: make install perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     exit 3
@@ -1915,7 +1915,7 @@ echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
 
-for lib in YAML Expect Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
+for lib in Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
            FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager CGI::Session \
            DBI IO::All HTML::Template Term::ProgressBar         \
            PerlIO::gzip Date::Manip Date::Calc                              \
@@ -1939,7 +1939,7 @@ do
         env PERL_MM_USE_DEFAULT=1 \
           ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
           ${BUILD_PATH}/${BUILD_LOG} 2>&1
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         else
@@ -1950,16 +1950,16 @@ do
         env PERL_MM_USE_DEFAULT=1 \
           ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
           ${BUILD_PATH}/${BUILD_LOG} 2>&1
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
         else
-            [step6 = step6 + 1]
+            step6=`expr $step6 + 1`
             continue
         fi
     else
         ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             echo "Error: $lib installation failed !" |\
              tee -a ${BUILD_PATH}/${BUILD_LOG}
             exit 3
@@ -1969,8 +1969,8 @@ do
     fi
 done
 
-# there are 67 perl modules install calls
-step6=`expr $step6 / 67`
+# there are 65 perl modules install calls
+step6=`expr $step6 / 65`
 
 
 # final check; all 6 steps
