@@ -2233,12 +2233,13 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
+    CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
     -L/lib64 -L/usr/lib64" ./configure --with-python=no \
     --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
- 
-if [ $? != 0 ]; then
+
+if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -2252,7 +2253,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -2268,7 +2269,7 @@ echo "Info: Step 4 - Make install $dir..." |\
 
 
 make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: make install gd failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -2287,7 +2288,7 @@ fi
 
 cd ..
 rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: cleaning up $dirarchive !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}

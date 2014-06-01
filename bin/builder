@@ -454,10 +454,10 @@ case "$OS_NAME" in
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
-             if [ "$iprefix" == "/opt/www" ]; then
+             if [ "$iprefix" = "/opt/www" ]; then
                  iuser=www
              else
-                 if [ "$iprefix" == "/opt/nginx" ]; then
+                 if [ "$iprefix" = "/opt/nginx" ]; then
                      iuser=nginx
                  else
                      iuser=nobody
@@ -550,10 +550,10 @@ case "$OS_NAME" in
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
-             if [ "$iprefix" == "/opt/www" ]; then
+             if [ "$iprefix" = "/opt/www" ]; then
                  iuser=www
              else
-                 if [ "$iprefix" == "/opt/nginx" ]; then
+                 if [ "$iprefix" = "/opt/nginx" ]; then
                      iuser=nginx
                  else
                      iuser=nobody
@@ -631,10 +631,10 @@ case "$OS_NAME" in
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
-             if [ "$iprefix" == "/opt/www" ]; then
+             if [ "$iprefix" = "/opt/www" ]; then
                  iuser=www
              else
-                 if [ "$iprefix" == "/opt/nginx" ]; then
+                 if [ "$iprefix" = "/opt/nginx" ]; then
                      iuser=nginx
                  else
                      iuser=nobody
@@ -682,7 +682,7 @@ else
 fi
 
 
-if [ "$OS_NAME" == "SunOS" ]; then
+if [ "$OS_NAME" = "SunOS" ]; then
     start=`nawk 'BEGIN{print srand()}'`
 else
     start=`date +%s`
