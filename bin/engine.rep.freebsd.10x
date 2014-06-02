@@ -101,17 +101,10 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-if [ "$PT_NAME" = "x86_64" ]; then 
-    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-        -L/lib64 -L/usr/lib64" ./configure \
+env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    -L/usr/lib" ./configure \
     --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-else
-    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-        LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-        -L/lib -L/usr/lib" ./configure \
-    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-fi
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -214,7 +207,7 @@ env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     CC=cc CFLAGS="-O3" \
     CPPFLAGS="-I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-    -L/lib64 -L/usr/lib64" ./configure --enable-cookies --enable-nonblocking \
+    -L/usr/lib" ./configure --enable-cookies --enable-nonblocking \
     --with-libidn --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
@@ -1624,9 +1617,8 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-             -L/lib64 -L/usr/lib64" ./configure \
-            --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -2133,8 +2125,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 
 env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-    -L/lib64 -L/usr/lib64" ./configure \
-    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
  
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -2236,7 +2227,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
     CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-    -L/lib64 -L/usr/lib64" ./configure --with-python=no \
+    .configure --with-python=no \
     --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
