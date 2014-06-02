@@ -1906,7 +1906,7 @@ echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
 
-for lib in Test::Pod Test::Pod::Coverage HTML::CalendarMonth    \
+for lib in HTML::CalendarMonth    \
            FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager CGI::Session \
            DBI IO::All HTML::Template Term::ProgressBar         \
            PerlIO::gzip Date::Manip Date::Calc                              \
@@ -1960,8 +1960,8 @@ do
     fi
 done
 
-# there are 65 perl modules install calls
-step6=`expr $step6 / 65`
+# there are 63 perl modules install calls
+step6=`expr $step6 / 63`
 
 
 # final check; all 6 steps
