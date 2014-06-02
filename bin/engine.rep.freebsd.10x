@@ -102,9 +102,8 @@ echo "Info: Step 2 - Configure $dir ..." |\
 
 
 env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-    -L/usr/lib" ./configure \
-    --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib -L/usr/lib" \
+    ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -411,7 +410,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     PATH=${iprefix}/bin:$PATH \
-    CC=cc CFLAGS="-O3 -I${iprefix}/include"                        \
+    CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
@@ -1715,7 +1714,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 if [ "$PT_NAME" = "amd64" ]; then
-    /usr/bin/env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
+    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
          ./Configure BSD-x86_64 threads shared --prefix=${iprefix} \
           --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
@@ -2124,7 +2123,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
  
 if [ $? -ne 0 ]; then
@@ -2226,7 +2225,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 
 env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH CC=cc \
     CFLAGS="-O3 -I${iprefix}/include" \
-    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     .configure --with-python=no \
     --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
