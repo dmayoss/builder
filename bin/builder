@@ -805,17 +805,16 @@ case "$module" in
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_ossl
+        build_rep_idn
+        build_rep_gettext
         build_rep_iconv
+        build_rep_gettext
         build_rep_libxml2
         build_rep_xmllibxml
-        build_rep_ssh2
-        build_rep_gettext
         build_rep_readline
-        build_rep_idn
         build_rep_curl
         build_rep_ffi
         build_rep_glib
-        build_rep_perlssh2
         build_rep_wcurl
         build_rep_pcre
         build_rep_fcgi
