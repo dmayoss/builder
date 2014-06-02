@@ -1649,7 +1649,7 @@ echo "Info: Step 4 - Make install $dir..." |\
 
 make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
-    echo "Error: make install perl failed !" |\
+    echo "Error: make install $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     exit 3
 else
