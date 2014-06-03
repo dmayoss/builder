@@ -25,8 +25,8 @@
 usage() {
 
 cat << END
-USAGE: $0 [OPTIONS] rec|rep|nginx version
-OPTIONS:
+Usage: $0 [options] rec|rep|nginx version
+Options:
   -h help
   -d database: mariadb | pgsql
   -a all: php, pecl, memcached, libmcrypt
@@ -34,7 +34,7 @@ OPTIONS:
   -t test mode
   -m module
 
-MODULES:
+Modules:
    perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
    scripts, rep1, rep2, rep3, rep4, rep5, nginx, nginxfin
    mariadb, pgsql, php, ngxfin
@@ -52,7 +52,7 @@ MODULES:
       nginx 1.2.6 - NGINX HTTP Server, legacy release
       nginx 1.4.5 - NGINX HTTP Server, stable release
 
-NOTES:
+Notes:
    Make sure you have defined WORKSPACE_BUILDER variable before running
    builder.
 END
@@ -814,7 +814,9 @@ case "$module" in
         build_rep_readline
         build_rep_curl
         build_rep_ffi
-        build_rep_glib
+        if [ "${OS_NAME}" = "Linux" ]; then
+            build_rep_glib
+        fi
         build_rep_wcurl
         build_rep_pcre
         build_rep_fcgi
