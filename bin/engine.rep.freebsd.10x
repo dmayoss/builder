@@ -1623,7 +1623,7 @@ if [ $mode -eq 0 ]; then
     env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-elsif [ $mode -eq 1 ]; then
+elif [ $mode -eq 1 ]; then
     env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} --with-libiconv-prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
