@@ -1668,6 +1668,9 @@ else
 fi
 
 
+# STEP 5
+ln -s ${iprefix}/lib/libiconv.so.7.1 ${iprefix}/lib/libiconv.so
+
 # final check; all 4 steps
 rep_gett_done=`expr $step1 + $step2 + $step3 + $step4`
 if [ $rep_gett_done -eq 4 ]; then
