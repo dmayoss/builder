@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  SDR Development tools, builder the master script engine 
+#  SDR Development tools, runner the test engine
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
