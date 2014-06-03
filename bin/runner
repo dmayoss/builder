@@ -1,0 +1,189 @@
+#!/bin/sh
+#
+#  SDR Development tools, builder the master script engine 
+#
+#  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#  (http://www.gnu.org/copyleft/gpl.html)
+
+# VERSION: 1.1
+
+### Settings
+RRDSIZE=5       # RRD file in MB
+RRDCOUNT=5      # RRDs files, count per host per sec
+BLOCKSIZE=64k   # blocksize to read or write
+RUNTIME=900     # execution time
+
+
+### DO NOT TOUCH
+TESTCASE=sdr_release_10
+HOSTNAME=`hostname`
+RUNNERPATH=/opt/sdrbuild
+DESTINATION=/opt/sdr/data
+RUNNERLOG=${RUNNERPATH}/log
+FIOBIN="/usr/local/bin/fio"
+TIMESTAMP=`date "+%Y-%m-%dT%H:%M:%S"`
+
+
+### usage
+usage() {
+cat << END
+Usage: $0 testid iotype number
+Options:
+ testid : test id description
+ iotype : seqr, seqw, rr, rw, rrw
+ number : number of hosts
+END
+exit 1
+
+}
+
+
+### create test fio file
+create_fio() {
+
+mkdir ${RUNNERLOG}/${TESTID}.${TIMESTAMP}
+cd ${RUNNERLOG}/${TESTID}.${TIMESTAMP}
+
+cat <<EOF >$TEMPLATE
+[global]
+rw=$IOTYPE
+thread
+size=${IOSIZE}m
+directory=$DESTINATION
+blocksize=$BLOCKSIZE
+nrfiles=$RRDCOUNT
+runtime=$RUNTIME
+time_based
+EOF
+
+c=1
+while [ $c -le $NHOSTS ]
+do
+    echo "" >> $TEMPLATE
+    echo "[host$c]" >> $TEMPLATE
+    echo "directory=${DESTINATION}/${TESTCASE}/${c}" >> $TEMPLATE
+    echo "" >> $TEMPLATE
+    c=`expr $c + 1`
+done
+
+}
+
+
+### execute fio
+execute_fio() {
+    $FIOBIN --output=${TESTID}.log $TEMPLATE
+}
+
+
+
+### MAIN
+
+# input parameters
+if [ "$#" -ne 3 ]; then
+  usage
+fi
+
+seqr_sem=0
+seqw_sem=0
+rr_sem=0
+rw_sem=0
+rrw_sem=0
+
+TESTID=$1
+IOTYPE=$2
+NHOSTS=$3
+
+IOSIZE=`expr $RRDSIZE \\* $RRDCOUNT`
+
+case "$IOTYPE" in
+
+    seqr)
+        seqr_sem=1
+        IOTYPE=read
+    ;;
+
+    seqw)
+        seqw_sem=1
+        IOTYPE=write
+    ;;
+        
+    rr)
+        rr_sem=1
+        IOTYPE=randread
+    ;;
+
+    rw)
+        rw_sem=1
+        IOTYPE=randwrite
+    ;;
+
+    rrw)
+        rrw_sem=1
+        IOTYPE=randrw
+    ;;
+
+    *)
+        usage
+    ;;
+
+esac
+
+
+TEMPLATE="${HOSTNAME}.${IOTYPE}.fio"
+STATFILE=".${TESTID}.${IOTYPE}.${HOSTNAME}.run"
+
+# Status File
+if [ -f /var/tmp/${STATFILE} ]; then
+    echo "Error: currently running, please wait your job terminates"
+    exit 1
+else
+touch /var/tmp/${STATFILE}
+fi
+
+### prepare the test directory
+if [ ! -d $DESTINATION ]; then
+    echo "Error: cannot find destination: $DESTINATION"
+else
+    if [ ! -d ${DESTINATION}/${TESTCASE} ]; then
+        mkdir ${DESTINATION}/${TESTCASE}
+    fi
+fi
+
+# layout data directory
+current=1
+while [ $current -le $NHOSTS ]
+do
+    if [ ! -d ${DESTINATION}/${TESTCASE}/${current} ]; then
+        # we make raw data directories
+        echo "Making host data dir: $current..."
+        mkdir ${DESTINATION}/${TESTCASE}/${current}
+    fi
+    current=`expr $current + 1`
+done
+
+
+### create fio
+create_fio
+
+### execute fio
+execute_fio
+
+# cleanup
+if [ -f /var/tmp/${STATFILE} ]; then
+    rm /var/tmp/${STATFILE}
+fi
