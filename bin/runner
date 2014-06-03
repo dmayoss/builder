@@ -32,9 +32,6 @@ RUNTIME=900     # execution time
 ### DO NOT TOUCH
 TESTCASE=sdr_release_10
 HOSTNAME=`hostname`
-RUNNERPATH=/opt/sdrbuild
-DESTINATION=/opt/sdr/data
-RUNNERLOG=${RUNNERPATH}/log
 FIOBIN="/usr/local/bin/fio"
 TIMESTAMP=`date "+%Y-%m-%dT%H:%M:%S"`
 
@@ -47,6 +44,12 @@ Options:
  testid : test id description
  iotype : seqr, seqw, rr, rw, rrw
  number : number of hosts
+
+Note: Runner will use BUILDER_ROOT variable to find out its
+components and log files and SDR_LOG for all test data files.
+Usually these variables are sourced via setenv master config
+script found under SDR Development Tools. No manual actions
+required if SDR Devleopment has been properly installed.
 END
 exit 1
 
@@ -56,8 +59,10 @@ exit 1
 ### create test fio file
 create_fio() {
 
-mkdir ${RUNNERLOG}/${TESTID}.${TIMESTAMP}
-cd ${RUNNERLOG}/${TESTID}.${TIMESTAMP}
+if [ -d ${RUNNERLOG} ]; then
+    mkdir ${RUNNERLOG}/${TESTID}.${TIMESTAMP}
+    cd ${RUNNERLOG}/${TESTID}.${TIMESTAMP}
+fi
 
 cat <<EOF >$TEMPLATE
 [global]
@@ -92,6 +97,23 @@ execute_fio() {
 
 
 ### MAIN
+
+# Source Global SDR Settings
+PWD=`dirname $0`
+. ${PWD}/setenv
+
+# check BUILDER_ROOT
+if [ ! -z "$BUILDER_ROOT" ]; then
+   RUNNERLOG="${BUILDER_ROOT}/log"
+else
+   usage
+fi
+
+if [ ! -z "$SDR_LOG" ]; then
+   DESTINATION="${SDR_LOG}"
+else
+   usage
+fi
 
 # input parameters
 if [ "$#" -ne 3 ]; then

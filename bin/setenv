@@ -24,10 +24,12 @@ OS_NAME=`uname -s`
 PT_NAME=`uname -m`
 HOSTNAME=`uname -n`
 
+### General settings
+BUILDER_ROOT=/opt/sdrbuilder
+BUILD_PATH=${BUILDER_ROOT}/log
+
 NGINX_PERLBIN=/opt/nginx/perl/bin
 NGXAL_PERLBIN=/opt/www/perl/bin
-BUILD_PATH=/opt/build/log
-
 
 ### COMPILER & USER ID
 case "$OS_NAME" in
@@ -57,18 +59,16 @@ JDK_PATH=/opt/java/current
 
 
 ### SDR PREFIX
-SDR_PATH=/opt/sdr
-SDR_BIN=${SDR_PATH}/bin
-SDR_LIB=${SDR_PATH}/lib
-SDR_LOG=${SDR_PATH}/log
-SDR_RAW=${SDR_LOG}/raw
+SDR_ROOT=/opt/sdr
+SDR_BIN=${SDR_ROOT}/bin
+SDR_LIB=${SDR_ROOT}/lib
+SDR_LOG=${SDR_ROOT}/log
+SDR_CURRENT=${SDR_LOG}/current
 SDR_DAILY=${SDR_LOG}/daily
-SDR_PERLBIN=${SDR_PATH}/perl/bin
-SDRREP_ROOT=${SDR_PATH}/report
-SDRREP_PERLBIN=${SDRREP_ROOT}/perl/bin
-SDRREP_BIN=${SDRREP_ROOT}/rrd/bin
-SDRREP_DOCROOT=${SDRREP_ROOT}/docroot
-SDRREP_DB=${SDRREP_ROOT}/db
+SDR_PERLBIN=${SDR_ROOT}/perl/bin
+SDRREP_PATH=${SDR_ROOT}/report
+SDRREP_PERLBIN=${SDRREP_PATH}/perl/bin
+SDRREP_BIN=${SDRREP_PATH}/bin
 
 
 ### RAW COLLECTOR DATA DIRECTORY
@@ -102,4 +102,4 @@ ZONEADM_BIN=/usr/sbin/zoneadm
 #############################
 
 
-export HOSTNAME SDR_PATH SDR_BIN SDR_PERLBIN
+export HOSTNAME BUILDER_ROOT SDR_PATH SDR_BIN SDR_PERLBIN
