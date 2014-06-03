@@ -806,9 +806,9 @@ case "$module" in
         build_rep_perl
         build_rep_ossl
         build_rep_idn
-        build_rep_gettext
+        build_rep_gettext 0
         build_rep_iconv
-        build_rep_gettext
+        build_rep_gettext 1
         build_rep_libxml2
         build_rep_xmllibxml
         build_rep_readline

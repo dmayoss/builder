@@ -1584,6 +1584,10 @@ cd ..
 # Reporting: gettext Build Phase                                  #
 # ############################################################### #
 build_rep_gettext() {
+
+### modes: 0 no libiconv, 1 with libiconv
+mode=$1
+
 dir=gettext
 step1=0
 step2=0
@@ -1615,9 +1619,16 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+if [ $mode -eq 0 ]; then
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+elsif [ $mode -eq 1 ]; then
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --prefix=${iprefix} --with-libiconv-prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
+
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
