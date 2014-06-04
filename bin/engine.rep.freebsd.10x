@@ -1826,7 +1826,7 @@ archive_file=`ls *.tar.gz`
 dirarchive=${archive_file%%.tar*}
 
 # get CPAN version
-echo $dirarchive | sed 's/perl-//' | read cpanver
+cpanver=`echo $dirarchive | sed 's/perl-//'`
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
@@ -3014,22 +3014,6 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-# if we are in gcc 4.4 and debian based system we might hit
-# Debian Bug report logs - #504963
-
-/usr/bin/lsb_release -i | sed 's/^Distributor ID://' | read distro
-if [ $distro = "Ubuntu" ]; then
-    # check gcc version   
-    gcc --version | head -1 | sed 's/^.* //' | read gccver
-
-    case "$gccver" in
-     4.4*)
-         # we are using gcc 4.4+
-         ${iprefix}/perl/bin/perl -pi -le 'echo "#include <cstdio>" if $. == 24' libfcgi/fcgio.cpp     
-    esac
-fi
-
 
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
@@ -4421,7 +4405,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install FastRWeb $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls FastRWeb*.tar.gz | read archive_file
+archive_file=`ls FastRWeb*.tar.gz`
+
 env PATH=${iprefix}/bin:$PATH CC=cc \
     PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     ${iprefix}/R/bin/R CMD INSTALL $archive_file >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
