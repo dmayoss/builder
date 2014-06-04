@@ -3330,7 +3330,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -3355,10 +3355,6 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-#if [ ! -d ${iprefix}/ws/sbin ]; then
-#    mkdir ${iprefix}/ws/sbin
-#fi
 
 make iprefix=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
