@@ -3417,7 +3417,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 
@@ -3431,7 +3431,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $PT_NAME = "amd64" ]; then
+if [ "$PT_NAME" = "amd64" ]; then
     env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
     CC=cc CFLAGS="-O3"                             \
     ./configure --prefix=${iprefix} --with-ipv6    \
