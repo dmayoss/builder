@@ -823,7 +823,9 @@ case "$module" in
         build_rep_ws
         build_rep_fcgiwrap
         build_rep_ws_scripts
-        build_rep_pkgconfig
+        if [ "${OS_NAME}" = "Linux" ]; then
+            build_rep_pkgconfig
+        fi
         build_rep_harfbuzz
         build_rep_libjpeg
         build_rep_libpng
