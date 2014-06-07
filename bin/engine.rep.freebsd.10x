@@ -715,7 +715,7 @@ echo "Info: Step 2 - Configure $dir ..." |\
 env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig PATH=${iprefix}/bin:$PATH \
     CFLAGS="-O3 -I${iprefix}/include"                        \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    ./configure --prefix=${iprefix} --enable-libxml2 --with-freetype-config=${iprefix}/bin/freetype-config >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ./configure --prefix=${iprefix} --enable-libxml2 >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -730,7 +730,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -745,7 +745,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1212,7 +1212,8 @@ env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig \
     PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
     CC=cc CFLAGS="-O3 -fPIC -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    ./configure --prefix=${iprefix} --with-libiconv=gnu >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+    ./configure --prefix=${iprefix} --with-libiconv=gnu \
+     --disable-gtk-doc --disable-man --disable-fam >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
