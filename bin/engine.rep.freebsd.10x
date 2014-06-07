@@ -1031,7 +1031,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1046,7 +1046,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install perl failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -2330,7 +2330,7 @@ dirarchive=${archive_file%%.tar*}
 
 # STEP 1
 extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0]; then
+if [ $? -eq 0 ]; then
     step1=1
 fi
 

@@ -820,7 +820,9 @@ case "$module" in
             build_rep_glib
         fi
         build_rep_wcurl
-        build_rep_pcre
+        if [ "${OS_NAME}" = "Linux" ]; then
+            build_rep_pcre
+        fi
         build_rep_fcgi
         build_rep_ws
         build_rep_fcgiwrap
