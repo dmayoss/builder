@@ -804,47 +804,19 @@ case "$module" in
           -a "$perltt_sem" -eq 0 -a "$nginx_sem" -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
-        build_rep_ossl
-        build_rep_idn
-        if [ "${OS_NAME}" = "Linux" ]; then
-            build_rep_gettext 0
-            build_rep_iconv
-            build_rep_gettext 1
-        fi
-        build_rep_libxml2
         build_rep_xmllibxml
-        build_rep_readline
-        build_rep_curl
-        if [ "${OS_NAME}" = "Linux" ]; then
-            build_rep_ffi
-            build_rep_glib
-        fi
         build_rep_wcurl
-        if [ "${OS_NAME}" = "Linux" ]; then
-            build_rep_pcre
-        fi
         build_rep_fcgi
         build_rep_ws
         build_rep_fcgiwrap
         build_rep_ws_scripts
-        if [ "${OS_NAME}" = "Linux" ]; then
-            build_rep_pkgconfig
-        fi
-        build_rep_harfbuzz
-        build_rep_libjpeg
-        build_rep_libpng
-        build_rep_pixman
-        build_rep_freetype
-        build_rep_fontconfig
-        build_rep_cairo
-        build_rep_pango
         build_rep_rrd
-        build_rep_R
-        build_rep_rcairo
-        build_rep_rggplot2
-        build_rep_rserve
-        build_rep_ranalysis
-        build_rep_pdq
+        #build_rep_R
+        #build_rep_rcairo
+        #build_rep_rggplot2
+        #build_rep_rserve
+        #build_rep_ranalysis
+        #build_rep_pdq
         build_rep_fin
 
     elif [ "$rep1_sem" -eq 1 ]; then

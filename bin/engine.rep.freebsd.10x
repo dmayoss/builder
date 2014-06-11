@@ -1,4 +1,4 @@
-#!/bin/sh
+#/bin/sh
 #
 #  SDR Development tools, Linux reporting engine 
 #
@@ -1921,26 +1921,18 @@ echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp ${BUILDER_ROOT}/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
 
-for lib in HTML::CalendarMonth    \
-           FCGI CGI CGI::Simple CGI::Minimal FCGI::ProcManager CGI::Session \
-           DBI IO::All HTML::Template Term::ProgressBar         \
-           PerlIO::gzip Date::Manip Date::Calc                              \
-           Statistics::Distributions Statistics::Frequency                  \
-           Statistics::Shannon Statistics::GammaDistribution                \
-           Statistics::Basic HTML::Calendar::Monthly                        \
-           HTML::CalendarMonthSimple Smart::Comments Net::Telnet            \
-           Net::SSH::Expect Authen::SASL Email::Valid MIME::Lite            \
-           Text::CSV_XS Text::CSV Regexp::Common IO::Interactive            \
-           Compress::Zlib Regexp::Log::DateRange Term::Prompt               \
-           Net::Netmask Text::Autoformat Text::FormatTable Data::Dumper     \
-           Perl::Critic Devel::Cover Devel::Cycle Data::Report              \
-           Test::Deep Devel::Size IO::Async CGI::FormBuilder                \
-           Logfile::Rotate Log::Log4perl Geo::IPfree Log::Handler           \
-           Archive::Zip Time::HiRes Net::Ping::External Tie::Array::CSV     \
-           Net::IP XML::SAX PDF::API2 PDF::Reuse Mail::Sender               \
-           HTML::Template::Pro XML::NamespaceSupport version SemVer
+for lib in FCGI CGI CGI::Simple CGI::Session DBI IO::All PerlIO::gzip \
+Date::Manip Date::Calc Statistics::Distributions Statistics::Frequency \
+Statistics::Shannon Statistics::GammaDistribution Statistics::Basic \
+Smart::Comments Authen::SASL Email::Valid MIME::Lite Text::CSV_XS \
+Text::CSV Regexp::Common Compress::Zlib \
+Regexp::Log::DateRange Text::Autoformat Text::FormatTable Data::Dumper \
+Perl::Critic Devel::Cover Devel::Cycle Data::Report Test::Deep Devel::Size \
+CGI::FormBuilder Logfile::Rotate Log::Log4perl Geo::IPfree Log::Handler \
+Archive::Zip Time::HiRes Tie::Array::CSV Net::IP XML::SAX Mail::Sender \
+HTML::Template::Pro XML::NamespaceSupport version SemVer Plack Session::Token \
+Crypt::PBKDF2 Cache::Memcached::Fast Mojolicious AnyEvent EV
 do
-
     if [ "$lib" = "MIME::Lite" ]; then
         env PERL_MM_USE_DEFAULT=1 \
           ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
@@ -1953,6 +1945,17 @@ do
             continue
         fi
     elif [ $lib = "Mail::Sender" ]; then
+        env PERL_MM_USE_DEFAULT=1 \
+          ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
+          ${BUILD_PATH}/${BUILD_LOG} 2>&1
+        if [ $? -ne 0 ]; then
+            tee -a ${BUILD_PATH}/${BUILD_LOG}
+            exit 3
+        else
+            step6=`expr $step6 + 1`
+            continue
+        fi
+    elif [ $lib = "EV" ]; then
         env PERL_MM_USE_DEFAULT=1 \
           ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> \
           ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -2690,7 +2693,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env LD_LIBRARY_PATH=${iprefix}/lib ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env LD_LIBRARY_PATH=/usr/local/lib ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=/usr/local >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+#env LD_LIBRARY_PATH=${iprefix}/lib ${iprefix}/perl/bin/perl Makefile.PL XMLPREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -3341,7 +3345,7 @@ cd ${archive_file%%.tar*}
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-cp Makefile.Linux Makefile
+cp Makefile.${OS_NAME} Makefile
 make iprefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
@@ -3356,6 +3360,10 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+if [ ! -d ${iprefix}/share/man/man8 ]; then
+    mkdir -p ${iprefix}/share/man/man8
+fi
 
 make iprefix=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
@@ -3428,9 +3436,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" = "amd64" ]; then
-    env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
-    CC=cc CFLAGS="-O3"                             \
+ env PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig   \
+     CC=cc CFLAGS="-O3"                             \
     ./configure --prefix=${iprefix} --with-ipv6    \
     --with-perl=${iprefix}/perl/bin                \
     --with-http_ssl_module                         \
@@ -3438,33 +3445,14 @@ if [ "$PT_NAME" = "amd64" ]; then
     --with-http_realip_module                      \
     --with-http_flv_module                         \
     --with-http_gzip_static_module                 \
-    --with-cc-opt="-I${iprefix}/include"           \
-    --with-ld-opt="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    --with-cc-opt="-I${iprefix}/include -I/usr/local/include"           \
+    --with-ld-opt="-L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     --add-module=upstream \
     --http-client-body-temp-path=logs/client_body_temp   \
     --http-proxy-temp-path=logs/proxy_temp         \
     --http-fastcgi-temp-path=logs/fastcgi_temp       \
     --http-uwsgi-temp-path=logs/uwsgi_temp         \
     --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-else
-    env PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig   \
-    CC=cc CFLAGS="-m64 -O3"                        \
-    ./configure --prefix=${iprefix} --with-ipv6    \
-    --with-perl=${iprefix}/perl/bin                \
-    --with-http_ssl_module                         \
-    --with-http_stub_status_module                 \
-    --with-http_realip_module                      \
-    --with-http_flv_module                         \
-    --with-http_gzip_static_module                 \
-    --with-cc-opt="-I${iprefix}/include"          \
-    --with-ld-opt="-m64 -L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    --add-module=upstream \
-    --http-client-body-temp-path=logs/client_body_temp   \
-    --http-proxy-temp-path=logs/proxy_temp         \
-    --http-fastcgi-temp-path=logs/fastcgi_temp       \
-    --http-uwsgi-temp-path=logs/uwsgi_temp         \
-    --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-fi
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -4702,42 +4690,45 @@ echo "Info: Step 7 - Configuring FastRWeb configs ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 # set the sym links
-if [ -d ${iprefix}/R/lib64 ]; then
-    cd ${iprefix}/R/lib64/R/library/FastRWeb
-else
-    cd ${iprefix}/R/lib/R/library/FastRWeb
-fi
+if [ -d ${iprefix}/R ]; then
 
-if [ ! -d ${iprefix}/var/FastRWeb ]; then
-    if [ -f install.sh ]; then
-        ${iprefix}/perl/bin/perl -pi -e \
-         's/\=\/var\/FastRWeb/\=$ENV{iprefix}\/var\/FastRWeb/' \
-         install.sh code/start
-
-        ${iprefix}/perl/bin/perl -pi -e \
-         's/\s\/var\/FastRWeb/ $ENV{iprefix}\/var\/FastRWeb/' \
-          code/rserve.conf
-
-         ${iprefix}/perl/bin/perl -pi -e \
-         's/\"\/var\/FastRWeb/\"$ENV{iprefix}\/var\/FastRWeb/' code/rserve.R
-    
-        if [ ! -d ${iprefix}/var/FastRWeb ]; then
-            mkdir ${iprefix}/var/FastRWeb
-        fi
-        ./install.sh >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
-        if [ $? -ne 0 ]; then
-            echo "Error: cannot run FastRWeb install.sh !" |\
-              tee -a ${BUILD_PATH}/${BUILD_LOG}
-            rm /var/tmp/build.${module}
-            exit 3
-        else
-           step7=`expr $step7 + 1`
-        fi
+    if [ -d ${iprefix}/R/lib64 ]; then
+        cd ${iprefix}/R/lib64/R/library/FastRWeb
     else
-        echo "Error: cannot find install.sh FastRWeb !" |\
-          tee -a ${BUILD_PATH}/${BUILD_LOG}
-        exit 3
+        cd ${iprefix}/R/lib/R/library/FastRWeb
+    fi
+
+    if [ ! -d ${iprefix}/var/FastRWeb ]; then
+        if [ -f install.sh ]; then
+            ${iprefix}/perl/bin/perl -pi -e \
+             's/\=\/var\/FastRWeb/\=$ENV{iprefix}\/var\/FastRWeb/' \
+             install.sh code/start
+
+            ${iprefix}/perl/bin/perl -pi -e \
+             's/\s\/var\/FastRWeb/ $ENV{iprefix}\/var\/FastRWeb/' \
+              code/rserve.conf
+
+            ${iprefix}/perl/bin/perl -pi -e \
+             's/\"\/var\/FastRWeb/\"$ENV{iprefix}\/var\/FastRWeb/' code/rserve.R
+    
+            if [ ! -d ${iprefix}/var/FastRWeb ]; then
+                mkdir ${iprefix}/var/FastRWeb
+            fi
+            ./install.sh >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+            if [ $? -ne 0 ]; then
+                echo "Error: cannot run FastRWeb install.sh !" |\
+              tee -a ${BUILD_PATH}/${BUILD_LOG}
+                rm /var/tmp/build.${module}
+                exit 3
+            else
+               step7=`expr $step7 + 1`
+            fi
+        else
+            echo "Error: cannot find install.sh FastRWeb !" |\
+              tee -a ${BUILD_PATH}/${BUILD_LOG}
+            exit 3
+        fi
     fi
 fi
 
