@@ -37,7 +37,7 @@ Options:
 Modules:
    perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
    scripts, rep1, rep2, rep3, rep4, rep5, nginx, nginxfin
-   mariadb, pgsql, php, ngxfin
+   memcached, mariadb, pgsql, php, ngxfin
 
   eg, builder rec 0.73                            # build recording 0.73
       builder rep 0.71                            # build reporting 0.71
@@ -110,40 +110,21 @@ pdq_sem=0
 repfin_sem=0
 ranalysis_sem=0
 perltt_sem=0
+mcd_sem=0
+cache_mcd_fast_sem=0
 
-rep_idn_done=0
-rep_ssh2_done=0
-rep_perlssh2_done=0
-rep_curl_done=0
-rep_pkgc_done=0
-rep_pixm_done=0
-rep_libpng_done=0
-rep_libjpeg_done=0
-rep_freetype_done=0
-rep_fontconfig_done=0
-rep_cairo_done=0
-rep_ffi_done=0
-rep_harfbuzz_done=0
-rep_glib_done=0
-rep_pango_done=0
 rep_rrd_done=0
-rep_gett_done=0
-rep_ossl_done=0
+rep_mcd_done=0
+rep_cache_mcd_fast_done=0
 rep_perl_done=0
-rep_iconv_done=0
-rep_libxml2_done=0
 rep_perllxml_done=0
-rep_rdln_done=0
-rep_gd_done=0
 rep_perlmodules_done=0
 rep_perlnetdns_done=0
 rep_dbdpg_done=0
-rep_pcre_done=0
 rep_fcgi_done=0
 rep_fcgiw_done=0
 rep_ws_done=0
 rep_rsts_done=0
-rep_rcairo_done=0
 rep_rggplot2_done=0
 rep_pdq_done=0
 rep_wcurl_done=0
@@ -152,7 +133,6 @@ rep_tests_done=0
 rep_fin_done=0
 rep_rserve_done=0
 rep_ranalysis_done=0
-rep_perltt_done=0
 ##
 
 ## nginx
@@ -232,6 +212,8 @@ do
     m)
         module=$OPTARG
         case "$module" in
+
+            
             perl)
                 perl_sem=1
             ;;
@@ -304,10 +286,6 @@ do
                 rep6_sem=1
             ;;
 
-            tt)
-                perltt_sem=1
-            ;;
-
             nginx)
                 nginx_sem=1
             ;;
@@ -352,6 +330,13 @@ do
                 pgsql_sem=1
             ;;
 
+            memcached)
+                mcd_sem=1
+            ;;
+
+            cache_mcd_fast)
+                cache_mcd_fast_sem=1
+            ;;
             *)
                 echo "Not supported module!"
                 usage
@@ -713,7 +698,7 @@ case "$module" in
           -a "$lcrl_sem" -eq 0 -a "$lwcl_sem" -eq 0 \
           -a "$wrec_sem" -eq 0 -a "$nrec_sem" -eq 0 \
           -a "$recs_sem" -eq 0 -a "$test_sem" -eq 0 \
-          -a "$rec1_sem" -eq 0 ];then
+          -a "$rec1_sem" -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rec_perl
         build_rec_ossl
@@ -798,10 +783,10 @@ case "$module" in
     if [ "$rep1_sem" -eq 0 -a "$rep2_sem" -eq 0  \
           -a "$rep3_sem" -eq 0 -a "$rep4_sem" -eq 0 \
           -a "$rep5_sem" -eq 0 -a "$rep6_sem" -eq 0 \
-          -a "$jpeg_sem" -eq 0 -a "$fcgiwrap_sem" -eq 0 \
+          -a "$cache_mcd_fast_sem" -eq 0 -a "$fcgiwrap_sem" -eq 0 \
           -a "$rserve_sem" -eq 0 -a "$pdq_sem" -eq 0 \
           -a "$repfin_sem" -eq 0 -a "$ranalysis_sem" -eq 0 \
-          -a "$perltt_sem" -eq 0 -a "$nginx_sem" -eq 0 ]; then
+          -a "$mcd_sem" -eq 0 -a "$nginx_sem" -eq 0 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_perl
         build_rep_xmllibxml
@@ -811,6 +796,8 @@ case "$module" in
         build_rep_fcgiwrap
         build_rep_ws_scripts
         build_rep_rrd
+        build_rep_mcd
+        build_rep_cache_mcd_fast
         #build_rep_R
         #build_rep_rcairo
         #build_rep_rggplot2
@@ -890,17 +877,17 @@ case "$module" in
         build_rep_fcgiwrap
         build_rep_ws_scripts
 
-    elif [ "$perltt_sem" -eq 1 ]; then
+    elif [ "$mcd_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_perltt
+        build_rep_mcd
 
     elif [ "$fcgiwrap_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rep_fcgiwrap
 
-    elif [ "$jpeg_sem" -eq 1 ]; then
+    elif [ "$cache_mcd_fast_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_libjpeg
+        build_rep_cache_mcd_fast
 
     elif [ "$rserve_sem" -eq 1 ]; then
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
@@ -1093,111 +1080,111 @@ echo "# Compiler: ${COMPILER}"
 echo "# Built on: ${OS_NAME} ${KERNEL}"
 echo "# SDR Module: ${module}"
 echo "# Version: ${version}"
-echo "# Build Date: "$(date)"
+echo "# Build Date: `date`"
 
 case "$module" in
 
  rec)
 
-    if [ $perl_done -eq 1 ];then
+    if [ $perl_done -eq 1 ]; then
         echo "# PERL SUBSYSTEM: built and integrated"
     else
-        if [ $perl_done -eq 90 ];then
+        if [ $perl_done -eq 90 ]; then
             echo "# PERL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [ $ossl_done -eq 1 ];then
+    if [ $ossl_done -eq 1 ]; then
         echo "# OPENSSL SUBSYSTEM: built and integrated"
     else
-        if [ $ossl_done -eq 90 ];then
+        if [ $ossl_done -eq 90 ]; then
             echo "# OPENSSL SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [ $rec_ssh2_done -eq 1 ];then
+    if [ $rec_ssh2_done -eq 1 ]; then
         echo "# LIBSSH2 SUBSYSTEM: built and integrated"
     else
-        if [ $rec_ssh2_done -eq 90 ];then
+        if [ $rec_ssh2_done -eq 90 ]; then
             echo "# LIBSSH2 SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [ $rec_perlssh2_done -eq 1 ];then
+    if [ $rec_perlssh2_done -eq 1 ]; then
         echo "# Net::SSH2 SUBSYSTEM: built and integrated"
     else
-        if [ $rec_perlssh2_done -eq 90 ];then
+        if [ $rec_perlssh2_done -eq 90 ]; then
             echo "# Net::SSH2 SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [ $idn_done -eq 1 ];then
+    if [ $idn_done -eq 1 ]; then
         echo "# IDN SUBSYSTEM: built and integrated"
     else
-        if [ $idn_done -eq 90 ];then
+        if [ $idn_done -eq 90 ]; then
             echo "# IDN SUBSYSTEM: not integrated"
         fi
     fi
 
-    if [ $curl_done -eq 1 ];then
+    if [ $curl_done -eq 1 ]; then
         echo "# CURL SUBSYSTEM: built and integrated"
     else
-        if [ $curl_done -eq 90 ];then
+        if [ $curl_done -eq 90 ]; then
             echo "# CURL SUBSYSTEM: not integrated"
         fi
     fi
 
     if [ "$OS_NAME" = "Linux" ]; then
-        if [ $sysstat_done -eq 1 ];then
+        if [ $sysstat_done -eq 1 ]; then
             echo "# SYSSTAT SUBSYSTEM: built and integrated"
         else
-            if [ $sysstat_done -eq 90 ];then
+            if [ $sysstat_done -eq 90 ]; then
                 echo "# SYSSTAT SUBSYSTEM: not integrated"
             fi
         fi
     fi
 
-    if [ $wwwcurl_done -eq 1 ];then
+    if [ $wwwcurl_done -eq 1 ]; then
         echo "# WCURL SUBSYSTEM: built and integrated"
     else
-        if [ $wwwcurl_done -eq 90 ];then
+        if [ $wwwcurl_done -eq 90 ]; then
             echo "# WCURL SUBSYSTEM: not integrated"
         fi
     fi
 
 
     if [ "$OS_NAME" = "Linux" ]; then
-        if [ $nrec_done -eq 1 ];then
+        if [ $nrec_done -eq 1 ]; then
             echo "# NICREC SUBSYSTEM: built and integrated"
         else
-            if [ $nrec_done -eq 90 ];then
+            if [ $nrec_done -eq 90 ]; then
                 echo "# NICREC SUBSYSTEM: not integrated"
             fi
         fi
     fi
 
 
-    if [ $wrec_done -eq 1 ];then
+    if [ $wrec_done -eq 1 ]; then
         echo "# WEBREC SUBSYSTEM: built and integrated"
     else
-        if [ $wrec_done -eq 90 ];then
+        if [ $wrec_done -eq 90 ]; then
             echo "# WEBREC SUBSYSTEM: not integrated"
         fi
     fi
 
 
-    if [ $recs_done -eq 1 ];then
+    if [ $recs_done -eq 1 ]; then
         echo "# RECORDERS: built and integrated"
     else
-        if [ $recs_done -eq 90 ];then
+        if [ $recs_done -eq 90 ]; then
             echo "# RECORDERS: not integrated"
         fi
     fi
 
-    if [ $tests_done -eq 1 ];then
+    if [ $tests_done -eq 1 ]; then
         echo "# TESTS: ok"
     else
-        if [ $tests_done -eq 90 ];then
+        if [ $tests_done -eq 90 ]; then
             echo "# TESTS: failed"
         fi
     fi
@@ -1206,299 +1193,171 @@ case "$module" in
 
  rep)
 
-    if [ $rep_perl_done -eq 1 ];then
-        echo "# PERL SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_perl_done -eq 90 ];then
-            echo "# PERL SUBSYSTEM: not integrated"
+    if [ $rep_perl_done -ne 0 ]; then
+        if [ $rep_perl_done -eq 1 ]; then
+            echo "# perl: built and integrated"
+        else
+            if [ $rep_perl_done -eq 90 ]; then
+                echo "# perl: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_ossl_done -eq 1 ];then
-        echo "# OPENSSL SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_perl_done -eq 90 ];then
-            echo "# OPENSSL SUBSYSTEM: not integrated"
+    if [ $rep_perllxml_done -ne 0 ]; then
+        if [ $rep_perllxml_done -eq 1 ]; then
+            echo "# xml::libxml: built and integrated"
+        else
+            if [ $rep_perllxml_done -eq 90 ]; then
+                echo "# xml::libxml: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_gett_done -eq 1 ];then
-        echo "# GETTEXT SUBSYSTEM built and integrated"
-    else
-        if [ $rep_gett_done -eq 90 ];then
-            echo "# GETTEXT SUBSYSTEM not integrated"
+    if [ $rep_wcurl_done -ne 0 ]; then
+        if [ $rep_wcurl_done -eq 1 ]; then
+            echo "# wwwcurl: built and integrated"
+        else
+            if [ $rep_wcurl_done -eq 90 ]; then
+                echo "# wwwcurl: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_iconv_done -eq 1 ];then
-        echo "# ICONV SUBSYSTEM built and integrated"
-    else
-        if [ $rep_iconv_done -eq 90 ];then
-            echo "# ICONV SUBSYSTEM not integrated"
+    if [ $rep_dbdpg_done -ne 0 ]; then
+        if [ $rep_dbdpg_done -eq 1 ]; then
+            echo "# DBDPG: built and integrated"
+        else
+            if [ $rep_dbdpg_done -eq 90 ]; then
+                echo "# DBDPG: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_libxml2_done -eq 1 ];then
-        echo "# LIBXML2 SUBSYSTEM built and integrated"
-    else
-        if [ $rep_libxml2_done -eq 90 ];then
-            echo "# LIBXML2 SUBSYSTEM not integrated"
+    if [ $rep_fcgi_done -ne 0 ]; then
+        if [ $rep_fcgi_done -eq 1 ]; then
+            echo "# fastcgi: built and integrated"
+        else
+            if [ $rep_fcgi_done -eq 90 ]; then
+                echo "# fastcgi: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_perllxml_done -eq 1 ];then
-        echo "# XML::LIBXML SUBSYSTEM built and integrated"
-    else
-        if [ $rep_perllxml_done -eq 90 ];then
-            echo "# XML::LIBXML SUBSYSTEM not integrated"
+    if [ $rep_fcgiw_done -ne 0 ]; then
+        if [ $rep_fcgiw_done -eq 1 ]; then
+            echo "# fcgiw: built and integrated"
+        else
+            if [ $rep_fcgiw_done -eq 90 ]; then
+                echo "# fcgiw: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_rdln_done -eq 1 ];then
-        echo "# READLINE SUBSYSTEM built and integrated"
-    else
-        if [ $rep_rdln_done -eq 90 ];then
-            echo "# READLINE SUBSYSTEM not integrated"
+    if [ $rep_ws_done -ne 0 ]; then
+        if [ $rep_ws_done -eq 1 ]; then
+            echo "# nginx: built and integrated"
+        else
+            if [ $rep_ws_done -eq 90 ]; then
+                echo "# nginx: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_idn_done -eq 1 ];then
-        echo "# LIBIDN SUBSYSTEM built and integrated"
-    else
-        if [ $rep_idn_done -eq 90 ];then
-            echo "# LIBIDN SUBSYSTEM not integrated"
+    if [ $rep_wsscripts_done -ne 0 ]; then
+        if [ $rep_wsscripts_done -eq 1 ]; then
+            echo "# nginx boot: built and integrated"
+        else
+            if [ $rep_wsscripts_done -eq 90 ]; then
+                echo "# nginx boot: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_curl_done -eq 1 ];then
-        echo "# LIBCURL SUBSYSTEM built and integrated"
-    else
-        if [ $rep_curl_done -eq 90 ];then
-            echo "# LIBCURL SUBSYSTEM not integrated"
+    if [ $rep_rrd_done -ne 0 ]; then
+        if [ $rep_rrd_done -eq 1 ]; then
+            echo  "# rrdtool: built and integrated"
+        else
+            if [ $rep_rrd_done -eq 90 ]; then
+                echo  "# rrdtool: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_ssh2_done -eq 1 ];then
-        echo "# LIBSSH2 SUBSYSTEM built and integrated"
-    else
-        if [ $rep_ssh2_done -eq 90 ];then
-            echo "# LIBSSH2 SUBSYSTEM not integrated"
+    if [ $rep_mcd_done -ne 0 ]; then
+        if [ $rep_mcd_done -eq 1 ]; then
+            echo  "# memcached: built and integrated"
+        else
+            if [ $rep_mcd_done -eq 90 ]; then
+                echo  "# memcached: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_perlssh2_done -eq 1 ];then
-        echo "# Net::SSH2 SUBSYSTEM built and integrated"
-    else
-        if [ $rep_perlssh2_done -eq 90 ];then
-            echo "# Net::SSH2 SUBSYSTEM not integrated"
+    if [ $rep_cache_mcd_fast_done -ne 0 ]; then
+        if [ $rep_cache_mcd_fast_done -eq 1 ]; then
+            echo  "# perl cache-memcached-fast: built and integrated"
+        else
+            if [ $rep_cache_mcd_fast_done -eq 90 ]; then
+                echo  "# perl cache-memcached-fast: not integrated"
+            fi
         fi
     fi
 
-    if [ $rep_gd_done -eq 1 ];then
-        echo "# GD SUBSYSTEM built and integrated"
-    else
-        if [ $rep_gd_done -eq 90 ];then
-            echo "# GD SUBSYSTEM not integrated"
-        fi
-    fi
+    #if [ $rep_rsts_done -eq 1 ]; then
+    #    echo  "# R: built and integrated"
+    #else
+    #    if [ $rep_rsts_done -eq 90 ]; then
+    #        echo  "# R: not integrated"
+    #    fi
+    #fi
 
-    if [ $rep_perlmodules_done -eq 1 ];then
-        echo "# PERLMODS SUBSYSTEM built and integrated"
-    else
-        if [ $rep_perlmodules_done -eq 90 ];then
-            echo "# PERLMODS SUBSYSTEM not integrated"
-        fi
-    fi
+    #if [ $rep_rcairo_done -eq 1 ]; then
+    #    echo  "# R CAIRO: built and integrated"
+    #else
+    #    if [ $rep_rcairo_done -eq 90 ]; then
+    #        echo  "# R CAIRO: not integrated"
+    #    fi
+    #fi
 
-   if [ $rep_wcurl_done -eq 1 ];then
-        echo "# WWWCurl SUBSYSTEM built and integrated"
-    else
-        if [ $rep_wcurl_done -eq 90 ];then
-            echo "# WWWCurl SUBSYSTEM not integrated"
-        fi
-    fi
+    #if [ $rep_rggplot2_done -eq 1 ]; then
+    #    echo  "# R GGPLOT2: built and integrated"
+    #else
+    #    if [ $rep_rggplot2_done -eq 90 ]; then
+    #        echo  "# R GGPLOT2: not integrated"
+    #    fi
+    #fi
 
-    if [ $rep_dbdpg_done -eq 1 ];then
-        echo "# DBDPG SUBSYSTEM built and integrated"
-    else
-        if [ $rep_dbdpg_done -eq 90 ];then
-            echo "# DBDPG SUBSYSTEM not integrated"
-        fi
-    fi
+    #if [ $rep_rserve_done -eq 1 ]; then
+    #    echo  "# R Rserve: built and integrated"
+    #else
+    #    if [ $rep_rserve_done -eq 90 ]; then
+    #        echo  "# R RServe: not integrated"
+    #    fi
+    #fi
 
-    if [ $rep_pcre_done -eq 1 ];then
-        echo "# PCRE SUBSYSTEM built and integrated"
-    else
-        if [ $rep_pcre_done -eq 90 ];then
-            echo "# PCRE SUBSYSTEM not integrated"
-        fi
-    fi
+    #if [ $rep_ranalysis_done -eq 1 ]; then
+    #    echo  "# R PCA,TS: built and integrated"
+    #else
+    #    if [ $rep_analysis_done -eq 90 ]; then
+    #        echo  "# R PCA,TS: not integrated"
+    #    fi
+    #fi
 
-    if [ $rep_fcgi_done -eq 1 ];then
-        echo "# FCGI SUBSYSTEM built and integrated"
-    else
-        if [ $rep_fcgi_done -eq 90 ];then
-            echo "# FCGI SUBSYSTEM not integrated"
-        fi
-    fi
+    #if [ $rep_pdq_done -eq 1 ]; then
+    #    echo  "# PDQ: built and integrated"
+    #else
+    #    if [ $rep_pdq_done -eq 90 ]; then
+    #        echo  "# PDQ: not integrated"
+    #    fi
+    #fi
 
-    if [ $rep_fcgiw_done -eq 1 ];then
-        echo "# FCGIW SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_fcgiw_done -eq 90 ];then
-            echo "# FCGIW SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_ws_done -eq 1 ];then
-        echo "# NGINX SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_ws_done -eq 90 ];then
-            echo "# NGINX SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_wsscripts_done -eq 1 ];then
-        echo "# NGINX START SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_wsscripts_done -eq 90 ];then
-            echo "# NGINX START SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_pkgc_done -eq 1 ];then
-        echo "# PKGCONFIG SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_pkgc_done -eq 90 ];then
-            echo "# PKGCONFIG SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_pixm_done -eq 1 ];then
-        echo "# PIXMAN SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_pixm_done -eq 90 ];then
-            echo "# PIXMAN SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_libpng_done -eq 1 ];then
-        echo "# LIBPNG SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_libpnbg_done -eq 90 ];then
-            echo "# LIBPNG SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_libjpeg_done -eq 1 ];then
-        echo "# LIBJPEG SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_libjpeg_done -eq 90 ];then
-            echo "# LIBJPEG SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_harfbuzz_done -eq 1 ];then
-        echo "# HARFBUZZ SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_harfbuzz_done -eq 90 ];then
-            echo  "# HARFBUZZ SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_ffi_done -eq 1 ];then
-        echo  "# FFI SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_ffi_done -eq 90 ];then
-            echo  "# FFI SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_glib_done -eq 1 ];then
-        echo  "# GLIB SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_glib_done -eq 90 ];then
-            echo  "# GLIB SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_cairo_done -eq 1 ];then
-        echo  "# CAIRO SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_cairo_done -eq 90 ];then
-            echo  "# CAIRO SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_pango_done -eq 1 ];then
-        echo  "# PANGO SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_pango_done -eq 90 ];then
-            echo  "# PANGO SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_rrd_done -eq 1 ];then
-        echo  "# RRD SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_rrd_done -eq 90 ];then
-            echo  "# RRD SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_rsts_done -eq 1 ];then
-        echo  "# R SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_rsts_done -eq 90 ];then
-            echo  "# R SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_rcairo_done -eq 1 ];then
-        echo  "# R CAIRO SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_rcairo_done -eq 90 ];then
-            echo  "# R CAIRO SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_rggplot2_done -eq 1 ];then
-        echo  "# R GGPLOT2 SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_rggplot2_done -eq 90 ];then
-            echo  "# R GGPLOT2 SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_rserve_done -eq 1 ];then
-        echo  "# R Rserve SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_rserve_done -eq 90 ];then
-            echo  "# R RServe SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_ranalysis_done -eq 1 ];then
-        echo  "# R PCA,TS SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_analysis_done -eq 90 ];then
-            echo  "# R PCA,TS SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_pdq_done -eq 1 ];then
-        echo  "# PDQ SUBSYSTEM: built and integrated"
-    else
-        if [ $rep_pdq_done -eq 90 ];then
-            echo  "# PDQ SUBSYSTEM: not integrated"
-        fi
-    fi
-
-    if [ $rep_fin_done -eq 1] ;then
-        echo  "# FINALIZE: done"
-    else
-        if [ $rep_pdq_done -eq 90 ];then
-            echo  "# FINALIZE: not done"
+    if [ $rep_fin_done -ne 0 ]; then
+        if [ $rep_fin_done -eq 1 ]; then
+            echo  "# FINALIZE: done"
+        else
+            if [ $rep_fin_done -eq 90 ]; then
+                echo  "# FINALIZE: not done"
+            fi
         fi
     fi
 
