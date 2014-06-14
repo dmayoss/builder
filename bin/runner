@@ -20,7 +20,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.1
+# VERSION: 1.3
 
 ### Settings
 RRDSIZE=5       # RRD file in MB
@@ -39,10 +39,11 @@ TIMESTAMP=`date "+%Y-%m-%dT%H:%M:%S"`
 ### usage
 usage() {
 cat << END
-Usage: $0 testid iotype number
+Usage: $0 testid iotype blcksz number
 Options:
  testid : test id description
  iotype : seqr, seqw, rr, rw, rrw
+ blcksz : block size 4,8,16 KB
  number : number of hosts
 
 Note: Runner will use BUILDER_ROOT variable to find out its
@@ -116,7 +117,7 @@ else
 fi
 
 # input parameters
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 4 ]; then
   usage
 fi
 
@@ -128,7 +129,8 @@ rrw_sem=0
 
 TESTID=$1
 IOTYPE=$2
-NHOSTS=$3
+BLOCKSIZE=$3
+NHOSTS=$4
 
 IOSIZE=`expr $RRDSIZE \\* $RRDCOUNT`
 
