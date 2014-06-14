@@ -25,7 +25,6 @@
 ### Settings
 RRDSIZE=5       # RRD file in MB
 RRDCOUNT=5      # RRDs files, count per host per sec
-BLOCKSIZE=64k   # blocksize to read or write
 RUNTIME=900     # execution time
 
 
@@ -33,6 +32,7 @@ RUNTIME=900     # execution time
 TESTCASE=sdr_release_10
 HOSTNAME=`hostname`
 FIOBIN="/usr/local/bin/fio"
+VMSTATBIN="/usr/bin/vmstat"
 TIMESTAMP=`date "+%Y-%m-%dT%H:%M:%S"`
 
 
@@ -87,6 +87,12 @@ do
     c=`expr $c + 1`
 done
 
+}
+
+
+### execute vmstat
+execute_vmstat() {
+    ( $VMSTATBIN >> vmstat.${TESTID}.log 2>&1 & )
 }
 
 
@@ -203,6 +209,9 @@ done
 
 ### create fio
 create_fio
+
+### execute vmstat
+execute_vmstat
 
 ### execute fio
 execute_fio
