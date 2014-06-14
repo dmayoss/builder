@@ -92,7 +92,7 @@ done
 
 ### execute vmstat
 execute_vmstat() {
-    ( $VMSTATBIN >> vmstat.${TESTID}.log 2>&1 & )
+    ( $VMSTATBIN 5 >> vmstat.${TESTID}.log 2>&1 & )
 }
 
 
