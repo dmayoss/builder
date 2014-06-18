@@ -389,7 +389,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
+cp ${BUILDER_ROOT}/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN 
 
 ${iprefix}/perl/bin/perl -MCPAN -e 'install BSD::Sysctl' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
