@@ -1193,31 +1193,13 @@ fi
 # STEP 2
 cd ${archive_file%%.tar*}
 
-# copy the fair plugin
-cp -pr ../../upstream .
-
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
- env PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig   \
-     CC=cc CFLAGS="-O3"                             \
-    ./configure --prefix=${iprefix} --with-ipv6    \
-    --with-perl=${iprefix}/perl/bin                \
-    --with-http_ssl_module                         \
-    --with-http_stub_status_module                 \
-    --with-http_realip_module                      \
-    --with-http_flv_module                         \
-    --with-http_gzip_static_module                 \
-    --with-http_auth_request_module                \
-    --with-cc-opt="-I${iprefix}/include -I/usr/local/include"           \
-    --with-ld-opt="-L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib" \
-    --add-module=upstream \
-    --http-client-body-temp-path=logs/client_body_temp   \
-    --http-proxy-temp-path=logs/proxy_temp         \
-    --http-fastcgi-temp-path=logs/fastcgi_temp       \
-    --http-uwsgi-temp-path=logs/uwsgi_temp         \
-    --http-scgi-temp-path=logs/scgi_temp >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+ env PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig \
+     CC=cc ./configure --prefix=${iprefix} --with-luajit \
+     --with-cc=/usr/bin/cc >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -1232,7 +1214,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1248,7 +1230,7 @@ echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install gd failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1259,11 +1241,11 @@ else
 fi
 
 # final check; all 4 steps
-rep_ws_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $rep_ws_done -eq 4 ]; then
-   rep_ws_done=1
+rep_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_openresty_done -eq 4 ]; then
+   rep_openresty_done=1
 else
-   rep_ws_done=90
+   rep_openresty_done=90
 fi
 
 cd ..
