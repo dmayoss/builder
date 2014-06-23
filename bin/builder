@@ -795,6 +795,7 @@ case "$module" in
         build_rep_ws
         build_rep_fcgiwrap
         build_rep_ws_scripts
+        build_rep_openresty
         build_rep_rrd
         build_rep_mcd
         build_rep_cache_mcd_fast
