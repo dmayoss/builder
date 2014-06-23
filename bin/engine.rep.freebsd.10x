@@ -1091,7 +1091,6 @@ echo "Info: Step 2 - Configure $dir ..." |\
     --with-http_realip_module                      \
     --with-http_flv_module                         \
     --with-http_gzip_static_module                 \
-    --with-http_auth_request_module                \
     --with-cc-opt="-I${iprefix}/include -I/usr/local/include"           \
     --with-ld-opt="-L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib" \
     --add-module=upstream \
