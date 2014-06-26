@@ -1,0 +1,561 @@
+#/bin/sh
+#
+#  SDR Development tools, FreeBSD SDR Analytics Authentication engine
+#
+#  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+#  (http://www.gnu.org/copyleft/gpl.html)
+
+# VERSION: 1.1 
+
+# ############################################################### #
+# SDR Engine: Analytics AuthenticationFreeBSD                     #
+# ############################################################### #
+
+
+# ############################################################### #
+# extract_archive                                                 #
+# ############################################################### #
+extract_archive() {
+# $1 module name
+# $2 dir build
+
+modfile=$1
+bfile=$2
+
+# Debug
+# echo "module name: $modfile"
+# echo "archive dir: $bfile"
+
+if [ -d "$bfile" ]; then
+    echo "Info: Step 1 - Extracting $bfile ..." |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    echo "Warning: ${bfile} directory found, cleaning..." |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+    rm -rf ${bfile}
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot clean. Check ${modfile} , ${bfile}" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        exit 3
+    fi 
+    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+    echo "Info: Step 1 - Extracting $bfile ..." |\
+    tee -a ${BUILD_PATH}/${BUILD_LOG}
+    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
+
+}
+
+
+# ############################################################### #
+# Reporting: memcached Build Phase                                #
+# ############################################################### #
+build_rep_mcd() {
+dir=memcached
+step1=0
+step2=0
+step3=0
+step4=0
+
+cd $dir
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+# echo "Archive: $archive_file"
+# echo "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+    PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig  \
+    CC=cc CFLAGS="-O3 -I/usr/local/include -I${iprefix}/include" \
+    LDFLAGS="-L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib" \
+    ./configure --enable-64bit --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: configure $dir failed !" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 3
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi 
+
+
+# STEP 4
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+rep_mcd_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_mcd_done -eq 4 ]; then
+   rep_mcd_done=1
+else
+   rep_mcd_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
+# ############################################################### #
+# Reporting: OpenResty Build Phase                                #
+# ############################################################### #
+
+build_rep_openresty() {
+dir=openresty
+step1=0
+step2=0
+step3=0
+step4=0
+
+
+cd $dir
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+# echo "Archive: $archive_file"
+# echo "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Configure $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+ env PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig \
+     CC=cc ./configure --prefix=${iprefix} --with-luajit \
+     --with-cc=/usr/bin/cc >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Error: configure $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step2=1
+fi  
+
+# STEP 3
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 3 - Make $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make $dir failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step3=1
+fi 
+
+# STEP 4
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+
+gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make install gd failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step4=1
+fi
+
+# final check; all 4 steps
+rep_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $rep_openresty_done -eq 4 ]; then
+   rep_openresty_done=1
+else
+   rep_openresty_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi 
+cd ..
+
+}
+
+
+# ############################################################### #
+# Reporting: Scripts                                              #
+# ############################################################### #
+build_rep_ws_scripts() {
+
+dir=wsscripts
+step1=0
+step2=0
+
+
+cd $dir/${OS_NAME}
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $dir ${OS_NAME}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# STEP 1
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 1 - Installing nginx wrappers ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cp *nginx* htpasswd ${iprefix}/sbin
+if [ $? -ne 0 ]; then
+    echo "Error: cannot install nginx scripts !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step1=1
+fi
+
+
+# final check; all 2 steps
+rep_wsscripts_done=$step1
+if [ $rep_wsscripts_done -eq 1 ]; then
+   rep_wsscripts_done=1
+else
+   rep_wsscripts_done=90
+fi
+
+
+cd ../..
+
+}
+
+
+
+# ############################################################### #
+# Reporting: Finalize                                             #
+# ############################################################### #
+
+# hostadm, sdr conf
+# rrdcached dirs
+# docroot setup
+# FastWebR setup
+
+build_rep_fin() {
+
+dir=scripts
+step1=0
+step2=0
+step3=0
+step4=0
+step5=0
+step6=0
+step7=0
+
+# export iprefix
+export iprefix=${iprefix}
+
+
+cd $dir
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# STEP 1
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 1 - Installing hostadm ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cp hostadm ${iprefix}/bin
+if [ $? -ne 0 ]; then
+    echo "Error: cannot install hostadm script !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step1=1
+fi
+
+# STEP 2
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Installing sdr.conf ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+if [ ! -d ${iprefix}/etc ]; then
+    mkdir ${iprefix}/etc
+fi
+cp etc/sdr etc/init.sdr etc/*.xml ${iprefix}/etc
+if [ $? -ne 0 ]; then
+    echo "Error: cannot install etc scripts !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step2=1
+fi
+
+# STEP 3
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 3 - Installing docroot ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+if [ ! -d ${iprefix}/docroot ]; then
+
+    mkdir -p ${iprefix}/docroot
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot install db !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step3=1
+    fi
+fi
+
+# cd docroot
+# wksp=$(pwd)
+
+# cd ${iprefix}/docroot
+# tar xvf ${wksp}/content.tar >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+# cd ${wksp}
+# cd ..
+
+
+# STEP 4
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 4 - Installing db ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+for db in sys cpu nic disk net jvm web
+do
+    mkdir -p ${iprefix}/db/${db}
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot install db !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step4=`expr $step4 + 1`
+    fi
+done
+
+# there are 7 dbs to setup
+step4=`expr $step4 / 7`
+
+
+
+# STEP 5
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 5 - Installing rrdcached dirs ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# setup rrdcached
+if [ ! -d ${iprefix}/var/cache/rrdcached/journal ]; then
+    mkdir -p ${iprefix}/var/cache/rrdcached/journal
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot setup var rrdcached !" |\
+          tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step5=`expr $step5 + 1`
+    fi
+fi
+
+if [ ! -d ${iprefix}/var/log ]; then
+    mkdir ${iprefix}/var/log
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot setup var log !" |\
+          tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step5=`expr $step5 + 1`
+    fi
+fi
+
+if [ ! -d ${iprefix}/var/run ]; then
+    mkdir ${iprefix}/var/run
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot setup var run !" |\
+          tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step5=`expr $step5 + 1`
+    fi
+fi
+
+# there are 3 var dirs to setup
+step5=`expr $step5 / 3`
+
+
+# STEP 6
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 6 - Installing nginx configs ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+if [ -f ${iprefix}/conf/nginx.conf ]; then
+    cp ${iprefix}/conf/nginx.conf ${iprefix}/conf/nginx.conf.original
+fi
+
+cp etc/nginx.conf ${iprefix}/conf
+if [ $? -ne 0 ]; then
+    echo "Error: cannot setup nginx configs !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step6=`expr $step6 + 1`
+fi
+
+
+cp etc/htpasswd ${iprefix}/conf
+if [ $? -ne 0 ]; then
+    echo "Error: cannot setup nginx configs !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step6=`expr $step6 + 1`
+fi  
+
+
+# there are 2 configs
+step6=`expr $step6 / 2`
+
+
+# STEP 7
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 7 - Configuring FastRWeb configs ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+# set the sym links
+if [ -d ${iprefix}/R ]; then
+
+    if [ -d ${iprefix}/R/lib64 ]; then
+        cd ${iprefix}/R/lib64/R/library/FastRWeb
+    else
+        cd ${iprefix}/R/lib/R/library/FastRWeb
+    fi
+
+    if [ ! -d ${iprefix}/var/FastRWeb ]; then
+        if [ -f install.sh ]; then
+            ${iprefix}/perl/bin/perl -pi -e \
+             's/\=\/var\/FastRWeb/\=$ENV{iprefix}\/var\/FastRWeb/' \
+             install.sh code/start
+
+            ${iprefix}/perl/bin/perl -pi -e \
+             's/\s\/var\/FastRWeb/ $ENV{iprefix}\/var\/FastRWeb/' \
+              code/rserve.conf
+
+            ${iprefix}/perl/bin/perl -pi -e \
+             's/\"\/var\/FastRWeb/\"$ENV{iprefix}\/var\/FastRWeb/' code/rserve.R
+    
+            if [ ! -d ${iprefix}/var/FastRWeb ]; then
+                mkdir ${iprefix}/var/FastRWeb
+            fi
+            ./install.sh >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+
+            if [ $? -ne 0 ]; then
+                echo "Error: cannot run FastRWeb install.sh !" |\
+              tee -a ${BUILD_PATH}/${BUILD_LOG}
+                rm /var/tmp/build.${module}
+                exit 3
+            else
+               step7=`expr $step7 + 1`
+            fi
+        else
+            echo "Error: cannot find install.sh FastRWeb !" |\
+              tee -a ${BUILD_PATH}/${BUILD_LOG}
+            exit 3
+        fi
+    fi
+fi
+
+# final check; all 7 steps
+rep_fin_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6 + $step7`
+if [ "$rep_fin_done" -eq 7 ]; then
+   rep_fin_done=1
+else
+   rep_fin_done=90
+fi
+
+cd ..
+
+}
