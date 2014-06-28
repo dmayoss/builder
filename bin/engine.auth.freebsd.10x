@@ -1,6 +1,7 @@
 #/bin/sh
 #
-#  SDR Development tools, FreeBSD SDR Analytics Authentication engine
+#  SDR Development tools
+#  FreeBSD SDR Analytics Authentication engine
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
@@ -66,7 +67,7 @@ fi
 # ############################################################### #
 # Reporting: memcached Build Phase                                #
 # ############################################################### #
-build_rep_mcd() {
+build_auth_mcd() {
 dir=memcached
 step1=0
 step2=0
@@ -164,7 +165,7 @@ cd ..
 # Reporting: OpenResty Build Phase                                #
 # ############################################################### #
 
-build_rep_openresty() {
+build_auth_openresty() {
 dir=openresty
 step1=0
 step2=0
@@ -263,11 +264,10 @@ cd ..
 # ############################################################### #
 # Reporting: Scripts                                              #
 # ############################################################### #
-build_rep_ws_scripts() {
+build_auth_configs() {
 
-dir=wsscripts
+dir=configs
 step1=0
-step2=0
 
 
 cd $dir/${OS_NAME}
@@ -280,9 +280,9 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Installing nginx wrappers ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp *nginx* htpasswd ${iprefix}/sbin
+cp nginx.conf ${iprefix}/nginx/conf
 if [ $? -ne 0 ]; then
-    echo "Error: cannot install nginx scripts !" |\
+    echo "Error: cannot install nginx.conf script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
@@ -291,12 +291,12 @@ else
 fi
 
 
-# final check; all 2 steps
+# final check
 rep_wsscripts_done=$step1
-if [ $rep_wsscripts_done -eq 1 ]; then
-   rep_wsscripts_done=1
+if [ $auth_configs_done -eq 1 ]; then
+   auth_configs_done=1
 else
-   rep_wsscripts_done=90
+   auth_configs_done=90
 fi
 
 
@@ -310,10 +310,6 @@ cd ../..
 # Reporting: Finalize                                             #
 # ############################################################### #
 
-# hostadm, sdr conf
-# rrdcached dirs
-# docroot setup
-# FastWebR setup
 
 build_rep_fin() {
 
@@ -324,7 +320,6 @@ step3=0
 step4=0
 step5=0
 step6=0
-step7=0
 
 # export iprefix
 export iprefix=${iprefix}
@@ -499,54 +494,6 @@ fi
 # there are 2 configs
 step6=`expr $step6 / 2`
 
-
-# STEP 7
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 7 - Configuring FastRWeb configs ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-# set the sym links
-if [ -d ${iprefix}/R ]; then
-
-    if [ -d ${iprefix}/R/lib64 ]; then
-        cd ${iprefix}/R/lib64/R/library/FastRWeb
-    else
-        cd ${iprefix}/R/lib/R/library/FastRWeb
-    fi
-
-    if [ ! -d ${iprefix}/var/FastRWeb ]; then
-        if [ -f install.sh ]; then
-            ${iprefix}/perl/bin/perl -pi -e \
-             's/\=\/var\/FastRWeb/\=$ENV{iprefix}\/var\/FastRWeb/' \
-             install.sh code/start
-
-            ${iprefix}/perl/bin/perl -pi -e \
-             's/\s\/var\/FastRWeb/ $ENV{iprefix}\/var\/FastRWeb/' \
-              code/rserve.conf
-
-            ${iprefix}/perl/bin/perl -pi -e \
-             's/\"\/var\/FastRWeb/\"$ENV{iprefix}\/var\/FastRWeb/' code/rserve.R
-    
-            if [ ! -d ${iprefix}/var/FastRWeb ]; then
-                mkdir ${iprefix}/var/FastRWeb
-            fi
-            ./install.sh >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
-            if [ $? -ne 0 ]; then
-                echo "Error: cannot run FastRWeb install.sh !" |\
-              tee -a ${BUILD_PATH}/${BUILD_LOG}
-                rm /var/tmp/build.${module}
-                exit 3
-            else
-               step7=`expr $step7 + 1`
-            fi
-        else
-            echo "Error: cannot find install.sh FastRWeb !" |\
-              tee -a ${BUILD_PATH}/${BUILD_LOG}
-            exit 3
-        fi
-    fi
-fi
 
 # final check; all 7 steps
 rep_fin_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6 + $step7`
