@@ -315,6 +315,7 @@ build_auth_fin() {
 dir=scripts
 step1=0
 step2=0
+buildno=03
 
 # export iprefix
 export iprefix=${iprefix}
@@ -328,7 +329,7 @@ echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 # STEP 1
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 1 - Installing directory structure ..." |\
+echo "Info: Step 1 - Setting up directory structure ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 if [ ! -d ${iprefix}/etc ]; then
@@ -391,7 +392,7 @@ step1=`expr $step1 / 4`
 
 # STEP 2
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Installing hostadm ..." |\
+echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp sdr-auth ${iprefix}/etc
@@ -404,9 +405,26 @@ else
     step2=1
 fi
 
-# final check; all 2 steps
-auth_fin_done=`expr $step1 + $step2`
-if [ "$auth_fin_done" -eq 2 ]; then
+
+# STEP 3
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 3 - Creating sdranalytics-auth package ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cd ${iprefix}/../../..
+tar cvf /var/tmp/sdranalytics-auth-1.0.0b${buildno}-freebsd10.amd64 sdr
+bzip2 /var/tmp/sdranalytics-auth-1.0.0b${buildno}-freebsd10.amd64
+if [ $? -ne 0 ]; then
+    echo "Error: cannot create sdranalytics-auth package !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 3
+else
+    step3=1
+fi
+# final check; all 3 steps
+auth_fin_done=`expr $step1 + $step2 + $step3`
+if [ "$auth_fin_done" -eq 3 ]; then
    auth_fin_done=1
 else
    auth_fin_done=90
