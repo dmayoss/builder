@@ -98,7 +98,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+env PATH=${iprefix}/bin:$PATH \
     PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig  \
     CC=cc CFLAGS="-O3 -I/usr/local/include -I${iprefix}/include" \
     LDFLAGS="-L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib" \
@@ -141,11 +141,11 @@ fi
 
 
 # final check; all 4 steps
-rep_mcd_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $rep_mcd_done -eq 4 ]; then
-   rep_mcd_done=1
+auth_mcd_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $auth_mcd_done -eq 4 ]; then
+   auth_mcd_done=1
 else
-   rep_mcd_done=90
+   auth_mcd_done=90
 fi
 
 cd ..
@@ -241,11 +241,11 @@ else
 fi
 
 # final check; all 4 steps
-rep_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $rep_openresty_done -eq 4 ]; then
-   rep_openresty_done=1
+auth_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $auth_openresty_done -eq 4 ]; then
+   auth_openresty_done=1
 else
-   rep_openresty_done=90
+   auth_openresty_done=90
 fi
 
 cd ..
@@ -264,9 +264,9 @@ cd ..
 # ############################################################### #
 # Reporting: Scripts                                              #
 # ############################################################### #
-build_auth_configs() {
+build_auth_config() {
 
-dir=configs
+dir=config
 step1=0
 
 
@@ -292,13 +292,12 @@ fi
 
 
 # final check
-rep_wsscripts_done=$step1
-if [ $auth_configs_done -eq 1 ]; then
-   auth_configs_done=1
+auth_config_done=$step1
+if [ $auth_config_done -eq 1 ]; then
+   auth_config_done=1
 else
-   auth_configs_done=90
+   auth_config_done=90
 fi
-
 
 cd ../..
 
@@ -311,15 +310,11 @@ cd ../..
 # ############################################################### #
 
 
-build_rep_fin() {
+build_auth_fin() {
 
 dir=scripts
 step1=0
 step2=0
-step3=0
-step4=0
-step5=0
-step6=0
 
 # export iprefix
 export iprefix=${iprefix}
@@ -330,32 +325,78 @@ echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
+
 # STEP 1
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 1 - Installing hostadm ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-cp hostadm ${iprefix}/bin
-if [ $? -ne 0 ]; then
-    echo "Error: cannot install hostadm script !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step1=1
-fi
-
-# STEP 2
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Installing sdr.conf ..." |\
+echo "Info: Step 1 - Installing directory structure ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 if [ ! -d ${iprefix}/etc ]; then
     mkdir ${iprefix}/etc
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot configure etc directory !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step1=`expr $step1 + 1`
+    fi
 fi
-cp etc/sdr etc/init.sdr etc/*.xml ${iprefix}/etc
+
+
+if [ ! -d ${iprefix}/static ]; then
+    mkdir ${iprefix}/static
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot configure static directory !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step1=`expr $step1 + 1`
+    fi
+fi
+
+
+if [ ! -d ${iprefix}/app ]; then
+    mkdir ${iprefix}/app
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot configure app directory !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step1=`expr $step1 + 1`
+    fi
+fi
+
+
+if [ ! -d ${iprefix}/logs ]; then
+    mkdir ${iprefix}/logs
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot configure logs directory !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step1=`expr $step1 + 1`
+    fi
+
+    step1=`expr $step1 + 1`
+fi
+
+
+# there are 4 settings
+step1=`expr $step1 / 4`
+
+
+# STEP 2
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Installing hostadm ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cp sdr-auth ${iprefix}/etc
 if [ $? -ne 0 ]; then
-    echo "Error: cannot install etc scripts !" |\
+    echo "Error: cannot install sdr-auth script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
@@ -363,144 +404,12 @@ else
     step2=1
 fi
 
-# STEP 3
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 3 - Installing docroot ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-if [ ! -d ${iprefix}/docroot ]; then
-
-    mkdir -p ${iprefix}/docroot
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot install db !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step3=1
-    fi
-fi
-
-# cd docroot
-# wksp=$(pwd)
-
-# cd ${iprefix}/docroot
-# tar xvf ${wksp}/content.tar >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
-# cd ${wksp}
-# cd ..
-
-
-# STEP 4
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 4 - Installing db ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-for db in sys cpu nic disk net jvm web
-do
-    mkdir -p ${iprefix}/db/${db}
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot install db !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step4=`expr $step4 + 1`
-    fi
-done
-
-# there are 7 dbs to setup
-step4=`expr $step4 / 7`
-
-
-
-# STEP 5
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 5 - Installing rrdcached dirs ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-# setup rrdcached
-if [ ! -d ${iprefix}/var/cache/rrdcached/journal ]; then
-    mkdir -p ${iprefix}/var/cache/rrdcached/journal
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot setup var rrdcached !" |\
-          tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step5=`expr $step5 + 1`
-    fi
-fi
-
-if [ ! -d ${iprefix}/var/log ]; then
-    mkdir ${iprefix}/var/log
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot setup var log !" |\
-          tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step5=`expr $step5 + 1`
-    fi
-fi
-
-if [ ! -d ${iprefix}/var/run ]; then
-    mkdir ${iprefix}/var/run
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot setup var run !" |\
-          tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step5=`expr $step5 + 1`
-    fi
-fi
-
-# there are 3 var dirs to setup
-step5=`expr $step5 / 3`
-
-
-# STEP 6
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 6 - Installing nginx configs ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-if [ -f ${iprefix}/conf/nginx.conf ]; then
-    cp ${iprefix}/conf/nginx.conf ${iprefix}/conf/nginx.conf.original
-fi
-
-cp etc/nginx.conf ${iprefix}/conf
-if [ $? -ne 0 ]; then
-    echo "Error: cannot setup nginx configs !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
+# final check; all 2 steps
+auth_fin_done=`expr $step1 + $step2`
+if [ "$auth_fin_done" -eq 2 ]; then
+   auth_fin_done=1
 else
-    step6=`expr $step6 + 1`
-fi
-
-
-cp etc/htpasswd ${iprefix}/conf
-if [ $? -ne 0 ]; then
-    echo "Error: cannot setup nginx configs !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step6=`expr $step6 + 1`
-fi  
-
-
-# there are 2 configs
-step6=`expr $step6 / 2`
-
-
-# final check; all 7 steps
-rep_fin_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6 + $step7`
-if [ "$rep_fin_done" -eq 7 ]; then
-   rep_fin_done=1
-else
-   rep_fin_done=90
+   auth_fin_done=90
 fi
 
 cd ..
