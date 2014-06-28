@@ -25,7 +25,7 @@
 usage() {
 
 cat << END
-Usage: $0 [options] rec|rep|nginx version
+Usage: $0 [options] rec|analytics-auth|analytics-kernel|nginx version
 Options:
   -h help
   -d database: mariadb | pgsql
@@ -36,21 +36,14 @@ Options:
 
 Modules:
    perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
-   scripts, rep1, rep2, rep3, rep4, rep5, nginx, nginxfin
-   memcached, mariadb, pgsql, php, ngxfin
+   scripts, nginx, nginxfin memcached, mariadb, pgsql, php, 
+   ngxfin
 
   eg, builder rec 0.73                            # build recording 0.73
-      builder rep 0.71                            # build reporting 0.71
+      builder analytics-auth 0.71                 # build analytics auth 0.71
       builder nginx 0.8.54                        # build nginx 0.8.54
       builder -p /opt/www nginx 1.2.6             # build nginx 0.8.54
       builder -a -d mariadb nginx 1.4.5
-
-      rec 0.73  - SDR Recording package, legacy release
-      rec 0.74  - SDR Recording package, stable release
-      rec 0.75  - SDR Recording package, beta release
-      rep 0.75  - SDR Reporting package, beta release
-      nginx 1.2.6 - NGINX HTTP Server, legacy release
-      nginx 1.4.5 - NGINX HTTP Server, stable release
 
 Notes:
    Make sure you have defined WORKSPACE_BUILDER variable before running
@@ -135,6 +128,13 @@ rep_fin_done=0
 rep_rserve_done=0
 rep_ranalysis_done=0
 ##
+
+##auth
+auth_mcd_done=0
+auth_openresty_done=0
+auth_fin_done=0
+auth_config_done=0
+
 
 ## nginx
 nginxall_sem=0
@@ -596,6 +596,27 @@ case "$OS_NAME" in
              esac
          ;;
 
+
+         analytics-auth)
+
+             iprefix=${iprefix:-/opt/sdr/analytics/auth}
+             iuser=sdr
+             
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+
+             case "$version" in
+                 1.0*)
+                  . ${PWD}/engine.auth.freebsd.10x
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+
+
          rep)
 
              iprefix=${iprefix:-/opt/sdr/report}
@@ -777,6 +798,14 @@ case "$module" in
 
     fi
 
+ ;;
+
+ analytics-auth)
+    echo "" > ${BUILD_PATH}/${BUILD_LOG}
+    build_auth_openresty
+    build_auth_mcd
+    build_auth_config
+    build_auth_fin
  ;;
 
  rep)
@@ -1193,6 +1222,55 @@ case "$module" in
 
  ;;
 
+
+
+ analytics-auth)
+
+    if [ $auth_openresty_done -ne 0 ]; then
+        if [ $auth_openresty_done -eq 1 ]; then
+            echo "# openresty: built and integrated"
+        else
+            if [ $auth_openresty_done -eq 90 ]; then
+                echo "# openresty: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $auth_mcd_done -ne 0 ]; then
+        if [ $auth_mcd_done -eq 1 ]; then
+            echo  "# memcached: built and integrated"
+        else
+            if [ $auth_mcd_done -eq 90 ]; then
+                echo  "# memcached: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $auth_config_done -ne 0 ]; then
+        if [ $auth_config_done -eq 1 ]; then
+            echo  "# analytics-auth nginx.conf: done"
+        else
+            if [ $auth_config_done -eq 90 ]; then
+                echo  "# analytics-auth nginx.conf: not done"
+            fi
+        fi
+    fi
+
+    if [ $auth_fin_done -ne 0 ]; then
+        if [ $auth_fin_done -eq 1 ]; then
+            echo  "# FINALIZE: done"
+        else
+            if [ $auth_fin_done -eq 90 ]; then
+                echo  "# FINALIZE: not done"
+            fi
+        fi
+    fi
+
+ ;;
+
+
+
+
  rep)
 
     if [ $rep_perl_done -ne 0 ]; then
@@ -1314,54 +1392,6 @@ case "$module" in
             fi
         fi
     fi
-
-    #if [ $rep_rsts_done -eq 1 ]; then
-    #    echo  "# R: built and integrated"
-    #else
-    #    if [ $rep_rsts_done -eq 90 ]; then
-    #        echo  "# R: not integrated"
-    #    fi
-    #fi
-
-    #if [ $rep_rcairo_done -eq 1 ]; then
-    #    echo  "# R CAIRO: built and integrated"
-    #else
-    #    if [ $rep_rcairo_done -eq 90 ]; then
-    #        echo  "# R CAIRO: not integrated"
-    #    fi
-    #fi
-
-    #if [ $rep_rggplot2_done -eq 1 ]; then
-    #    echo  "# R GGPLOT2: built and integrated"
-    #else
-    #    if [ $rep_rggplot2_done -eq 90 ]; then
-    #        echo  "# R GGPLOT2: not integrated"
-    #    fi
-    #fi
-
-    #if [ $rep_rserve_done -eq 1 ]; then
-    #    echo  "# R Rserve: built and integrated"
-    #else
-    #    if [ $rep_rserve_done -eq 90 ]; then
-    #        echo  "# R RServe: not integrated"
-    #    fi
-    #fi
-
-    #if [ $rep_ranalysis_done -eq 1 ]; then
-    #    echo  "# R PCA,TS: built and integrated"
-    #else
-    #    if [ $rep_analysis_done -eq 90 ]; then
-    #        echo  "# R PCA,TS: not integrated"
-    #    fi
-    #fi
-
-    #if [ $rep_pdq_done -eq 1 ]; then
-    #    echo  "# PDQ: built and integrated"
-    #else
-    #    if [ $rep_pdq_done -eq 90 ]; then
-    #        echo  "# PDQ: not integrated"
-    #    fi
-    #fi
 
     if [ $rep_fin_done -ne 0 ]; then
         if [ $rep_fin_done -eq 1 ]; then
