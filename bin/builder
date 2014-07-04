@@ -28,6 +28,7 @@ cat << END
 Usage: $0 [options] rec|analytics-auth|analytics-kernel|nginx version
 Options:
   -h help
+  -b build_number
   -d database: mariadb | pgsql
   -a all: php, pecl, memcached, libmcrypt
   -p prefix
@@ -171,12 +172,16 @@ ngx_scripts_done=0
 PWD=`dirname $0`
 . ${PWD}/setenv
 
-while getopts ":ahm:p:d:t" arg
+while getopts ":ahm:p:d:b:t" arg
 do
     case "${arg}" in
 
     a)
         nginxall_sem=1
+    ;;
+
+    b)
+        build_num=$OPTARG
     ;;
 
     d)
@@ -197,7 +202,6 @@ do
             ;;
         esac
     ;;
-
 
     h)
         usage
