@@ -405,15 +405,6 @@ else
 fi
 
 
-# default maas appliace
-if [ ! -z "$appliance" ]; then
-    appliance="maas"
-else
-    usage
-fi
-
-
-
 # Status File
 STATFILE="build.${module}.${PT_NAME}.${HOSTNAME}"
 BUILD_LOG="${module}.${PT_NAME}.${HOSTNAME}.${version}.log"
@@ -641,6 +632,13 @@ case "$OS_NAME" in
 
          auth)
 
+             # default maas appliace
+             if [ ! -z "$appliance" ]; then
+                 appliance="maas"
+             else
+                 usage
+             fi
+      
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
              iuser=sdr
              
