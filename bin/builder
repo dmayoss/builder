@@ -739,17 +739,17 @@ echo ""
 echo "#################################################################"
 echo "# SDR Build Engine                                              #"
 echo "#################################################################"
-echo "# Start  : $(date)"
+echo "# Start: $(date)"
 if [ ! -z "$appliance" ]; then
-    echo "# Analytics Appliance  : $appliance"
+    echo "# Appliance: $appliance"
 fi
-echo "# Target : ${OS_NAME} ${PT_NAME}"
+echo "# Target: ${OS_NAME} ${PT_NAME}"
 if [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
-    echo "# Module : $module, mariadb, php"
+    echo "# Module: $module, mariadb, php"
 elif [ $nginxall_sem -eq 1 -a $pgsql_sem -eq 1 ]; then
-    echo "# Module : $module, pgsql, php"
+    echo "# Module: $module, pgsql, php"
 else
-    echo "# Module : $module"
+    echo "# Module: $module"
 fi
 echo "# Version: $version"
 echo "#################################################################"
@@ -1151,7 +1151,7 @@ echo "#################################################################"
 echo "# SUMMARY"
 echo "# Target:  ${OS_NAME} ${PT_NAME}"
 if [ ! -z "$appliance" ]; then
-    echo "# Analytics Appliance  : $appliance"
+    echo "# Appliance: $appliance"
 fi
 if [ ! -z "$COMPILER" ]; then
     echo "# Compiler: ${COMPILER}"
