@@ -20,17 +20,18 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.1
+# VERSION: 1.2
 
 usage() {
 
 cat << END
-Usage: $0 [options] rec|analytics-auth|analytics-kernel|nginx version
+Usage: $0 [options] -a appliance rec|auth|kernel|nginx version
 Options:
+  -a appliance type: maas, meteo, bio, env
   -h help
-  -b build_number
+  -b buildnumber
   -d database: mariadb | pgsql
-  -a all: php, pecl, memcached, libmcrypt
+  -A all: php, pecl, memcached, libmcrypt
   -p prefix
   -t test mode
   -m module
@@ -40,10 +41,11 @@ Modules:
    scripts, nginx, nginxfin memcached, mariadb, pgsql, php, 
    ngxfin
 
-  eg, builder rec 0.73                            # build recording 0.73
-      builder analytics-auth 0.71                 # build analytics auth 0.71
-      builder nginx 0.8.54                        # build nginx 0.8.54
-      builder -p /opt/www nginx 1.2.6             # build nginx 0.8.54
+  eg, builder rec 0.73                  # build recording 0.73
+      builder auth 1.0.0                # build analytics auth 1.0.0
+      builder kernel 1.0.0              # build analytics kernel 1.0.0
+      builder nginx 0.8.54              # build nginx 0.8.54
+      builder -p /opt/www nginx 1.2.6   # build nginx 0.8.54
       builder -a -d mariadb nginx 1.4.5
 
 Notes:
@@ -130,12 +132,19 @@ rep_rserve_done=0
 rep_ranalysis_done=0
 ##
 
+##appliance
+maas_sem=0
+meteo_sem=0
+bio_sem=0
+env_sem=0
+##
+
 ##auth
 auth_mcd_done=0
 auth_openresty_done=0
 auth_fin_done=0
 auth_config_done=0
-
+##
 
 ## nginx
 nginxall_sem=0
@@ -172,11 +181,29 @@ ngx_scripts_done=0
 PWD=`dirname $0`
 . ${PWD}/setenv
 
-while getopts ":ahm:p:d:b:t" arg
+while getopts ":a:b:d:m:p:Aht" arg
 do
     case "${arg}" in
 
     a)
+        appliance=$OPTARG
+
+        case "$appliance" in
+            maas)
+                maas_sem=1
+            ;;
+
+            meteo)
+                meteo_sem=1
+            ;;
+
+            *)
+                echo "Not supported appliance type!"
+                usage
+            ;;
+        esac
+    ;;
+    A)
         nginxall_sem=1
     ;;
 
@@ -374,6 +401,15 @@ if [ ! -z "$WORKSPACE_BUILDER" ]; then
 else
    usage
 fi
+
+
+# default maas appliace
+if [ ! -z "$appliance" ]; then
+    appliance="maas"
+else
+    usage
+fi
+
 
 
 # Status File
@@ -601,7 +637,7 @@ case "$OS_NAME" in
          ;;
 
 
-         analytics-auth)
+         auth)
 
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
              iuser=sdr
@@ -804,7 +840,7 @@ case "$module" in
 
  ;;
 
- analytics-auth)
+ auth)
     echo "" > ${BUILD_PATH}/${BUILD_LOG}
     build_auth_openresty
     build_auth_mcd
@@ -1227,8 +1263,7 @@ case "$module" in
  ;;
 
 
-
- analytics-auth)
+ auth)
 
     if [ $auth_openresty_done -ne 0 ]; then
         if [ $auth_openresty_done -eq 1 ]; then

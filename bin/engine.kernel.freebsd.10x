@@ -1,7 +1,7 @@
 #/bin/sh
 #
 #  SDR Development tools
-#  FreeBSD SDR Analytics Authentication engine
+#  FreeBSD SDR Analytics Kernel Eengine
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
@@ -24,7 +24,7 @@
 # VERSION: 1.1 
 
 # ############################################################### #
-# SDR Engine: Analytics AuthenticationFreeBSD                     #
+# SDR Engine: Analytics Kernel FreeBSD                            #
 # ############################################################### #
 
 
