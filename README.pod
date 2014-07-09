@@ -61,9 +61,14 @@ revision number. This file is used by fetcher.
 
 Building SDR software requires that you have a software
 
+=head3 MaaS Analytics Auth Package
+
+/opt/sdrbuilder/bin/builder -b4 -a maas auth 1.0.0
+
+
 =head1 FREE SOFTWARE LICENSE
 
-Copyright (c) 2013 SystemDataRecorder
+Copyright (c) 2014 SystemDataRecorder
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
