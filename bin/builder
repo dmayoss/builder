@@ -633,11 +633,10 @@ case "$OS_NAME" in
 
          auth)
 
-             # default maas appliace
+             # default maas appliance
              if [ -z "$appliance" ]; then
                  appliance="maas"
-             else
-                 usage
+                 maas_sem=1
              fi
       
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
