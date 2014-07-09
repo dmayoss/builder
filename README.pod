@@ -94,7 +94,7 @@ Building SDR software requires that you have a software
 
 =head3 MaaS Analytics Auth Package
 
-/opt/sdrbuilder/bin/builder -b4 -a maas auth 1.0.0
+/opt/sdrbuilder/bin/builder -b05 -a maas auth 1.0.0
 
 
 =head1 FREE SOFTWARE LICENSE
