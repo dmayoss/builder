@@ -283,7 +283,7 @@ echo "Info: Step 1 - Installing nginx wrappers ..." |\
 
 if [ $maas_sem -eq 1 ]; then
     cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
-elsif [ $meteo_sem -eq 1 ]; then
+elif [ $meteo_sem -eq 1 ]; then
     cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
 fi
 
@@ -410,7 +410,7 @@ echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
 
 if [ $maas_sem -eq 1 ]; then
     cp sdr-auth.maas ${iprefix}/etc/sdr-auth
-elsif [ $meteo_sem -eq 1 ]; then
+elif [ $meteo_sem -eq 1 ]; then
     cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
 fi
 
