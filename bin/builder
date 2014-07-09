@@ -26,7 +26,7 @@ usage() {
 
 cat << END
 Usage: $0 [-hA] [-b buildno] [-d db] [-m module] 
-          [-p prefix] -a appliance pkg version
+          [-p prefix] [-a appliance] pkg version
 Package:
    rec, auth, kernel, nginx
 
@@ -205,6 +205,7 @@ do
             ;;
         esac
     ;;
+
     A)
         nginxall_sem=1
     ;;
@@ -633,7 +634,7 @@ case "$OS_NAME" in
          auth)
 
              # default maas appliace
-             if [ ! -z "$appliance" ]; then
+             if [ -z "$appliance" ]; then
                  appliance="maas"
              else
                  usage
