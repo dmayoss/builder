@@ -5,9 +5,8 @@ Builder - SDR Development Tools
 =head1 CONTEXT
 
 These are the tools required to build, compile and package SDR 
-software. The package requires ksh93 and perl. You should
-have access to all SDR Builder libraries used by SDR, available 
-separately.
+software. The package requires perl. You should have access to all 
+SDR Builder libraries used by SDR, available separately.
 
 =head1 COMPONENTS
 
