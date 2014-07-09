@@ -19,14 +19,40 @@ script to be called.
 =head2 engine.rec.linux.version
 
 Linux Recording Engine - describes what software components will
+be unpacked and compiled for SDR Recording Linux package. 
+This handles 32 and 64bit platforms.
+
+=head2 engine.rec.solaris.version
+
+Solaris Recording Engine - describes what software components will
+be unpacked and compiled for SDR Recording Solaris package.
+This handles 64bit platforms only.
+
+=head2 engine.rec.freebsd.version
+
+FreeBSD Recording Engine - describes what software components will
+be unpacked and compiled for SDR Recording FreeBSD package.
+This handles 64bit platforms only.
+
+
+=head2 engine.auth.freebsd.version
+
+FreeBSD Analytics Auth Engine - describes what software components will
+be unpacked and compiled for SDR Analytics Authentication FreeBSD package. 
+This handles 32 and 64bit platforms.
+
+=head2 engine.kernel.freebsd.version
+
+FreeBSD Analytics Kernel Engine - describes what software components will
+be unpacked and compiled for SDR Analytics Kernel FreeBSD package. 
+This handles 32 and 64bit platforms.
+
+=head2 engine.rec.linux.version
+
+Linux Recording Engine - describes what software components will
 be unpacked and compiled for SDR Recording Linux module. 
 This handles 32 and 64bit platforms.
 
-=head2 engine.rep.linux.version
-
-Linux Reporting Engine - describes what software components will
-be unpacked and compiled for SDR Reporting Linux module. 
-This handles 32 and 64bit platforms.
 
 =head2 engine.rec.solaris.version
 
@@ -60,6 +86,12 @@ revision number. This file is used by fetcher.
 =head1 EXECUTION
 
 Building SDR software requires that you have a software
+
+
+=head3 Recording Linux Package
+
+/opt/sdrbuilder/bin/builder rec 1.0.0
+
 
 =head3 MaaS Analytics Auth Package
 
