@@ -25,24 +25,26 @@
 usage() {
 
 cat << END
-Usage: $0 [options] -a appliance rec|auth|kernel|nginx version
+Usage: $0 [-hA] [-b buildno] [-d db] [-m module] 
+          [-p prefix] -a appliance pkg version
+Package:
+   rec, auth, kernel, nginx
+
 Options:
   -a appliance type: maas, meteo, bio, env
   -h help
-  -b buildnumber
-  -d database: mariadb | pgsql
+  -b buildno
+  -d db: mariadb | pgsql
   -A all: php, pecl, memcached, libmcrypt
   -p prefix
   -t test mode
-  -m module
-
-Modules:
-   perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
-   scripts, nginx, nginxfin memcached, mariadb, pgsql, php, 
-   ngxfin
+  -m module: perl, openssl, idn, curl,  wcurl, sysstat, nrec, webrec
+             scripts, nginx, nginxfin memcached, mariadb, pgsql, php, 
+             ngxfin
 
   eg, builder rec 0.73                  # build recording 0.73
       builder auth 1.0.0                # build analytics auth 1.0.0
+      builder -a meteo auth 1.0.0       # build meteo analytics auth 1.0.0
       builder kernel 1.0.0              # build analytics kernel 1.0.0
       builder nginx 0.8.54              # build nginx 0.8.54
       builder -p /opt/www nginx 1.2.6   # build nginx 0.8.54
