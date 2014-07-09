@@ -740,6 +740,9 @@ echo "#################################################################"
 echo "# SDR Build Engine                                              #"
 echo "#################################################################"
 echo "# Start  : $(date)"
+if [ ! -z "$appliance" ]; then
+    echo "# Analytics Appliance  : $appliance"
+fi
 echo "# Target : ${OS_NAME} ${PT_NAME}"
 if [ $nginxall_sem -eq 1 -a $mariadb_sem -eq 1 ]; then
     echo "# Module : $module, mariadb, php"
@@ -1147,8 +1150,14 @@ esac
 echo "#################################################################"
 echo "# SUMMARY"
 echo "# Target:  ${OS_NAME} ${PT_NAME}"
-echo "# Compiler: ${COMPILER}"
+if [ ! -z "$appliance" ]; then
+    echo "# Analytics Appliance  : $appliance"
+fi
+if [ ! -z "$COMPILER" ]; then
+    echo "# Compiler: ${COMPILER}"
+fi
 echo "# Built on: ${OS_NAME} ${KERNEL}"
+echo "#################################################################"
 echo "# SDR Module: ${module}"
 echo "# Version: ${version}"
 echo "# Build Date: `date`"
