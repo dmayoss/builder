@@ -545,20 +545,22 @@ case "$OS_NAME" in
              esac
          ;;
 
-         rep)
+         auth)
 
-             iprefix=${iprefix:-/opt/sdr/report}
+             # default maas appliance
+             if [ -z "$appliance" ]; then
+                 appliance="maas"
+                 maas_sem=1
+             fi
+
+             iprefix=${iprefix:-/opt/sdr/analytics/auth}
              iuser=sdr
-             
+
              WORKSPACE="${WORKSPACE_BUILDER}/SDR"
 
              case "$version" in
-                 0.74*)
-                  . ${PWD}/engine.rep.linux.074
-                  ;;
-               
                  1.0*)
-                  . ${PWD}/engine.rep.linux.10x
+                  . ${PWD}/engine.auth.linux.10x
                   ;;
 
                  *)
@@ -566,7 +568,7 @@ case "$OS_NAME" in
                  ;;
              esac
          ;;
-         
+
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
@@ -656,25 +658,6 @@ case "$OS_NAME" in
          ;;
 
 
-
-         rep)
-
-             iprefix=${iprefix:-/opt/sdr/report}
-             iuser=sdr
-             
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
-
-             case "$version" in
-                 1.0*)
-                  . ${PWD}/engine.rep.freebsd.10x
-                  ;;
-
-                 *)
-                   usage
-                 ;;
-             esac
-         ;;
-         
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
