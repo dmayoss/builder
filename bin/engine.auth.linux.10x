@@ -24,7 +24,7 @@
 # VERSION: 1.2
 
 # ############################################################### #
-# SDR Engine: Analytics Authentication FreeBSD                    #
+# SDR Engine: Analytics Authentication Linux                      #
 # ############################################################### #
 
 
@@ -97,6 +97,7 @@ cd ${archive_file%%.tar*}
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
+
 if [ "$PT_NAME" = "armv6l" ]; then
     env PATH=${iprefix}/bin:$PATH \
     PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig  \
