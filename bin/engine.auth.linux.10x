@@ -438,11 +438,11 @@ echo "Info: Step 3 - Creating sdranalytics-auth package ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cd ${iprefix}/../../..
-tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar sdr
-if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar.bz2 ]; then
-    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar.bz2
+tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar sdr
+if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2 ]; then
+    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2
 fi
-bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar
+bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar
 if [ $? -ne 0 ]; then
     echo "Error: cannot create sdranalytics-auth package !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}

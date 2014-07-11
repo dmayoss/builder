@@ -20,9 +20,10 @@
 
 
 ### Platform and OS
-OS_NAME=`uname -s`
-PT_NAME=`uname -m`
+OS_NAME=`uname -s | tr '[A-Z]' '[a-z]'`
+PT_NAME=`uname -m | tr '[A-Z]' '[a-z]'`
 HOSTNAME=`uname -n`
+
 
 ### General settings
 BUILDER_ROOT=/opt/sdrbuilder
@@ -33,18 +34,18 @@ NGXAL_PERLBIN=/opt/www/perl/bin
 
 ### COMPILER & USER ID
 case "$OS_NAME" in
-    SunOS)
+    sunos)
         USER_ID=`/usr/xpg4/bin/id -u`
         KERNEL=`uname -sr`
     ;;
 
-    Linux)
+    linux)
         COMPILER=`gcc --version | head -1 | sed 's/(GCC) //'`
         KERNEL=`uname -r`
         USER_ID=`/usr/bin/id -u`
     ;;
 
-    FreeBSD)
+    freebsd)
         KERNEL=`uname -r`
         USER_ID=`/usr/bin/id -u`
     ;;
