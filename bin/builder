@@ -420,7 +420,7 @@ fi
 
 
 case "$OS_NAME" in
-    SunOS)
+    sunos)
          
 	# source here the engine for Solaris
         case "$module" in
@@ -511,7 +511,7 @@ case "$OS_NAME" in
         esac
     ;;
 
-    Linux)
+    linux)
 
         case "$module" in
          rec)
@@ -611,7 +611,7 @@ case "$OS_NAME" in
     ;;
 
 
-    FreeBSD)
+    freebsd)
 
         case "$module" in
          rec)
