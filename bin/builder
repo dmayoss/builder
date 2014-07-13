@@ -148,6 +148,20 @@ auth_fin_done=0
 auth_config_done=0
 ##
 
+##kernel
+kernel_openresty_done=0
+kernel_luarocks_done=0
+kernel_lapis_done=0
+kernel_etlua_done=0
+kernel_loadkit_done=0
+kernel_luafilesystem_done=0
+kernel_rrdtool_done=0
+kernel_redis_done=0
+kernel_fin_done=0
+kernel_config_done=0
+##
+
+
 ## nginx
 nginxall_sem=0
 nginxfin_sem=0
@@ -659,6 +673,31 @@ case "$OS_NAME" in
          ;;
 
 
+         kernel)
+
+             # default maas appliance
+             if [ -z "$appliance" ]; then
+                 appliance="maas"
+                 maas_sem=1
+             fi
+      
+             iprefix=${iprefix:-/opt/sdr/analytics/kernel}
+             iuser=sdr
+             
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+
+             case "$version" in
+                 1.0*)
+                  . ${PWD}/engine.kernel.freebsd.10x
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
+
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
@@ -827,6 +866,7 @@ case "$module" in
 
  ;;
 
+
  auth)
     echo "" > ${BUILD_PATH}/${BUILD_LOG}
     build_auth_openresty
@@ -834,6 +874,22 @@ case "$module" in
     build_auth_config
     build_auth_fin
  ;;
+
+
+ kernel)
+    echo "" > ${BUILD_PATH}/${BUILD_LOG}
+    build_kernel_openresty
+    build_kernel_luarocks
+    build_kernel_etlua
+    build_kernel_loadkit
+    build_kernel_luafilesystem
+    build_kernel_lapis
+    build_kernel_rrdtool
+    build_kernel_redis
+    build_kernel_config
+    build_kernel_fin
+ ;;
+
 
  rep)
 
