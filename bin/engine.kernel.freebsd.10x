@@ -1,7 +1,7 @@
 #/bin/sh
 #
 #  SDR Development tools
-#  FreeBSD SDR Analytics Authentication Engine
+#  FreeBSD SDR Analytics Kernel Engine
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
@@ -24,7 +24,7 @@
 # VERSION: 1.2
 
 # ############################################################### #
-# SDR Engine: Analytics Authentication FreeBSD                    #
+# SDR Engine: Analytics Kernel FreeBSD                            #
 # ############################################################### #
 
 
@@ -67,7 +67,7 @@ fi
 # ############################################################### #
 # Reporting: memcached Build Phase                                #
 # ############################################################### #
-build_auth_mcd() {
+build_kernel_mcd() {
 dir=memcached
 step1=0
 step2=0
@@ -141,11 +141,11 @@ fi
 
 
 # final check; all 4 steps
-auth_mcd_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $auth_mcd_done -eq 4 ]; then
-   auth_mcd_done=1
+kernel_mcd_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $kernel_mcd_done -eq 4 ]; then
+   kernel_mcd_done=1
 else
-   auth_mcd_done=90
+   kernel_mcd_done=90
 fi
 
 cd ..
@@ -165,7 +165,7 @@ cd ..
 # Reporting: OpenResty Build Phase                                #
 # ############################################################### #
 
-build_auth_openresty() {
+build_kernel_openresty() {
 dir=openresty
 step1=0
 step2=0
@@ -241,11 +241,11 @@ else
 fi
 
 # final check; all 4 steps
-auth_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $auth_openresty_done -eq 4 ]; then
-   auth_openresty_done=1
+kernel_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $kernel_openresty_done -eq 4 ]; then
+   kernel_openresty_done=1
 else
-   auth_openresty_done=90
+   kernel_openresty_done=90
 fi
 
 cd ..
@@ -264,7 +264,7 @@ cd ..
 # ############################################################### #
 # Reporting: Scripts                                              #
 # ############################################################### #
-build_auth_config() {
+build_kernel_config() {
 
 dir=config
 step1=0
@@ -298,11 +298,11 @@ fi
 
 
 # final check
-auth_config_done=$step1
-if [ $auth_config_done -eq 1 ]; then
-   auth_config_done=1
+kernel_config_done=$step1
+if [ $kernel_config_done -eq 1 ]; then
+   kernel_config_done=1
 else
-   auth_config_done=90
+   kernel_config_done=90
 fi
 
 cd ../..
@@ -316,7 +316,7 @@ cd ../..
 # ############################################################### #
 
 
-build_auth_fin() {
+build_kernel_fin() {
 
 dir=scripts
 step1=0
@@ -405,17 +405,17 @@ step1=`expr $step1 / 4`
 
 # STEP 2
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
+echo "Info: Step 2 - Installing sdr-kernel startup script ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 if [ $maas_sem -eq 1 ]; then
-    cp sdr-auth.maas ${iprefix}/etc/sdr-auth
+    cp sdr-kernel.maas ${iprefix}/etc/sdr-kernel
 elif [ $meteo_sem -eq 1 ]; then
-    cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
+    cp sdr-kernel.rbpi ${iprefix}/etc/sdr-kernel
 fi
 
 if [ $? -ne 0 ]; then
-    echo "Error: cannot install sdr-auth script !" |\
+    echo "Error: cannot install sdr-kernel script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
@@ -426,17 +426,17 @@ fi
 
 # STEP 3
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 3 - Creating sdranalytics-auth package ..." |\
+echo "Info: Step 3 - Creating sdranalytics-kernel package ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cd ${iprefix}/../../..
-tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar sdr
-if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2 ]; then
-    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2
+tar cf /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar sdr
+if [ -f /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2 ]; then
+    rm /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2
 fi
-bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar
+bzip2 /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar
 if [ $? -ne 0 ]; then
-    echo "Error: cannot create sdranalytics-auth package !" |\
+    echo "Error: cannot create sdranalytics-kernel package !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
@@ -444,11 +444,11 @@ else
     step3=1
 fi
 # final check; all 3 steps
-auth_fin_done=`expr $step1 + $step2 + $step3`
-if [ "$auth_fin_done" -eq 3 ]; then
-   auth_fin_done=1
+kernel_fin_done=`expr $step1 + $step2 + $step3`
+if [ "$kernel_fin_done" -eq 3 ]; then
+   kernel_fin_done=1
 else
-   auth_fin_done=90
+   kernel_fin_done=90
 fi
 
 cd ..
