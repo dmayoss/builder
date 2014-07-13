@@ -1,7 +1,7 @@
 #/bin/sh
 #
 #  SDR Development tools
-#  FreeBSD SDR Analytics Kernel Eengine
+#  FreeBSD SDR Analytics Authentication Engine
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
@@ -21,10 +21,10 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.1 
+# VERSION: 1.2
 
 # ############################################################### #
-# SDR Engine: Analytics Kernel FreeBSD                            #
+# SDR Engine: Analytics Authentication FreeBSD                    #
 # ############################################################### #
 
 
@@ -269,8 +269,9 @@ build_auth_config() {
 dir=config
 step1=0
 
-
+## change OS name directory
 cd $dir/${OS_NAME}
+
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir ${OS_NAME}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -280,12 +281,17 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Installing nginx wrappers ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp nginx.conf ${iprefix}/nginx/conf
+if [ $maas_sem -eq 1 ]; then
+    cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
+elif [ $meteo_sem -eq 1 ]; then
+    cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
+fi
+
 if [ $? -ne 0 ]; then
     echo "Error: cannot install nginx.conf script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
+     rm /var/tmp/build.${module}
+     exit 3
 else
     step1=1
 fi
@@ -402,7 +408,12 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp sdr-auth ${iprefix}/etc
+if [ $maas_sem -eq 1 ]; then
+    cp sdr-auth.maas ${iprefix}/etc/sdr-auth
+elif [ $meteo_sem -eq 1 ]; then
+    cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
+fi
+
 if [ $? -ne 0 ]; then
     echo "Error: cannot install sdr-auth script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -419,11 +430,11 @@ echo "Info: Step 3 - Creating sdranalytics-auth package ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cd ${iprefix}/../../..
-tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar sdr
-if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar.bz2 ]; then
-    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar.bz2
+tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar sdr
+if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2 ]; then
+    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2
 fi
-bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-freebsd10.amd64.tar
+bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar
 if [ $? -ne 0 ]; then
     echo "Error: cannot create sdranalytics-auth package !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
