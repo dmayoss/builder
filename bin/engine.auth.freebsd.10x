@@ -334,7 +334,7 @@ fi
 
 
 
-cd $dir
+cd $dir/${OS_NAME}
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
