@@ -318,7 +318,7 @@ cd ../..
 
 build_auth_fin() {
 
-dir=scripts
+dir=etc
 step1=0
 step2=0
 sdrver=$version
