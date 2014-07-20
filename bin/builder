@@ -150,11 +150,7 @@ auth_config_done=0
 
 ##kernel
 kernel_openresty_done=0
-kernel_luarocks_done=0
-kernel_lapis_done=0
-kernel_etlua_done=0
-kernel_loadkit_done=0
-kernel_luafilesystem_done=0
+kernel_libluafs_done=0
 kernel_rrdtool_done=0
 kernel_redis_done=0
 kernel_fin_done=0
@@ -879,13 +875,9 @@ case "$module" in
  kernel)
     echo "" > ${BUILD_PATH}/${BUILD_LOG}
     build_kernel_openresty
-    build_kernel_luarocks
-    build_kernel_etlua
-    build_kernel_loadkit
-    build_kernel_luafilesystem
-    build_kernel_lapis
-    build_kernel_rrdtool
-    build_kernel_redis
+    build_kernel_libluafs
+    #build_kernel_rrdtool
+    #build_kernel_redis
     build_kernel_config
     build_kernel_fin
  ;;
@@ -1357,6 +1349,49 @@ case "$module" in
  ;;
 
 
+ kernel)
+
+    if [ $kernel_openresty_done -ne 0 ]; then
+        if [ $kernel_openresty_done -eq 1 ]; then
+            echo "# openresty: built and integrated"
+        else
+            if [ $kernel_openresty_done -eq 90 ]; then
+                echo "# openresty: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $kernel_libluafs_done -ne 0 ]; then
+        if [ $kernel_libluafs_done -eq 1 ]; then
+            echo  "# lib luafilesystem: built and integrated"
+        else
+            if [ $kernel_libluafs_done -eq 90 ]; then
+                echo  "# lib luafilesystem: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $kernel_config_done -ne 0 ]; then
+        if [ $kernel_config_done -eq 1 ]; then
+            echo  "# analytics-kernel nginx.conf: done"
+        else
+            if [ $kernel_config_done -eq 90 ]; then
+                echo  "# analytics-kernel nginx.conf: not done"
+            fi
+        fi
+    fi
+
+    if [ $kernel_fin_done -ne 0 ]; then
+        if [ $kernel_fin_done -eq 1 ]; then
+            echo  "# FINALIZE: done"
+        else
+            if [ $kernel_fin_done -eq 90 ]; then
+                echo  "# FINALIZE: not done"
+            fi
+        fi
+    fi
+
+ ;;
 
 
  rep)

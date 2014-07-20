@@ -300,7 +300,7 @@ cd ../..
 
 build_kernel_fin() {
 
-dir=scripts
+dir=etc
 step1=0
 step2=0
 sdrver=$version
@@ -314,9 +314,8 @@ else
    buildno=0
 fi
 
+cd $dir/${OS_NAME}
 
-
-cd $dir
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
