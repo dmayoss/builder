@@ -270,45 +270,31 @@ if [ $? -eq 0 ]; then
 fi
 
 # STEP 2
-cd ${archive_file%%.tar*}
+cd ${archive_file%%.tar*}/lib/resty
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Configure $dir ..." |\
+echo "Info: Step 2 - Install template.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+cp template.lua ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
-    echo "Error: make $dir failed !" |\
+    echo "Error: cannot install template.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
+     rm /var/tmp/build.${module}
+     exit 3
 else
     step2=1
-fi  
+fi
 
-# STEP 3
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 3 - Make $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: make install $dir failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step3=1
-fi 
-
-# final check; all 3 steps
-kernel_libluatemplate_done=`expr $step1 + $step2 + $step3`
+# final check; all 2 steps
+kernel_libluatemplate_done=`expr $step1 + $step2`
 if [ $kernel_libluatemplate_done -eq 3 ]; then
    kernel_libluatemplate_done=1
 else
    kernel_libluatemplate_done=90
 fi
 
-cd ..
+cd ../../..
 rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: cleaning up $dirarchive !" |\
