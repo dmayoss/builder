@@ -167,13 +167,11 @@ cd ..
 # ############################################################### #
 # Kernel: luafilesystem lib                                       #
 # ############################################################### #
-
 build_kernel_luafs() {
 dir="lib/luafilesystem"
 step1=0
 step2=0
 step3=0
-step4=0
 
 
 cd $dir
@@ -200,12 +198,6 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
- gmake clean >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
-
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 3 - Make $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
 gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
@@ -214,31 +206,28 @@ if [ $? -ne 0 ]; then
     exit 3
 else
     step2=1
-fi 
+fi  
 
-
-# STEP 4
+# STEP 3
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 4 - Make install $dir..." |\
+echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-
 gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
-    echo "Error: make install gd failed !" |\
+    echo "Error: make install $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
 else
-    step4=1
-fi
+    step3=1
+fi 
 
-# final check; all 4 steps
-kernel_openresty_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $kernel_openresty_done -eq 4 ]; then
-   kernel_openresty_done=1
+# final check; all 3 steps
+kernel_libluafs_done=`expr $step1 + $step2 + $step3`
+if [ $kernel_libluafs_done -eq 3 ]; then
+   kernel_libluafs_done=1
 else
-   kernel_openresty_done=90
+   kernel_libluafs_done=90
 fi
 
 cd ..
@@ -249,74 +238,10 @@ if [ $? -ne 0 ]; then
     rm /var/tmp/build.${module}
     exit 5
 fi 
-cd ..
-
-}
-
-
-# ############################################################### #
-# Kernel: luafilesystem                                           #
-# ############################################################### #
-build_kernel_luafs() {
-
-dir="lib/luafilesystem"
-step1=0
-
-## change OS name directory
-cd $dir
-
-echo "############################################################"
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-archive_file=`ls *.tar.gz`
-# Debug
-# echo "Archive: $archive_file"
-# echo "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
-# STEP 1
-extract_archive "$dir" "$dirarchive"
-if [ $? -eq 0 ]; then
-    step1=1
-fi
-
-# STEP 2
-cd ${archive_file%%.tar*}
-
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Configure $dir ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-
-
-if [ $maas_sem -eq 1 ]; then
-    cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
-elif [ $meteo_sem -eq 1 ]; then
-    cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
-fi
-
-if [ $? -ne 0 ]; then
-    echo "Error: cannot install nginx.conf script !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-     rm /var/tmp/build.${module}
-     exit 3
-else
-    step1=1
-fi
-
-
-# final check
-kernel_config_done=$step1
-if [ $kernel_config_done -eq 1 ]; then
-   kernel_config_done=1
-else
-   kernel_config_done=90
-fi
-
 cd ../..
-
 }
+
+
 
 # ############################################################### #
 # Reporting: Scripts                                              #
