@@ -167,7 +167,7 @@ cd ..
 # ############################################################### #
 # Kernel: luafilesystem lib                                       #
 # ############################################################### #
-build_kernel_luafs() {
+build_kernel_libluafs() {
 dir="lib/luafilesystem"
 step1=0
 step2=0
