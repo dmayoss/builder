@@ -144,6 +144,8 @@ env_sem=0
 ##auth
 auth_mcd_done=0
 auth_openresty_done=0
+auth_libluatemplate_done=0
+auth_libluarouter_done=0
 auth_fin_done=0
 auth_config_done=0
 ##
@@ -869,6 +871,8 @@ case "$module" in
  auth)
     echo "" > ${BUILD_PATH}/${BUILD_LOG}
     build_auth_openresty
+    build_auth_libluatemplate
+    build_auth_libluarouter
     build_auth_mcd
     build_auth_config
     build_auth_fin
@@ -1318,6 +1322,26 @@ case "$module" in
         else
             if [ $auth_openresty_done -eq 90 ]; then
                 echo "# openresty: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $auth_libluatemplate_done -ne 0 ]; then
+        if [ $auth_libluatemplate_done -eq 1 ]; then
+            echo  "# lib lua-resty-template: built and integrated"
+        else
+            if [ $auth_libluatemplate_done -eq 90 ]; then
+                echo  "# lib lua-resty-template: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $auth_libluarouter_done -ne 0 ]; then
+        if [ $auth_libluarouter_done -eq 1 ]; then
+            echo  "# lib router.lua: built and integrated"
+        else
+            if [ $auth_libluarouter_done -eq 90 ]; then
+                echo  "# lib router.lua: not integrated"
             fi
         fi
     fi

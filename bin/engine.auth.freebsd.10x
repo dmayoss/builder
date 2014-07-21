@@ -262,7 +262,134 @@ cd ..
 
 
 # ############################################################### #
-# Reporting: Scripts                                              #
+# Auth: lib lua-resty-template                                    #
+# ############################################################### #
+build_auth_libluatemplate() {
+dir="lib/lua-resty-template"
+step1=0
+step2=0
+step3=0
+
+
+cd $dir
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+# echo "Archive: $archive_file"
+# echo "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}/lib/resty
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Install template.lua ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cp template.lua ${iprefix}/lualib/resty
+if [ $? -ne 0 ]; then
+    echo "Error: cannot install template.lua script !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+     rm /var/tmp/build.${module}
+     exit 3
+else
+    step2=1
+fi
+
+# final check; all 2 steps
+auth_libluatemplate_done=`expr $step1 + $step2`
+if [ $auth_libluatemplate_done -eq 2 ]; then
+   auth_libluatemplate_done=1
+else
+   auth_libluatemplate_done=90
+fi
+
+cd ../../..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi 
+cd ../..
+}
+
+
+# ############################################################### #
+# Auth: lib router.lua                                            #
+# ############################################################### #
+build_auth_libluarouter() {
+dir="lib/router.lua"
+step1=0
+step2=0
+
+
+cd $dir
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+# echo "Archive: $archive_file"
+# echo "Dir: ${archive_file%%.tar*}"
+
+dirarchive=${archive_file%%.tar*}
+
+# STEP 1
+extract_archive "$dir" "$dirarchive"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+cd ${archive_file%%.tar*}
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Install router.lua ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cp router.lua ${iprefix}/lualib/resty
+if [ $? -ne 0 ]; then
+    echo "Error: cannot install router.lua script !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+     rm /var/tmp/build.${module}
+     exit 3
+else
+    step2=1
+fi
+
+# final check; all 2 steps
+auth_libluarouter_done=`expr $step1 + $step2`
+if [ $auth_libluarouter_done -eq 2 ]; then
+   auth_libluarouter_done=1
+else
+   auth_libluarouter_done=90
+fi
+
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi 
+cd ../..
+}
+
+
+# ############################################################### #
+# Auth: Scripts                                                   #
 # ############################################################### #
 build_auth_config() {
 
@@ -310,12 +437,9 @@ cd ../..
 }
 
 
-
 # ############################################################### #
-# Reporting: Finalize                                             #
+# Auth: Finalize                                                  #
 # ############################################################### #
-
-
 build_auth_fin() {
 
 dir=etc
@@ -454,3 +578,4 @@ fi
 cd ..
 
 }
+
