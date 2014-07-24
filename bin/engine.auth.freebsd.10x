@@ -65,7 +65,7 @@ fi
 
 
 # ############################################################### #
-# Reporting: memcached Build Phase                                #
+# Auth: memcached Build Phase                                     #
 # ############################################################### #
 build_auth_mcd() {
 dir=memcached
@@ -162,7 +162,7 @@ cd ..
 
 
 # ############################################################### #
-# Reporting: OpenResty Build Phase                                #
+# Auth: OpenResty Build Phase                                     #
 # ############################################################### #
 
 build_auth_openresty() {
@@ -455,8 +455,6 @@ if [ ! -z "$build_num" ]; then
 else
    buildno=0
 fi
-
-
 
 cd $dir/${OS_NAME}
 echo "############################################################"
