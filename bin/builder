@@ -31,7 +31,7 @@ Package:
    rec, auth, kernel, nginx
 
 Options:
-  -a appliance type: maas, meteo, bio, env
+  -a appliance type: entreprise, falcon
   -h help
   -b buildno
   -d db: mariadb | pgsql
@@ -135,10 +135,8 @@ rep_ranalysis_done=0
 ##
 
 ##appliance
-maas_sem=0
-meteo_sem=0
-bio_sem=0
-env_sem=0
+entreprise_sem=0
+falcon_sem=0
 ##
 
 ##auth
@@ -206,12 +204,12 @@ do
         appliance=$OPTARG
 
         case "$appliance" in
-            maas)
-                maas_sem=1
+            entreprise)
+                entreprise_sem=1
             ;;
 
-            meteo)
-                meteo_sem=1
+            falcon)
+                falcon_sem=1
             ;;
 
             *)
@@ -563,10 +561,10 @@ case "$OS_NAME" in
 
          auth)
 
-             # default maas appliance
+             # default appliance
              if [ -z "$appliance" ]; then
-                 appliance="maas"
-                 maas_sem=1
+                 appliance="entreprise"
+                 entreprise_sem=1
              fi
 
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
@@ -584,6 +582,32 @@ case "$OS_NAME" in
                  ;;
              esac
          ;;
+
+
+         kernel)
+
+             # default appliance
+             if [ -z "$appliance" ]; then
+                 appliance="entreprise"
+                 entreprise_sem=1
+             fi
+      
+             iprefix=${iprefix:-/opt/sdr/analytics/kernel}
+             iuser=sdr
+             
+             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+
+             case "$version" in
+                 1.0*)
+                  . ${PWD}/engine.kernel.linux.10x
+                  ;;
+
+                 *)
+                   usage
+                 ;;
+             esac
+         ;;
+
 
 	 nginx)
 
@@ -651,10 +675,10 @@ case "$OS_NAME" in
 
          auth)
 
-             # default maas appliance
+             # default appliance
              if [ -z "$appliance" ]; then
-                 appliance="maas"
-                 maas_sem=1
+                 appliance="entreprise"
+                 entreprise_sem=1
              fi
       
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
@@ -676,10 +700,10 @@ case "$OS_NAME" in
 
          kernel)
 
-             # default maas appliance
+             # default appliance
              if [ -z "$appliance" ]; then
-                 appliance="maas"
-                 maas_sem=1
+                 appliance="entreprise"
+                 entreprise_sem=1
              fi
       
              iprefix=${iprefix:-/opt/sdr/analytics/kernel}
