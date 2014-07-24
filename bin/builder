@@ -93,47 +93,6 @@ libxml2_done=0
 perlxml_done=0
 ##
 
-## reporting
-rep1_sem=0
-rep2_sem=0
-rep3_sem=0
-rep4_sem=0
-rep5_sem=0
-rep6_sem=0
-nginx_sem=0
-fcgiwrap_sem=0
-jpeg_sem=0
-rserve_sem=0
-pdq_sem=0
-repfin_sem=0
-ranalysis_sem=0
-perltt_sem=0
-mcd_sem=0
-cache_mcd_fast_sem=0
-
-rep_rrd_done=0
-rep_mcd_done=0
-rep_openresty_done=0
-rep_cache_mcd_fast_done=0
-rep_perl_done=0
-rep_perllxml_done=0
-rep_perlmodules_done=0
-rep_perlnetdns_done=0
-rep_dbdpg_done=0
-rep_fcgi_done=0
-rep_fcgiw_done=0
-rep_ws_done=0
-rep_rsts_done=0
-rep_rggplot2_done=0
-rep_pdq_done=0
-rep_wcurl_done=0
-rep_wsscripts_done=0
-rep_tests_done=0
-rep_fin_done=0
-rep_rserve_done=0
-rep_ranalysis_done=0
-##
-
 ##appliance
 entreprise_sem=0
 falcon_sem=0
@@ -310,30 +269,6 @@ do
 		rec1_sem=1
             ;;
 
-            rep1)
-                rep1_sem=1
-            ;;
-
-            rep2)
-                rep2_sem=1
-            ;;
-
-            rep3)
-                rep3_sem=1
-            ;;
-
-            rep4)
-                rep4_sem=1
-            ;;
-
-            rep5)
-                rep5_sem=1
-            ;;
-
-            rep6)
-                rep6_sem=1
-            ;;
-
             nginx)
                 nginx_sem=1
             ;;
@@ -356,10 +291,6 @@ do
 
             pdq)
                 pdq_sem=1
-            ;;
-
-            repfin)
-                repfin_sem=1
             ;;
 
             ngxfin)
@@ -463,28 +394,6 @@ case "$OS_NAME" in
              esac
          ;;
 
-         rep)
-             iprefix=${iprefix:-/opt/sdr/report}
-             iuser=sdr
-
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
-
-             case "$version" in
-                 0.74)
-                  . ${PWD}/engine.rep.solaris.074
-                  ;;
-
-                 1.0x)
-                  . ${PWD}/engine.rep.solaris.10x
-                  ;;
-
-                 *)
-                   usage
-                 ;;
-             esac
-
-         ;;
-         
 	 nginx)
 
              iprefix=${iprefix:-/opt/www}
@@ -917,137 +826,6 @@ case "$module" in
  ;;
 
 
- rep)
-
-    if [ "$rep1_sem" -eq 0 -a "$rep2_sem" -eq 0  \
-          -a "$rep3_sem" -eq 0 -a "$rep4_sem" -eq 0 \
-          -a "$rep5_sem" -eq 0 -a "$rep6_sem" -eq 0 \
-          -a "$cache_mcd_fast_sem" -eq 0 -a "$fcgiwrap_sem" -eq 0 \
-          -a "$rserve_sem" -eq 0 -a "$pdq_sem" -eq 0 \
-          -a "$repfin_sem" -eq 0 -a "$ranalysis_sem" -eq 0 \
-          -a "$mcd_sem" -eq 0 -a "$nginx_sem" -eq 0 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_perl
-        build_rep_xmllibxml
-        build_rep_wcurl
-        build_rep_fcgi
-        build_rep_ws
-        build_rep_fcgiwrap
-        build_rep_ws_scripts
-        build_rep_openresty
-        build_rep_rrd
-        build_rep_mcd
-        build_rep_cache_mcd_fast
-        #build_rep_R
-        #build_rep_rcairo
-        #build_rep_rggplot2
-        #build_rep_rserve
-        #build_rep_ranalysis
-        #build_rep_pdq
-        build_rep_fin
-
-    elif [ "$rep1_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_perl
-        build_rep_ossl
-        build_rep_ssh2
-        build_rep_gettext
-        build_rep_iconv
-        build_rep_gettext
-        build_rep_readline
-        build_rep_libxml2
-        build_rep_xmllibxml
-        build_rep_idn
-        build_rep_curl
-        build_rep_harfbuzz
-        build_rep_ffi
-        build_rep_glib
-        build_rep_perlssh2
-        build_rep_wcurl
-        build_rep_pcre
-        build_rep_fcgi
-        build_rep_ws
-        build_rep_fcgiwrap
-        build_rep_ws_scripts
-        build_rep_fin
-
-    elif [ "$rep2_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_ffi
-        build_rep_glib
-        build_rep_ossl
-        build_rep_gettext
-        build_rep_iconv
-        build_rep_gettext
-        build_rep_readline
-        build_rep_libxml2
-        build_rep_xmllibxml
-        build_rep_pkgconfig
-        build_rep_harfbuzz
-        build_rep_libjpeg
-        build_rep_libpng
-        build_rep_pixman
-        build_rep_freetype
-        build_rep_fontconfig
-        build_rep_cairo
-        build_rep_pango
-        build_rep_rrd
-
-    elif [ "$rep3_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        # build_rep_R
-        build_rep_rcairo
-        build_rep_rggplot2
-
-    elif [ "$rep4_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_pdq
-
-    elif [ "$rep5_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_rggplot2
-
-    elif [ "$rep6_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_fin
-
-    elif [ "$nginx_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_ws
-        build_rep_fcgiwrap
-        build_rep_ws_scripts
-
-    elif [ "$mcd_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_mcd
-
-    elif [ "$fcgiwrap_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_fcgiwrap
-
-    elif [ "$cache_mcd_fast_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_cache_mcd_fast
-
-    elif [ "$rserve_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_rserve
-
-    elif [ "$ranalysis_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_ranalysis
-
-    elif [ "$pdq_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_pdq
-
-    elif [ "$repfin_sem" -eq 1 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rep_fin
-    fi
- ;;
-
-
  nginx)
 
     # build world
@@ -1477,140 +1255,6 @@ case "$module" in
 
  ;;
 
-
- rep)
-
-    if [ $rep_perl_done -ne 0 ]; then
-        if [ $rep_perl_done -eq 1 ]; then
-            echo "# perl: built and integrated"
-        else
-            if [ $rep_perl_done -eq 90 ]; then
-                echo "# perl: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_perllxml_done -ne 0 ]; then
-        if [ $rep_perllxml_done -eq 1 ]; then
-            echo "# xml::libxml: built and integrated"
-        else
-            if [ $rep_perllxml_done -eq 90 ]; then
-                echo "# xml::libxml: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_wcurl_done -ne 0 ]; then
-        if [ $rep_wcurl_done -eq 1 ]; then
-            echo "# wwwcurl: built and integrated"
-        else
-            if [ $rep_wcurl_done -eq 90 ]; then
-                echo "# wwwcurl: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_dbdpg_done -ne 0 ]; then
-        if [ $rep_dbdpg_done -eq 1 ]; then
-            echo "# DBDPG: built and integrated"
-        else
-            if [ $rep_dbdpg_done -eq 90 ]; then
-                echo "# DBDPG: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_fcgi_done -ne 0 ]; then
-        if [ $rep_fcgi_done -eq 1 ]; then
-            echo "# fastcgi: built and integrated"
-        else
-            if [ $rep_fcgi_done -eq 90 ]; then
-                echo "# fastcgi: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_fcgiw_done -ne 0 ]; then
-        if [ $rep_fcgiw_done -eq 1 ]; then
-            echo "# fcgiw: built and integrated"
-        else
-            if [ $rep_fcgiw_done -eq 90 ]; then
-                echo "# fcgiw: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_ws_done -ne 0 ]; then
-        if [ $rep_ws_done -eq 1 ]; then
-            echo "# nginx: built and integrated"
-        else
-            if [ $rep_ws_done -eq 90 ]; then
-                echo "# nginx: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_wsscripts_done -ne 0 ]; then
-        if [ $rep_wsscripts_done -eq 1 ]; then
-            echo "# nginx boot: built and integrated"
-        else
-            if [ $rep_wsscripts_done -eq 90 ]; then
-                echo "# nginx boot: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_openresty_done -ne 0 ]; then
-        if [ $rep_openresty_done -eq 1 ]; then
-            echo "# nginx openresty: built and integrated"
-        else
-            if [ $rep_openresty_done -eq 90 ]; then
-                echo "# nginx openresty: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_rrd_done -ne 0 ]; then
-        if [ $rep_rrd_done -eq 1 ]; then
-            echo  "# rrdtool: built and integrated"
-        else
-            if [ $rep_rrd_done -eq 90 ]; then
-                echo  "# rrdtool: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_mcd_done -ne 0 ]; then
-        if [ $rep_mcd_done -eq 1 ]; then
-            echo  "# memcached: built and integrated"
-        else
-            if [ $rep_mcd_done -eq 90 ]; then
-                echo  "# memcached: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_cache_mcd_fast_done -ne 0 ]; then
-        if [ $rep_cache_mcd_fast_done -eq 1 ]; then
-            echo  "# perl cache-memcached-fast: built and integrated"
-        else
-            if [ $rep_cache_mcd_fast_done -eq 90 ]; then
-                echo  "# perl cache-memcached-fast: not integrated"
-            fi
-        fi
-    fi
-
-    if [ $rep_fin_done -ne 0 ]; then
-        if [ $rep_fin_done -eq 1 ]; then
-            echo  "# FINALIZE: done"
-        else
-            if [ $rep_fin_done -eq 90 ]; then
-                echo  "# FINALIZE: not done"
-            fi
-        fi
-    fi
-
- ;;
 
 esac
 
