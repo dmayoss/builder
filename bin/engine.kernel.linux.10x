@@ -1,7 +1,7 @@
 #/bin/sh
 #
 #  SDR Development tools
-#  FreeBSD SDR Analytics Kernel Engine
+#  Linux SDR Analytics Kernel Engine
 #
 #  Copyright (c) 2014 Stefan Parvu (www.systemdatarecorder.org).
 #
@@ -24,7 +24,7 @@
 # VERSION: 1.2
 
 # ############################################################### #
-# SDR Engine: Analytics Kernel FreeBSD                            #
+# SDR Engine: Analytics Kernel Linux                              #
 # ############################################################### #
 
 
@@ -101,8 +101,8 @@ echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
  env PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig \
-     CC=cc ./configure --prefix=${iprefix} --with-luajit \
-     --with-cc=/usr/bin/cc >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+     ./configure --prefix=${iprefix} --with-luajit \
+      >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
@@ -117,7 +117,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -133,7 +133,7 @@ echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install gd failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -198,7 +198,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-gmake >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -212,7 +212,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Make $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-gmake install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
