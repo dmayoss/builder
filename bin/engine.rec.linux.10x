@@ -20,7 +20,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.1
+# VERSION: 1.2
 
 # ############################################################### #
 # SDR Engine: Linux                                               # 
@@ -32,68 +32,70 @@
 # ############################################################### #
 extract_archive() {
 
-    # $1 module name
-    # $2 dir build
+# $1 module name
+# $2 dir build
 
-    modfile=$1
-    bfile=$2
+modfile=$1
+bfile=$2
 
-    # Debug
-    # echo "module name: $modfile"
-    # echo "archive dir: $bfile"
+# Debug
+# echo "module name: $modfile"
+# echo "archive dir: $bfile"
 
-    if [ -d $bfile ]; then
-        echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
-        echo "Warning: ${bfile} directory found, cleaning..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+if [ -d $bfile ]; then
+    echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    echo "Warning: ${bfile} directory found, cleaning..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-        rm -rf ${bfile}
-        if [ $? -ne 0 ]; then
-            echo "Error: cannot clean. Check ${modfile} , ${bfile}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-            exit 3
-        fi 
-        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
-    else
-        echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
-        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
-    fi
+    rm -rf ${bfile}
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot clean. Check ${modfile} , ${bfile}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+        exit 3
+    fi 
+    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
+else
+    echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG}
+fi
+
 }
 
 
 ### init_module
 init_module() {
 
-    # $1 directory name
-    directory=$1
+# $1 directory name
+directory=$1
 
-    cd $directory
-    echo "############################################################"
-    echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-    echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    archive_file=`ls *.tar.gz`
-    # Debug
-    #echo "Directory: $directory"
-    #echo "Archive: $archive_file"
-    # echo "Dir: ${archive_file%%.tar*}"
+cd $directory
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+#echo "Directory: $directory"
+#echo "Archive: $archive_file"
 
-    dirarchive=${archive_file%%.tar*}
+dirarchive=${archive_file%%.tar*}
 
-    extract_archive "$directory" "$dirarchive"
+extract_archive "$directory" "$dirarchive"
 
-    cd ${archive_file%%.tar*}
+cd ${archive_file%%.tar*}
+
 }
 
 
 ### clean_module
 clean_module() {
-    cd ..
-    rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    if [ $? -ne 0 ]; then
-        echo "Error: cleaning up $dirarchive !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 5
-    fi
-    cd ..
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
 }
 
 
@@ -114,7 +116,12 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" = "x86_64" ]; then
+if [ "$PT_NAME" = "armv6l" ]; then
+    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
+     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
+      -L/lib -L/usr/lib" \
+      ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+elif [ "$PT_NAME" = "x86_64" ]; then
     env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
      LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
       -L/lib64 -L/usr/lib64" \
