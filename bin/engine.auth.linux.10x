@@ -423,9 +423,9 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Installing nginx wrappers ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $maas_sem -eq 1 ]; then
+if [ $entreprise_sem -eq 1 ]; then
     cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
-elif [ $meteo_sem -eq 1 ]; then
+elif [ $falcon_sem -eq 1 ]; then
     cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
 fi
 
@@ -549,9 +549,9 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $maas_sem -eq 1 ]; then
+if [ $entreprise_sem -eq 1 ]; then
     cp sdr-auth.maas ${iprefix}/etc/sdr-auth
-elif [ $meteo_sem -eq 1 ]; then
+elif [ $falcon_sem -eq 1 ]; then
     cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
 fi
 
