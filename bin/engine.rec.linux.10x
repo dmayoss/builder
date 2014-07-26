@@ -396,7 +396,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp /opt/build/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
+cp /opt/sdrbuilder/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN
 #${iprefix}/perl/bin/perl -MCPAN -e 'install Bundle::LWP' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 #if [ $? -ne 0 ]; then
 #    echo "Error: Bundle::LWP installation failed !" |\
@@ -451,7 +451,7 @@ clean_module
 
 ### Recording: openssl Build Phase
 build_rec_ossl() {
-dir=openssl
+dir="lib/openssl"
 step1=0
 step2=0
 step3=0
@@ -469,6 +469,10 @@ echo "Info: Step 2 - Configure $dir ..." |\
 if [ "$PT_NAME" = "x86_64" ]; then
     env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
      ./Configure linux-x86_64 threads shared --prefix=${iprefix} \
+     --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+elif [ "$PT_NAME" = "armv6l" ]; then
+    env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
+     ./Configure linux-armv4 threads shared --prefix=${iprefix} \
      --openssldir=${iprefix}/openssl >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
     env PATH=${iprefix}/bin:${iprefix}/perl/bin:$PATH \
