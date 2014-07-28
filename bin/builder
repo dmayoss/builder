@@ -250,7 +250,7 @@ do
             ;;
 
             sysstat)
-              if [ "$OS_NAME" != "Linux" ]; then
+              if [ "$OS_NAME" != "linux" ]; then
                 echo "Error: sysstat is a Linux specific pkg !\n"
                 exit 1
               fi
@@ -724,18 +724,18 @@ case "$module" in
         echo "" > ${BUILD_PATH}/${BUILD_LOG}
         build_rec_perl
         build_rec_ossl
-        # build_rec_ssh2
-        # build_rec_perlssh2
         build_rec_idn
         build_rec_libxml2
         build_rec_xmllibxml
         build_rec_curl
         build_rec_wcurl
-        if [ "${OS_NAME}" = "Linux" ]; then
+        if [ "${OS_NAME}" = "linux" ]; then
             build_rec_sysstat
         fi
-   
-        build_rec_webrec
+  
+        if [ "$PT_NAME" != "armv6l" ]; then 
+            build_rec_webrec
+        fi
         build_rec_scripts
         test_rec_scripts
     else
@@ -770,7 +770,7 @@ case "$module" in
         fi
 
         if [ "$syss_sem" -eq 1 ]; then
-            if [ "${OS_NAME}" = "Linux" ]; then
+            if [ "${OS_NAME}" = "linux" ]; then
                 echo "" > ${BUILD_PATH}/${BUILD_LOG}
                 build_rec_sysstat
             fi
@@ -1058,7 +1058,7 @@ case "$module" in
         fi
     fi
 
-    if [ "$OS_NAME" = "Linux" ]; then
+    if [ "$OS_NAME" = "linux" ]; then
         if [ $sysstat_done -eq 1 ]; then
             echo "# SYSSTAT SUBSYSTEM: built and integrated"
         else
@@ -1077,7 +1077,7 @@ case "$module" in
     fi
 
 
-    if [ "$OS_NAME" = "Linux" ]; then
+    if [ "$OS_NAME" = "linux" ]; then
         if [ $nrec_done -eq 1 ]; then
             echo "# NICREC SUBSYSTEM: built and integrated"
         else
