@@ -1020,7 +1020,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ "$PT_NAME" -eq "x86_64" ]; then
+if [ "$PT_NAME" = "x86_64" ]; then
     env CC=cc CFLAGS="-O3" LDFLAGS="-L/lib64 -L/usr/lib64 -Wl,-rpath -Wl,${iprefix}/lib" ./configure \
      man_group=sdr sa_dir=/opt/sdr/log conf_dir=/opt/sdr/etc  \
      --prefix=/opt/sdr >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -1304,7 +1304,7 @@ for r in sys cpu net hdw nic proc
 do
     echo "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     echo "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    #if [ $r -eq "jvm" ]; then
+    #if [ "$r" = "jvm" ]; then
     #    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #else
     ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
