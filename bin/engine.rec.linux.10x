@@ -1023,11 +1023,11 @@ echo "Info: Step 2 - Configure $dir ..." |\
 if [ "$PT_NAME" = "x86_64" ]; then
     env CC=cc CFLAGS="-O3" LDFLAGS="-L/lib64 -L/usr/lib64 -Wl,-rpath -Wl,${iprefix}/lib" ./configure \
      man_group=sdr sa_dir=/opt/sdr/log conf_dir=/opt/sdr/etc  \
-     --prefix=/opt/sdr >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+     --prefix=/opt/sdr --disable-documentation --disable-nls >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 else
     env CC=cc CFLAGS="-O3" LDFLAGS="-L/lib -L/usr/lib -Wl,-rpath -Wl,${iprefix}/lib" ./configure \
      man_group=sdr sa_dir=/opt/sdr/log conf_dir=/opt/sdr/etc  \
-     --prefix=/opt/sdr >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+     --prefix=/opt/sdr --disable-documentation --disable-nls >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 fi
 
 if [ $? -ne 0 ]; then
