@@ -105,10 +105,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Kernel: OpenResty Build Phase                                   #
-# ############################################################### #
-
+### openresty
 build_kernel_openresty() {
 dir=openresty
 step1=0
@@ -186,9 +183,7 @@ clean_module
 }
 
 
-# ############################################################### #
-# Kernel: lib luafilesystem                                       #
-# ############################################################### #
+### luafilesystem
 build_kernel_libluafs() {
 dir="luafilesystem"
 step1=0
@@ -249,9 +244,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Kernel: lib lua-resty-template                                  #
-# ############################################################### #
+### lua-resty-template
 build_kernel_libluatemplate() {
 dir="lua-resty-template"
 step1=0
@@ -299,9 +292,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Kernel: lib lua-resty-session                                   #
-# ############################################################### #
+### lua-resty-session
 build_kernel_libluasession() {
 dir="lua-resty-session"
 step1=0
@@ -349,9 +340,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Kernel: lib router.lua                                          #
-# ############################################################### #
+### router.lua
 build_kernel_libluarouter() {
 dir="router.lua"
 step1=0
@@ -398,9 +387,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Reporting: Scripts                                              #
-# ############################################################### #
+### configuration settings
 build_kernel_config() {
 
 dir=config
@@ -448,11 +435,7 @@ cd ../..
 
 
 
-# ############################################################### #
-# Reporting: Finalize                                             #
-# ############################################################### #
-
-
+### finalize
 build_kernel_fin() {
 
 dir=etc

@@ -28,9 +28,7 @@
 # ############################################################### #
 
 
-# ############################################################### #
-# extract_archive                                                 #
-# ############################################################### #
+### extract_archive
 extract_archive() {
 # $1 module name
 # $2 dir build
@@ -64,9 +62,50 @@ fi
 }
 
 
-# ############################################################### #
-# Reporting: memcached Build Phase                                #
-# ############################################################### #
+### init_module
+init_module() {
+
+# $1 directory name
+directory=$1
+
+cd $directory
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+#echo "Directory: $directory"
+#echo "Archive: $archive_file"
+
+# dirarchive=${archive_file%%.tar*}
+dirarchive=`echo $archive_file | sed 's/\.tar.*//'`
+
+# Debug
+#echo "DirArchive: $dirarchive"
+
+extract_archive "$directory" "$dirarchive"
+
+cd $dirarchive
+
+}
+
+
+### clean_module
+clean_module() {
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
+### memcached
 build_auth_mcd() {
 dir=memcached
 step1=0
