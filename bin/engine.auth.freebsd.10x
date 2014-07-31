@@ -336,7 +336,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install router.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp lib/router.lua ${iprefix}/lualib/resty
+cp router.lua ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install router.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
