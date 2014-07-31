@@ -323,7 +323,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install session.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp session.lua ${iprefix}/lualib/resty
+cp lib/resty/session.lua ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install session.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
