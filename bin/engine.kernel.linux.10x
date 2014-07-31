@@ -28,9 +28,7 @@
 # ############################################################### #
 
 
-# ############################################################### #
-# extract_archive                                                 #
-# ############################################################### #
+### extract_archive
 extract_archive() {
 # $1 module name
 # $2 dir build
@@ -64,10 +62,7 @@ fi
 }
 
 
-# ############################################################### #
-# Kernel: OpenResty Build Phase                                   #
-# ############################################################### #
-
+# openresty
 build_kernel_openresty() {
 dir=openresty
 step1=0
@@ -164,11 +159,9 @@ cd ..
 }
 
 
-# ############################################################### #
-# Kernel: lib luafilesystem                                       #
-# ############################################################### #
+### luafilesystem
 build_kernel_libluafs() {
-dir="lib/luafilesystem"
+dir="luafilesystem"
 step1=0
 step2=0
 step3=0
@@ -242,11 +235,9 @@ cd ../..
 }
 
 
-# ############################################################### #
-# Kernel: lib lua-resty-template                                  #
-# ############################################################### #
+### lua-resty-template
 build_kernel_libluatemplate() {
-dir="lib/lua-resty-template"
+dir="lua-resty-template"
 step1=0
 step2=0
 step3=0
@@ -306,11 +297,9 @@ cd ../..
 }
 
 
-# ############################################################### #
-# Kernel: lib lua-resty-session                                   #
-# ############################################################### #
+# lua-resty-session
 build_kernel_libluasession() {
-dir="lib/lua-resty-session"
+dir="lua-resty-session"
 step1=0
 step2=0
 step3=0
@@ -370,11 +359,9 @@ cd ../..
 }
 
 
-# ############################################################### #
-# Kernel: lib router.lua                                          #
-# ############################################################### #
+### router.lua
 build_kernel_libluarouter() {
-dir="lib/router.lua"
+dir="router.lua"
 step1=0
 step2=0
 
@@ -433,9 +420,7 @@ cd ../..
 }
 
 
-# ############################################################### #
-# Reporting: Scripts                                              #
-# ############################################################### #
+### configuration settings
 build_kernel_config() {
 
 dir=config
@@ -483,11 +468,7 @@ cd ../..
 
 
 
-# ############################################################### #
-# Reporting: Finalize                                             #
-# ############################################################### #
-
-
+### finalize
 build_kernel_fin() {
 
 dir=etc
