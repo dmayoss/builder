@@ -103,6 +103,7 @@ auth_mcd_done=0
 auth_openresty_done=0
 auth_libluatemplate_done=0
 auth_libluarouter_done=0
+auth_libluasmtp_done=0
 auth_fin_done=0
 auth_config_done=0
 ##
@@ -806,6 +807,7 @@ case "$module" in
     build_auth_openresty
     build_auth_libluatemplate
     build_auth_libluarouter
+    build_auth_libluasmtp
     build_auth_mcd
     build_auth_config
     build_auth_fin
@@ -1148,6 +1150,15 @@ case "$module" in
         fi
     fi
 
+    if [ $auth_libluasmtp_done -ne 0 ]; then
+        if [ $auth_libluasmtp_done -eq 1 ]; then
+            echo  "# lib smtp.lua: built and integrated"
+        else
+            if [ $auth_libluasmtp_done -eq 90 ]; then
+                echo  "# lib smtp.lua: not integrated"
+            fi
+        fi
+    fi
     if [ $auth_mcd_done -ne 0 ]; then
         if [ $auth_mcd_done -eq 1 ]; then
             echo  "# memcached: built and integrated"
