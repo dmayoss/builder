@@ -80,7 +80,7 @@ archive_file=`ls *.tar.gz`
 # dirarchive=${archive_file%%.tar*}
 dirarchive=`echo $archive_file | sed 's/\.tar.*//'`
 
-#echo "DirArchive: $dirarchive"
+echo "DirArchive: $dirarchive"
 
 extract_archive "$directory" "$dirarchive"
 
@@ -282,13 +282,12 @@ fi
 
 
 # STEP 2
-cd ${archive_file%%.tar*}/lib/resty
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install template.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp template.lua ${iprefix}/lualib/resty
+cp -R lib/resty/template* ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install template.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -332,13 +331,12 @@ fi
 
 
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install router.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp router.lua ${iprefix}/lualib/resty
+cp lib/router.lua ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install router.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -381,13 +379,12 @@ if [ $? -eq 0 ]; then
 fi
 
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install router.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp -R smtp* ${iprefix}/lualib/resty
+cp -R lib/resty/smtp* ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install smtp.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
