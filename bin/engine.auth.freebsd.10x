@@ -180,7 +180,7 @@ clean_module
 }
 
 
-### OpenResty
+### openresty
 build_auth_openresty() {
 dir=openresty
 step1=0
