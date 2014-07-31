@@ -31,7 +31,7 @@ Package:
    rec, auth, kernel, nginx
 
 Options:
-  -a appliance type: entreprise, falcon
+  -a appliance type: entreprise, rbpi
   -h help
   -b buildno
   -d db: mariadb | pgsql
@@ -95,7 +95,7 @@ perlxml_done=0
 
 ##appliance
 entreprise_sem=0
-falcon_sem=0
+rbpi_sem=0
 ##
 
 ##auth
@@ -168,8 +168,8 @@ do
                 entreprise_sem=1
             ;;
 
-            falcon)
-                falcon_sem=1
+            rbpi)
+                rbpi_sem=1
             ;;
 
             *)

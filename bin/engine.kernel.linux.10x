@@ -62,6 +62,49 @@ fi
 }
 
 
+### init_module
+init_module() {
+
+# $1 directory name
+directory=$1
+
+cd $directory
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+#echo "Directory: $directory"
+#echo "Archive: $archive_file"
+
+# dirarchive=${archive_file%%.tar*}
+dirarchive=`echo $archive_file | sed 's/\.tar.*//'`
+
+# Debug
+#echo "DirArchive: $dirarchive"
+
+extract_archive "$directory" "$dirarchive"
+
+cd $dirarchive
+
+}
+
+
+### clean_module
+clean_module() {
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: cleaning up $dirarchive !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    rm /var/tmp/build.${module}
+    exit 5
+fi
+cd ..
+
+}
+
+
 # openresty
 build_kernel_openresty() {
 dir=openresty
@@ -71,32 +114,20 @@ step3=0
 step4=0
 
 
-cd $dir
-echo "############################################################"
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-archive_file=`ls *.tar.gz`
-# Debug
-# echo "Archive: $archive_file"
-# echo "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
-
 # STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
 fi
 
+
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
- env PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig \
-     ./configure --prefix=${iprefix} --with-luajit \
+ ./configure --prefix=${iprefix} --with-luajit \
       >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
@@ -146,15 +177,7 @@ else
    kernel_openresty_done=90
 fi
 
-cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi 
-cd ..
+clean_module
 
 }
 
@@ -166,26 +189,16 @@ step1=0
 step2=0
 step3=0
 
-
-cd $dir
-echo "############################################################"
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-archive_file=`ls *.tar.gz`
-# Debug
-# echo "Archive: $archive_file"
-# echo "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
+cd lib
 
 # STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
 fi
 
+
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
@@ -223,15 +236,11 @@ else
    kernel_libluafs_done=90
 fi
 
+clean_module
+
+# back to root
 cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi 
-cd ../..
+
 }
 
 
@@ -242,32 +251,21 @@ step1=0
 step2=0
 step3=0
 
-
-cd $dir
-echo "############################################################"
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-archive_file=`ls *.tar.gz`
-# Debug
-# echo "Archive: $archive_file"
-# echo "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
+cd lib
 
 # STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
 fi
 
 # STEP 2
-cd ${archive_file%%.tar*}/lib/resty
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install template.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp template.lua ${iprefix}/lualib/resty
+cp -R lib/resty/template* ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install template.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -285,15 +283,11 @@ else
    kernel_libluatemplate_done=90
 fi
 
-cd ../../..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi 
-cd ../..
+clean_module
+
+# back to root
+cd ..
+
 }
 
 
@@ -305,31 +299,21 @@ step2=0
 step3=0
 
 
-cd $dir
-echo "############################################################"
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-archive_file=`ls *.tar.gz`
-# Debug
-# echo "Archive: $archive_file"
-# echo "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
+cd lib
 
 # STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
 fi
 
 # STEP 2
-cd ${archive_file%%.tar*}/lib/resty
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install session.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp session.lua ${iprefix}/lualib/resty
+cp lib/resty/session.lua ${iprefix}/lualib/resty
 if [ $? -ne 0 ]; then
     echo "Error: cannot install session.lua script !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -347,15 +331,11 @@ else
    kernel_libluasession_done=90
 fi
 
-cd ../../..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi 
-cd ../..
+clean_module
+
+# back to root
+cd ..
+
 }
 
 
@@ -365,26 +345,15 @@ dir="router.lua"
 step1=0
 step2=0
 
-
-cd $dir
-echo "############################################################"
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Submodule: $dir" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-archive_file=`ls *.tar.gz`
-# Debug
-# echo "Archive: $archive_file"
-# echo "Dir: ${archive_file%%.tar*}"
-
-dirarchive=${archive_file%%.tar*}
+cd lib
 
 # STEP 1
-extract_archive "$dir" "$dirarchive"
+init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
 fi
 
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Install router.lua ..." |\
@@ -408,15 +377,11 @@ else
    kernel_libluarouter_done=90
 fi
 
+clean_module
+
+# back to root
 cd ..
-rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: cleaning up $dirarchive !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 5
-fi 
-cd ../..
+
 }
 
 
@@ -440,7 +405,7 @@ echo "Info: Step 1 - Installing nginx wrappers ..." |\
 
 if [ $entreprise_sem -eq 1 ]; then
     cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
-elif [ $falcon_sem -eq 1 ]; then
+elif [ $rbpi_sem -eq 1 ]; then
     cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
 fi
 
@@ -562,7 +527,7 @@ echo "Info: Step 2 - Installing sdr-kernel startup script ..." |\
 
 if [ $entreprise_sem -eq 1 ]; then
     cp sdr-kernel.maas ${iprefix}/etc/sdr-kernel
-elif [ $falcon_sem -eq 1 ]; then
+elif [ $rbpi_sem -eq 1 ]; then
     cp sdr-kernel.rbpi ${iprefix}/etc/sdr-kernel
 fi
 

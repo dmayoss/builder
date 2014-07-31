@@ -407,7 +407,7 @@ echo "Info: Step 1 - Installing nginx wrappers ..." |\
 
 if [ $maas_sem -eq 1 ]; then
     cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
-elif [ $meteo_sem -eq 1 ]; then
+elif [ $rbpi_sem -eq 1 ]; then
     cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
 fi
 
@@ -529,7 +529,7 @@ echo "Info: Step 2 - Installing sdr-kernel startup script ..." |\
 
 if [ $maas_sem -eq 1 ]; then
     cp sdr-kernel.maas ${iprefix}/etc/sdr-kernel
-elif [ $meteo_sem -eq 1 ]; then
+elif [ $rbpi_sem -eq 1 ]; then
     cp sdr-kernel.rbpi ${iprefix}/etc/sdr-kernel
 fi
 

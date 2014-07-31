@@ -433,7 +433,7 @@ echo "Info: Step 1 - Installing nginx wrappers ..." |\
 
 if [ $entreprise_sem -eq 1 ]; then
     cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
-elif [ $falcon_sem -eq 1 ]; then
+elif [ $rbpi_sem -eq 1 ]; then
     cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
 fi
 
@@ -555,7 +555,7 @@ echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
 
 if [ $entreprise_sem -eq 1 ]; then
     cp sdr-auth.maas ${iprefix}/etc/sdr-auth
-elif [ $falcon_sem -eq 1 ]; then
+elif [ $rbpi_sem -eq 1 ]; then
     cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
 fi
 
