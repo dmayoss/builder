@@ -1171,7 +1171,7 @@ fi
 
 # set etc settings
 cd ../..
-cp etc/${OS_NAME}/* ${iprefix}
+cp etc/${OS_NAME}/* ${iprefix}/etc
 if [ $? -ne 0 ]; then
     echo "Error: cannot install etc settings !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1192,7 +1192,7 @@ if [ ! -d ${iprefix}/man ]; then
     mkdir ${iprefix}/man
 fi
 
-cp man/${OS_NAME}/* ${iprefix}/man
+cp -pr man/${OS_NAME}/* ${iprefix}/man
 if [ $? -ne 0 ]; then
     echo "Error: cannot install man pages !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
