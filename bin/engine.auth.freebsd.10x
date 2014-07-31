@@ -28,9 +28,7 @@
 # ############################################################### #
 
 
-# ############################################################### #
-# extract_archive                                                 #
-# ############################################################### #
+### extract_archive
 extract_archive() {
 # $1 module name
 # $2 dir build
@@ -79,11 +77,14 @@ archive_file=`ls *.tar.gz`
 #echo "Directory: $directory"
 #echo "Archive: $archive_file"
 
-dirarchive=${archive_file%%.tar*}
+# dirarchive=${archive_file%%.tar*}
+dirarchive=`echo $archive_file | sed 's/\.tar.*//'`
+
+#echo "DirArchive: $dirarchive"
 
 extract_archive "$directory" "$dirarchive"
 
-cd ${archive_file%%.tar*}
+cd $dirarchive
 
 }
 
@@ -120,7 +121,6 @@ if [ $? -eq 0 ]; then
 fi
 
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
@@ -201,7 +201,6 @@ fi
 
 
 # STEP 2
-cd ${archive_file%%.tar*}
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
