@@ -1127,9 +1127,9 @@ echo "Info: Step 2 - Installing recorders ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 
-ls *rec | wc -l | read nrecs
+nrecs=`ls *rec | wc -l`
 
-if [ nrecs -ne 10 ]; then
+if [ "$nrecs" -ne 10 ]; then
     echo "Error: wrong no. of recorders, check workspace !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -1170,7 +1170,8 @@ fi
 
 
 # set etc settings
-cp -pr etc ${iprefix}
+cd ../..
+cp etc/${OS_NAME}/* ${iprefix}
 if [ $? -ne 0 ]; then
     echo "Error: cannot install etc settings !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1179,22 +1180,19 @@ if [ $? -ne 0 ]; then
 fi
 
 # final check; all 2 steps
-[ recs_done = step1 + step2 ]
-if [ recs_done -eq 2 ]; then
+recs_done=`expr $step1 + $step2`
+if [ "$recs_done" -eq 2 ]; then
    recs_done=1
 else
    recs_done=0
 fi
-
-cd ../..
 
 # set man pages
 if [ ! -d ${iprefix}/man ]; then
     mkdir ${iprefix}/man
 fi
 
-cd man/${OS_NAME}
-cp -pr * ${iprefix}/man
+cp man/${OS_NAME}/* ${iprefix}/man
 if [ $? -ne 0 ]; then
     echo "Error: cannot install man pages !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1213,7 +1211,6 @@ done
 
 
 # set release notes
-cd ../..
 cp release.notes.${OS_NAME} ${iprefix}/release.notes
 if [ $? -ne 0 ]; then
     echo "Error: cannot install release.notes !" |\
