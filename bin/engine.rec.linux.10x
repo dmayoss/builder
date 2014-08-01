@@ -27,9 +27,7 @@
 # ############################################################### #
 
 
-# ############################################################### #
-# extract_archive                                                 #
-# ############################################################### #
+### extract_archive
 extract_archive() {
 
 # $1 module name
@@ -99,7 +97,7 @@ cd ..
 }
 
 
-### Recording: Perl Build Phase
+### perl
 build_rec_perl() {
 dir=perl
 step1=0
@@ -247,7 +245,7 @@ clean_module
 }
 
 
-### Recording: openssl Build Phase
+### openssl
 build_rec_ossl() {
 dir="openssl"
 step1=0
@@ -351,7 +349,7 @@ cd ..
 }
 
 
-### Recording: Idn Build Phase
+### libidn
 build_rec_idn() {
 dir=idn
 step1=0
@@ -436,7 +434,7 @@ cd ..
 }
 
 
-### Recording: libxml2 Build Phase
+### libxml2
 build_rec_libxml2() {
 dir=libxml2
 step1=0
@@ -514,9 +512,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Recording: Perl Module:  XML::LibXML                            #
-# ############################################################### #
+### perl XML::LibXML
 build_rec_xmllibxml() {
 
 dir=XML-LibXML
@@ -595,7 +591,7 @@ cd ..
 }
 
 
-### Recording: Curl Build Phase
+### curl
 build_rec_curl() {
 dir=curl
 step1=0
@@ -708,7 +704,7 @@ cd ..
 }
 
 
-# Recording: WWW::Curl Phase
+### perl WWW::Curl
 build_rec_wcurl() {
 
 #  perl Makefile.PL
@@ -788,8 +784,7 @@ else
     step4=1
 fi
 
-#
-# final check; all 4 steps
+## final check; all 4 steps
 wwwcurl_done=`expr $step1 + $step2 + $step3 + $step4`
 if [ "$wwwcurl_done" -eq 4 ]; then
    wwwcurl_done=1
@@ -805,7 +800,7 @@ cd ..
 }
 
 
-### Recording: Nicrec Native Phase
+### nicrec
 build_rec_nrec() {
 
 dir=nicrec
@@ -909,9 +904,7 @@ cd ../..
 }
 
 
-# ############################################################### #
-# Recording: WebRec Phase                                         #
-# ############################################################### #
+# webrec
 build_rec_webrec() {
 
 dir=WebRec
@@ -1000,9 +993,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Recording: Sysstat Build Phase                                  #
-# ############################################################### #
+### sysstat
 build_rec_sysstat() {
 dir=sysstat
 step1=0
@@ -1083,9 +1074,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Recording: Scripts                                              #
-# ############################################################### #
+### configuration settings
 build_rec_scripts() {
 
 dir=bin
@@ -1274,9 +1263,7 @@ fi
 }
 
 
-# ############################################################### #
-# Recording: Test Scripts                                         #
-# ############################################################### #
+### testing
 test_rec_scripts() {
 
 dir=tests
