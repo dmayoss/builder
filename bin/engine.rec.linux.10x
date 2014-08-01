@@ -73,11 +73,15 @@ archive_file=`ls *.tar.gz`
 #echo "Directory: $directory"
 #echo "Archive: $archive_file"
 
-dirarchive=${archive_file%%.tar*}
+# dirarchive=${archive_file%%.tar*}
+dirarchive=`echo $archive_file | sed 's/\.tar.*//'`
+
+# Debug
+#echo "DirArchive: $dirarchive"
 
 extract_archive "$directory" "$dirarchive"
 
-cd ${archive_file%%.tar*}
+cd $dirarchive
 
 }
 
