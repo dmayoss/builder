@@ -248,14 +248,15 @@ clean_module
 }
 
 
-### Recording: openssl Build Phase
+### openssl
 build_rec_ossl() {
-dir=openssl
+dir="openssl"
 step1=0
 step2=0
 step3=0
 step4=0
 
+cd lib
 init_module "$dir"
 
 if [ $? -eq 0 ]; then
@@ -342,16 +343,22 @@ else
 fi
 
 clean_module
+
+# back to root
+cd ..
+
 }
 
 
-### Recording: Idn Build Phase
+### libidn
 build_rec_idn() {
 dir=idn
 step1=0
 step2=0
 step3=0
 step4=0
+
+cd lib
 
 init_module "$dir"
 if [ $? -eq 0 ]; then
@@ -422,10 +429,14 @@ else
 fi
 
 clean_module
+
+# back to root
+cd ..
+
 }
 
 
-### Recording: libxml2 Build Phase
+### libxml2
 build_rec_libxml2() {
 dir=libxml2
 step1=0
@@ -433,6 +444,7 @@ step2=0
 step3=0
 step4=0
 
+cd lib
 init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
@@ -495,12 +507,14 @@ else
 fi
 
 clean_module
+
+# back to root
+cd ..
+
 }
 
 
-# ############################################################### #
-# Recording: Perl Module:  XML::LibXML                            #
-# ############################################################### #
+# perl XML::LibXML
 build_rec_xmllibxml() {
 
 dir=XML-LibXML
@@ -510,6 +524,7 @@ step3=0
 step4=0
 step5=0
 
+cd lib
 init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
@@ -571,10 +586,14 @@ else
 fi
 
 clean_module
+
+# back to root
+cd ..
+
 }
 
 
-### Recording: Curl Build Phase
+### curl
 build_rec_curl() {
 dir=curl
 step1=0
@@ -582,6 +601,7 @@ step2=0
 step3=0
 step4=0
 
+cd lib
 init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
@@ -680,16 +700,15 @@ fi
 
 clean_module
 
+# back to root
+cd ..
+
 }
 
 
-# Recording: WWW::Curl Phase
+# perl WWW::Curl
 build_rec_wcurl() {
 
-#-eq-eq-eq-eq-eq-eq=
-#4. WWW::Curl 
-#-eq-eq-eq-eq-eq-eq=
-#
 #  WWW-Curl-4.xx:
 #  perl Makefile.PL
 #  Modify the Makefile to include -L/opt/sdr/lib -R/opt/sdr/lib
@@ -706,6 +725,7 @@ step2=0
 step3=0
 step4=0
 
+cd lib
 init_module "$dir"
 if [ $? -eq 0 ]; then
     step1=1
@@ -757,36 +777,6 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-#if [ -f /opt/sdr/bin/curl ]; then
-#    echo "Warning: $dir binary found, cleaning it..." |\
-#     tee -a ${BUILD_PATH}/${BUILD_LOG}
-#    rm /opt/sdr/bin/curl
-#    rm /opt/sdr/bin/curl-config
-#    if [ $? -ne 0 ]; then
-#        echo "Error: cleaning idn binary failed !" |\
-#         tee -a ${BUILD_PATH}/${BUILD_LOG}
-#        exit 3
-#    fi
-#
-#fi
-#
-#if [ -d /opt/sdr/lib ]; then
-#    echo "Warning: lib directory found..." |\
-#     tee -a ${BUILD_PATH}/${BUILD_LOG}
-#    for f in $(find /opt/sdr/lib -name '*curl*')
-#    do
-#        echo "Cleaning file: $f..." |\
-#         tee -a ${BUILD_PATH}/${BUILD_LOG}
-#        rm $f
-#        if [ $? -ne 0 ]; then
-#            echo "Error: cleaning lib $f file failed !" |\
-#             tee -a ${BUILD_PATH}/${BUILD_LOG}
-#            exit 3
-#        fi
-#    done
-#fi
-#
-#
 make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install perl failed !" |\
@@ -807,10 +797,14 @@ else
 fi
 
 clean_module
+
+# back to root
+cd ..
+
 }
 
 
-### Recording: Nicrec Native Phase
+### nicrec
 build_rec_nrec() {
 
 dir=nicrec
@@ -914,9 +908,7 @@ cd ../..
 }
 
 
-# ############################################################### #
-# Recording: WebRec Phase                                         #
-# ############################################################### #
+### webrec
 build_rec_webrec() {
 
 dir=WebRec
@@ -1005,9 +997,7 @@ cd ..
 }
 
 
-# ############################################################### #
-# Recording: Scripts                                              #
-# ############################################################### #
+### configuration settings
 build_rec_scripts() {
 
 dir=scripts
@@ -1181,13 +1171,10 @@ else
     fi
 fi
 
-
 }
 
 
-# ############################################################### #
-# Recording: Test Scripts                                         #
-# ############################################################### #
+### testing
 test_rec_scripts() {
 
 dir=tests
