@@ -1000,7 +1000,7 @@ cd ..
 ### configuration settings
 build_rec_scripts() {
 
-dir=scripts
+dir=bin
 step1=0
 step2=0
 
@@ -1038,8 +1038,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing recorders ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-ls *rec | wc -l | read nrecs
-if [ nrecs -ne 10 ]; then
+nrecs=`ls *rec | wc -l`
+if [ "$nrecs" -ne 10 ]; then
     echo "Error: wrong no. of recorders, check workspace !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -1058,7 +1058,7 @@ fi
 
 
 # set the other bins
-cp sender raw2day ${iprefix}/bin
+cp sender ${iprefix}/bin
 if [ $? -ne 0 ]; then
     echo "Error: cannot install additional bins !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1068,37 +1068,37 @@ fi
 
 
 # set etc settings
-cp -pr etc ${iprefix}
+cd ../..
+cp etc/${OS_NAME}/* ${iprefix}/etc
 if [ $? -ne 0 ]; then
     echo "Error: cannot install etc settings !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
-fi
+fi  
 
 # final check; all 2 steps
-[ recs_done = step1 + step2 ]
-if [ recs_done -eq 2 ]; then
+recs_done=`expr $step1 + $step2`
+if [ "$recs_done" -eq 2 ]; then
    recs_done=1
 else
    recs_done=0
 fi
 
-cd ../..
 
 # set man pages
 if [ ! -d ${iprefix}/man ]; then
     mkdir ${iprefix}/man
-fi
+fi  
 
-cd man/${OS_NAME}
-cp -pr * ${iprefix}/man
+cp -pr man/${OS_NAME}/* ${iprefix}/man
 if [ $? -ne 0 ]; then
     echo "Error: cannot install man pages !" |\
       tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
 fi
+
 
 # link man to share man
 ln -s ${iprefix}/share/man/man3 ${iprefix}/man
@@ -1111,7 +1111,6 @@ done
 
 
 # set release notes
-cd ../..
 cp release.notes.${OS_NAME} ${iprefix}/release.notes
 if [ $? -ne 0 ]; then
     echo "Error: cannot install release.notes !" |\
@@ -1195,15 +1194,10 @@ echo "Info: Step 1 - Check recorders" |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 . ${iprefix}/bin/setenv
-for r in sys cpu net hdw nic proc
+for r in sys cpu disk nic hdw 
 do
     echo "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     echo "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    #if [ $r -eq "jvm" ]; then
-    #    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    #else
-    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    #fi
     if [ $? -ne 0 ]; then
         echo "Error: cannot run ${r}rec !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1224,9 +1218,9 @@ echo "Info: Step 2 - Check libs" |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 noErrors=0
-for lib in $(ls ${iprefix}/lib/*.so)
+for lib in `ls ${iprefix}/lib/*.so`
 do
-    ldd $lib | grep 'not found' | wc -l | read noErrors
+    noErrors=`ldd $lib | grep 'not found' | wc -l`
     if [ "$noErrors" -ne 0 ]; then
         echo "LIB ERROR: $lib" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
