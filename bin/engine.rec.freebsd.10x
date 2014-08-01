@@ -20,271 +20,87 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.1
+# VERSION: 1.2
 
 # ############################################################### #
 # SDR Engine: FreeBSD                                               # 
 # ############################################################### #
 
 
-# ############################################################### #
-# extract_archive                                                 #
-# ############################################################### #
+### extract_archive
 extract_archive() {
 
-    # $1 module name
-    # $2 dir build
+# $1 module name
+# $2 dir build
 
-    modfile=$1
-    bfile=$2
+modfile=$1
+bfile=$2
 
-    # Debug
-    # echo "module name: $modfile"
-    # echo "archive dir: $bfile"
+# Debug
+# echo "module name: $modfile"
+# echo "archive dir: $bfile"
 
-    if [ -d $bfile ]; then
-        echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
-        echo "Warning: ${bfile} directory found, cleaning..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+if [ -d $bfile ]; then
+    echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    echo "Warning: ${bfile} directory found, cleaning..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-        rm -rf ${bfile}
-        if [ $? -ne 0 ]; then
-            echo "Error: cannot clean. Check ${modfile} , ${bfile}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-            exit 3
-        fi 
-        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    else
-        echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
-        gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    fi
+    rm -rf ${bfile}
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot clean. Check ${modfile} , ${bfile}" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+        exit 3
+    fi 
+    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+else
+    echo "Info: Step 1 - Extracting $bfile ..." | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    gzip -dc ${bfile}.tar.gz | tar xvf - >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+fi
 }
 
 
 ### init_module
 init_module() {
 
-    # $1 directory name
-    directory=$1
+# $1 directory name
+directory=$1
 
-    cd $directory
-    echo "############################################################"
-    echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-    echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    archive_file=`ls *.tar.gz`
-    # Debug
-    #echo "Directory: $directory"
-    #echo "Archive: $archive_file"
-    # echo "Dir: ${archive_file%%.tar*}"
+cd $directory
+echo "############################################################"
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Submodule: $directory" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+archive_file=`ls *.tar.gz`
+# Debug
+#echo "Directory: $directory"
+#echo "Archive: $archive_file"
 
-    dirarchive=${archive_file%%.tar*}
+# dirarchive=${archive_file%%.tar*}
+dirarchive=`echo $archive_file | sed 's/\.tar.*//'`
 
-    extract_archive "$directory" "$dirarchive"
+# Debug
+#echo "DirArchive: $dirarchive"
 
-    cd ${archive_file%%.tar*}
+extract_archive "$directory" "$dirarchive"
+
+cd $dirarchive
+
 }
 
 
 ### clean_module
 clean_module() {
-    cd ..
-    rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    if [ $? -ne 0 ]; then
-        echo "Error: cleaning up $dirarchive !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 5
-    fi
-    cd ..
-}
-
-
-### Recording: Libssh2 Build Phase
-build_rec_ssh2() {
-dir=libssh2
-step1=0
-step2=0
-step3=0
-step4=0
-
-init_module "$dir"
-if [ $? -eq 0 ]; then
-    step1=1
-fi
-
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Configure $dir ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-if [ "$PT_NAME" = "x86_64" ]; then
-    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-      -L/lib64 -L/usr/lib64" \
-      ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-else
-    env CC=cc CFLAGS="-O3 -I${iprefix}/include" \
-     LDFLAGS="-L${iprefix}/lib -Wl,-rpath -Wl,${iprefix}/lib \
-      -L/lib -L/usr/lib" \
-      ./configure --prefix=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-fi
-
+cd ..
+rm -rf $dirarchive >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
-    echo "Error: configure $dir failed !" |\
+    echo "Error: cleaning up $dirarchive !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
-    exit 3
-else
-    step2=1
-fi  
-
-
-
-# STEP 3
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 3 - Make $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: make $dir failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step3=1
-fi 
-
-
-# STEP 4
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 4 - Make install $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: make install gd failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step4=1
+    exit 5
 fi
-
-# final check; all 4 steps
-[ rec_ssh2_done = step1 + step2 + step3 + step4 ]
-if [ "$rec_ssh2_done" -eq 4 ]; then
-   rec_ssh2_done=1
-else
-   rec_ssh2_done=90
-fi
-
-clean_module
+cd ..
 
 }
 
 
-### Recording: Perl Modules: Net::SSH2
-build_rec_perlssh2() {
-
-dir=Net-SSH2
-step1=0
-step2=0
-step3=0
-step4=0
-step5=0
-
-init_module "$dir"
-if [ $? -eq 0 ]; then
-    step1=1
-fi
-
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Configure $dir ..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-
-env LD_LIBRARY_PATH=${iprefix}/lib \
-${iprefix}/perl/bin/perl Makefile.PL lib=${iprefix}/lib inc=${iprefix}/include >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-
-sed "s:LDFLAGS =  -fstack-protector -L/usr/local/lib:LDFLAGS = -fstack-protector -L${iprefix}/lib -L/usr/local/lib -Wl,-rpath -Wl,${iprefix}/lib:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
-
-sed "s:LDDLFLAGS = -shared -O3 -L/usr/local/lib -fstack-protector:LDDLFLAGS = -shared -O3 -L${iprefix}/lib -L/usr/local/lib -fstack-protector -Wl,-rpath -Wl,${iprefix}/lib:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
-
-
-sed "s:CCFLAGS = -fno-strict-aliasing -pipe -fstack-protector -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64:CCFLAGS = -fno-strict-aliasing -pipe -fstack-protector -I${iprefix}/include -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64:" Makefile > Makefile.tmp
-mv Makefile.tmp Makefile
-
-if [ $? -ne 0 ]; then
-    echo "Error: configure $dir failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step2=1
-fi
-
-
-# STEP 3
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 3 - Make $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: make $dir failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step3=1
-fi 
-
-
-
-# STEP 4
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 4 - Make test $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-make test >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: make install perl failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step4=1
-fi
-
-
-# STEP 4
-echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 4 - Make install $dir..." |\
- tee -a ${BUILD_PATH}/${BUILD_LOG}
-
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? -ne 0 ]; then
-    echo "Error: make install perl failed !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
-else
-    step5=1
-fi
-
-#
-# final check; all 5 steps
-rec_perlssh2_done=`expr $step1 + $step2 + $step3 + $step4 + $step5`
-if [ "$rec_perlssh2_done" -eq 5 ]; then
-   rec_perlssh2_done=1
-else
-   rec_perlssh2_done=90
-fi
-
-clean_module
-}
-
-
-
-### Recording: Perl Build Phase
+### perl
 build_rec_perl() {
 dir=perl
 step1=0
