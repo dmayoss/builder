@@ -1037,7 +1037,7 @@ if [ $? -ne 0 ]; then
     exit 3
 else
     step2=1
-fi  
+fi
 
 # STEP 3
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -1297,13 +1297,10 @@ echo "Info: Step 1 - Check recorders" |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 . ${iprefix}/bin/setenv
-for r in sys cpu net hdw nic proc
+for r in sys cpu disk nic hdw
 do
     echo "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     echo "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
-    #if [ "$r" = "jvm" ]; then
-    #    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    #else
     ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     #fi
     if [ $? -ne 0 ]; then
@@ -1326,9 +1323,9 @@ echo "Info: Step 2 - Check libs" |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 noErrors=0
-for lib in $(ls ${iprefix}/lib/*.so)
+for lib in `ls ${iprefix}/lib/*.so`
 do
-    ldd $lib | grep 'not found' | wc -l | read noErrors
+    noErrors=`ldd $lib | grep 'not found' | wc -l`
     if [ "$noErrors" -ne 0 ]; then
         echo "LIB ERROR: $lib" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
