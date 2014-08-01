@@ -117,7 +117,7 @@ if [ $? -eq 0 ]; then
 fi
 
 # get CPAN version
-echo $dirarchive | sed 's/perl-//' | read cpanver
+cpanver=`echo $dirarchive | sed 's/perl-//'`
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure perl ..." |\
