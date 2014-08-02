@@ -1038,7 +1038,7 @@ echo "Info: Step 2 - Installing recorders ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 nrecs=`ls *rec | wc -l`
-if [ "$nrecs" -ne 10 ]; then
+if [ "$nrecs" -ne 5 ]; then
     echo "Error: wrong no. of recorders, check workspace !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
