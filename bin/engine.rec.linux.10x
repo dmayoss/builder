@@ -219,8 +219,7 @@ else
 fi
 
 for lib in Digest::SHA XML::NamespaceSupport XML::SAX Proc::Daemon \
-           Proc::PID::File File::Tail List::MoreUtils Session::Token \
-           Data::UUID
+           Proc::PID::File File::Tail Session::Token Data::UUID
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if [ $? -ne 0 ]; then
@@ -233,8 +232,8 @@ do
     fi
 done
 
-# there are 8 perl modules install calls 
-step6=`expr $step6 / 8`
+# there are 7 perl modules install calls 
+step6=`expr $step6 / 7`
 
 # final check; all 6 steps
 perl_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6`
