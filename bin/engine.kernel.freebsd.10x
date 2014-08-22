@@ -183,6 +183,62 @@ clean_module
 }
 
 
+### redis
+build_kernel_redis() {
+dir=redis
+step1=0
+step2=0
+step3=0
+
+# STEP 1
+init_module "$dir"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Make $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+gmake PREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make $dir failed !" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 3
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 3 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+gmake PREFIX=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# final check; all 3 steps
+kernel_redis_done=`expr $step1 + $step2 + $step3`
+if [ $kernel_redis_done -eq 3 ]; then
+   kernel_redis_done=1
+else
+   kernel_redis_done=90
+fi
+
+clean_module
+
+}
+
+
 ### luafilesystem
 build_kernel_libluafs() {
 dir="luafilesystem"
