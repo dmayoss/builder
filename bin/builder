@@ -100,6 +100,7 @@ rbpi_sem=0
 
 ##auth
 auth_mcd_done=0
+auth_redis_done=0
 auth_openresty_done=0
 auth_libluatemplate_done=0
 auth_libluarouter_done=0
@@ -812,6 +813,7 @@ case "$module" in
     build_auth_libluarouter
     build_auth_libluasmtp
     build_auth_mcd
+    build_auth_redis
     build_auth_config
     build_auth_fin
  ;;
@@ -1162,12 +1164,23 @@ case "$module" in
             fi
         fi
     fi
+
     if [ $auth_mcd_done -ne 0 ]; then
         if [ $auth_mcd_done -eq 1 ]; then
             echo  "# memcached: built and integrated"
         else
             if [ $auth_mcd_done -eq 90 ]; then
                 echo  "# memcached: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $auth_redis_done -ne 0 ]; then
+        if [ $auth_redis_done -eq 1 ]; then
+            echo  "# redis: built and integrated"
+        else
+            if [ $auth_redis_done -eq 90 ]; then
+                echo  "# redis: not integrated"
             fi
         fi
     fi
