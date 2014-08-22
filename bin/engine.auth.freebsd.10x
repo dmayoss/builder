@@ -134,9 +134,9 @@ else
 fi  
 
 
-# STEP 4
+# STEP 3
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 4 - Make install $dir..." |\
+echo "Info: Step 3 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 gmake PREFIX=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
@@ -145,13 +145,13 @@ if [ $? -ne 0 ]; then
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     exit 3
 else
-    step4=1
+    step3=1
 fi
 
 
-# final check; all 4 steps
-auth_redis_done=`expr $step1 + $step2 + $step3 + $step4`
-if [ $auth_redis_done -eq 4 ]; then
+# final check; all 3 steps
+auth_redis_done=`expr $step1 + $step2 + $step3`
+if [ $auth_redis_done -eq 3 ]; then
    auth_redis_done=1
 else
    auth_redis_done=90
