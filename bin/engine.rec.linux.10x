@@ -499,6 +499,17 @@ else
     step4=1
 fi
 
+
+# clean docbook, html
+if [ -d ${iprefix}/share/gtk\-doc ]; then
+    rm -rf ${iprefix}/share/gtk\-doc
+fi
+
+if [ -d ${iprefix}/share/doc ]; then
+    rm -rf ${iprefix}/share/doc
+fi
+
+
 # final check; all 4 steps
 rec_libxml2_done=`expr $step1 + $step2 + $step3 + $step4`
 if [ "$rec_libxml2_done" -eq 4 ]; then
@@ -1061,6 +1072,11 @@ if [ $? -ne 0 ]; then
 else
     step4=1
 fi
+
+if [ -d ${iprefix}/share/doc ]; then
+    rm -rf ${iprefix}/share/doc
+fi
+
 
 # final check; all 4 steps
 sysstat_done=`expr $step1 + $step2 + $step3 + $step4`
