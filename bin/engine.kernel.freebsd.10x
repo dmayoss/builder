@@ -461,7 +461,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 1 - Installing nginx wrappers ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $maas_sem -eq 1 ]; then
+if [ $entreprise_sem -eq 1 ]; then
     cp nginx.conf.maas ${iprefix}/nginx/conf/nginx.conf
 elif [ $rbpi_sem -eq 1 ]; then
     cp nginx.conf.rbpi ${iprefix}/nginx/conf/nginx.conf
@@ -493,7 +493,6 @@ cd ../..
 
 ### finalize
 build_kernel_fin() {
-
 dir=etc
 step1=0
 step2=0
@@ -583,7 +582,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing sdr-kernel startup script ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $maas_sem -eq 1 ]; then
+if [ $entreprise_sem -eq 1 ]; then
     cp sdr-kernel.maas ${iprefix}/etc/sdr-kernel
 elif [ $rbpi_sem -eq 1 ]; then
     cp sdr-kernel.rbpi ${iprefix}/etc/sdr-kernel
