@@ -105,6 +105,63 @@ cd ..
 }
 
 
+### redis
+build_auth_redis() {
+dir=redis
+step1=0
+step2=0
+step3=0
+step4=0
+
+# STEP 1
+init_module "$dir"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Make ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+gmake PREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make $dir failed !" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 4
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 4 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+gmake PREFIX=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step4=1
+fi
+
+
+# final check; all 4 steps
+auth_redis_done=`expr $step1 + $step2 + $step3 + $step4`
+if [ $auth_redis_done -eq 4 ]; then
+   auth_redis_done=1
+else
+   auth_redis_done=90
+fi
+
+clean_module
+
+}
+
+
 ### memcached
 build_auth_mcd() {
 dir=memcached
