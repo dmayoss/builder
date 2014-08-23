@@ -613,8 +613,10 @@ echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
 
 if [ $entreprise_sem -eq 1 ]; then
     cp sdr-auth.maas ${iprefix}/etc/sdr-auth
+    cp redis.conf ${iprefix}/etc/
 elif [ $rbpi_sem -eq 1 ]; then
     cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
+    cp redis.conf ${iprefix}/etc/
 fi
 
 if [ $? -ne 0 ]; then
