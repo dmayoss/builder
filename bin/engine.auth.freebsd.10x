@@ -122,7 +122,7 @@ fi
 # STEP 2
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Make ..." |\
+echo "Info: Step 2 - Make $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 gmake PREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
