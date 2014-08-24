@@ -26,8 +26,8 @@ HOSTNAME=`uname -n`
 
 
 ### General settings
-BUILDER_ROOT=/opt/sdrbuilder
-BUILD_PATH=${BUILDER_ROOT}/log
+BUILDER_PREFIX=/opt/sdrbuilder
+BUILD_PATH=${BUILDER_PREFIX}/log
 
 NGINX_PERLBIN=/opt/nginx/perl/bin
 NGXAL_PERLBIN=/opt/www/perl/bin
@@ -103,4 +103,4 @@ ZONEADM_BIN=/usr/sbin/zoneadm
 #############################
 
 
-export HOSTNAME BUILDER_ROOT SDR_PATH SDR_BIN SDR_PERLBIN
+export HOSTNAME BUILDER_PREFIX SDR_PATH SDR_BIN SDR_PERLBIN

@@ -51,7 +51,7 @@ Options:
       builder -a -d mariadb nginx 1.4.5
 
 Notes:
-   Make sure you have defined WORKSPACE_BUILDER variable before running
+   Make sure you have defined WORKSPACE_PREFIX variable before running
    builder.
 END
 exit 1
@@ -345,8 +345,8 @@ module=$1
 
 # check workspace variable
 
-if [ ! -z "$WORKSPACE_BUILDER" ]; then
-   WORKSPACE="${WORKSPACE_BUILDER}"
+if [ ! -z "$WORKSPACE_PREFIX" ]; then
+   WORKSPACE="${WORKSPACE_PREFIX}"
 else
    usage
 fi
@@ -375,7 +375,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr}
              iuser=sdr
 
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
              case "$version" in
                  0.73*)
                   . ${PWD}/engine.rec.solaris.073
@@ -443,7 +443,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr}
              iuser=sdr
 
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
 
 
              #echo "Debug: iprefix=$iprefix"
@@ -480,7 +480,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
              iuser=sdr
 
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
 
              case "$version" in
                  1.0*)
@@ -505,7 +505,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/analytics/kernel}
              iuser=sdr
              
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
 
              case "$version" in
                  1.0*)
@@ -569,7 +569,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr}
              iuser=sdr
 
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
 
              case "$version" in
                  1.0*)
@@ -594,7 +594,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/analytics/auth}
              iuser=sdr
              
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
 
              case "$version" in
                  1.0*)
@@ -619,7 +619,7 @@ case "$OS_NAME" in
              iprefix=${iprefix:-/opt/sdr/analytics/kernel}
              iuser=sdr
              
-             WORKSPACE="${WORKSPACE_BUILDER}/SDR"
+             WORKSPACE="${WORKSPACE_PREFIX}/SDR"
 
              case "$version" in
                  1.0*)
@@ -646,7 +646,7 @@ case "$OS_NAME" in
                  fi
              fi
 
-             WORKSPACE="${WORKSPACE_BUILDER}/nginx"
+             WORKSPACE="${WORKSPACE_PREFIX}/nginx"
 
              case "$version" in
                  1.4.*)
