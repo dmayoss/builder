@@ -608,19 +608,15 @@ step1=`expr $step1 / 4`
 
 # STEP 2
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Installing sdr-auth startup script ..." |\
+echo "Info: Step 2 - Installing sdrauth startup services..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-if [ $entreprise_sem -eq 1 ]; then
-    cp sdr-auth.maas ${iprefix}/etc/sdr-auth
-    cp redis.conf ${iprefix}/etc/
-elif [ $rbpi_sem -eq 1 ]; then
-    cp sdr-auth.rbpi ${iprefix}/etc/sdr-auth
-    cp redis.conf ${iprefix}/etc/
-fi
+cp sdrauth-http ${iprefix}/etc/
+cp sdrauth-redis ${iprefix}/etc/
+cp redis.conf ${iprefix}/etc/
 
 if [ $? -ne 0 ]; then
-    echo "Error: cannot install sdr-auth script !" |\
+    echo "Error: cannot install sdrauth startup services !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
