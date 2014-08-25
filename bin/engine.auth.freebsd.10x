@@ -599,7 +599,7 @@ cp sdrauth-redis ${iprefix}/etc/
 cp redis.conf ${iprefix}/etc/
 
 if [ $? -ne 0 ]; then
-    echo "Error: cannot install sdr-auth script !" |\
+    echo "Error: cannot install sdrauth startup services !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
