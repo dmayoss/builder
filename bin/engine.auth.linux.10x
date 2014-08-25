@@ -146,10 +146,6 @@ else
     step3=1
 fi
 
-echo "step1=$step1"
-echo "step2=$step2"
-echo "step3=$step3"
-
 # final check; all 3 steps
 auth_redis_done=`expr $step1 + $step2 + $step3`
 if [ $auth_redis_done -eq 3 ]; then
