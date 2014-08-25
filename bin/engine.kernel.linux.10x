@@ -181,6 +181,61 @@ clean_module
 
 }
 
+### redis
+build_kernel_redis() {
+dir=redis
+step1=0
+step2=0
+step3=0
+
+# STEP 1
+init_module "$dir"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+# STEP 2
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Make $dir ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make PREFIX=${iprefix} >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make $dir failed !" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step2=1
+fi  
+
+
+# STEP 3
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 3 - Make install $dir..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+make PREFIX=${iprefix} install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+if [ $? -ne 0 ]; then
+    echo "Error: make install perl failed !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+    exit 3
+else
+    step3=1
+fi
+
+
+# final check; all 3 steps
+kernel_redis_done=`expr $step1 + $step2 + $step3`
+if [ $kernel_redis_done -eq 3 ]; then
+   kernel_redis_done=1
+else
+   kernel_redis_done=90
+fi
+
+clean_module
+
+}
+
 
 ### luafilesystem
 build_kernel_libluafs() {
@@ -478,19 +533,6 @@ if [ ! -d ${iprefix}/etc ]; then
 fi
 
 
-if [ ! -d ${iprefix}/static ]; then
-    mkdir ${iprefix}/static
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot configure static directory !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step1=`expr $step1 + 1`
-    fi
-fi
-
-
 if [ ! -d ${iprefix}/app ]; then
     mkdir ${iprefix}/app
     if [ $? -ne 0 ]; then
@@ -519,8 +561,8 @@ if [ ! -d ${iprefix}/logs ]; then
 fi
 
 
-# there are 4 settings
-step1=`expr $step1 / 4`
+# there are 3 settings
+step1=`expr $step1 / 3`
 
 
 # STEP 2

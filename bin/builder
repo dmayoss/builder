@@ -811,7 +811,6 @@ case "$module" in
     build_auth_libluatemplate
     build_auth_libluarouter
     build_auth_libluasmtp
-    # build_auth_mcd
     build_auth_redis
     build_auth_config
     build_auth_fin

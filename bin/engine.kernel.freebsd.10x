@@ -535,19 +535,6 @@ if [ ! -d ${iprefix}/etc ]; then
 fi
 
 
-if [ ! -d ${iprefix}/static ]; then
-    mkdir ${iprefix}/static
-    if [ $? -ne 0 ]; then
-        echo "Error: cannot configure static directory !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    else
-        step1=`expr $step1 + 1`
-    fi
-fi
-
-
 if [ ! -d ${iprefix}/app ]; then
     mkdir ${iprefix}/app
     if [ $? -ne 0 ]; then
@@ -576,8 +563,8 @@ if [ ! -d ${iprefix}/logs ]; then
 fi
 
 
-# there are 4 settings
-step1=`expr $step1 / 4`
+# there are 3 settings
+step1=`expr $step1 / 3`
 
 
 # STEP 2
