@@ -508,7 +508,7 @@ else
    buildno=0
 fi
 
-cd $dir/${OS_NAME}
+cd $dir
 
 echo "############################################################"
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
@@ -601,7 +601,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Installing RELEASENOTES and README  ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
-cd ../..
+cd ..
 cp RELEASENOTES README ${iprefix}/
 if [ $? -ne 0 ]; then
     echo "Error: cannot install RELEASENOTES and README !" |\
