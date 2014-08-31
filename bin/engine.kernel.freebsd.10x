@@ -604,7 +604,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 3 - Installing RELEASENOTES and README ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 cd ..
-cp RELEASENOTES README ${iprefix}/
+cp RELEASENOTES README TUNING ${iprefix}/
 if [ $? -ne 0 ]; then
     echo "Error: cannot install RELEASENOTES README !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
