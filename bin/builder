@@ -725,8 +725,8 @@ case "$module" in
         build_rec_perl
         build_rec_ossl
         build_rec_idn
-        build_rec_libxml2
-        build_rec_xmllibxml
+        # build_rec_libxml2
+        # build_rec_xmllibxml
         build_rec_curl
         build_rec_wcurl
         if [ "${OS_NAME}" = "linux" ]; then

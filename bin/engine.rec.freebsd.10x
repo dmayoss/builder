@@ -205,7 +205,7 @@ fi
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 6 - CPAN modules" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp ${BUILDER_ROOT}/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN 
+cp ${BUILDER_PREFIX}/etc/Config.pm ${iprefix}/perl/lib/${cpanver}/CPAN 
 
 ${iprefix}/perl/bin/perl -MCPAN -e 'install BSD::Sysctl' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
@@ -217,8 +217,7 @@ else
     step6=`expr $step6 + 1`
 fi
 
-for lib in Digest::SHA XML::NamespaceSupport XML::SAX Proc::Daemon \
-           Proc::PID::File File::Tail Session::Token Data::UUID
+for lib in Digest::SHA Proc::Daemon Proc::PID::File File::Tail
 do
     ${iprefix}/perl/bin/perl -MCPAN -e 'install "'$lib'"' >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if [ $? -ne 0 ]; then
@@ -231,8 +230,8 @@ do
     fi
 done
 
-# there are 7 perl modules install calls
-step6=`expr $step6 / 7`
+# there are 5 perl modules install calls
+step6=`expr $step6 / 5`
 
 # final check; all 6 steps
 perl_done=`expr $step1 + $step2 + $step3 + $step4 + $step5 + $step6`
