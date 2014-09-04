@@ -141,19 +141,13 @@ else
     # fix ldflags
     # ################################################################## #
     echo "Fixing ldflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [ "$PT_NAME" = "i86pc" ]; then
-        sed 's/\-xarch=generic64 \-L\/opt\/sunstudio12.1\/prod\/lib\/amd64 \-L\/lib\/64/\-m64 \-L\/lib\/64/' config.sh > config.sh.tmp
-    else
-        sed 's/^ldflags\=.*/ldflags\='\''\-m64 \-L\/lib\/64 \-L\/usr\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
-    fi
-    
+    sed 's/^ldflags\=.*/ldflags\='\''\-m64 \-L\/lib\/64'\''/' config.sh > config.sh.tmp
     if [ $? -ne 0 ]; then
         echo "Error: fixing ldflags perl failed !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
         exit 3
     fi
-
     mv config.sh.tmp config.sh
 
 
@@ -162,11 +156,11 @@ else
     # ################################################################## #
     echo "Fixing libspath..." >> ${BUILD_PATH}/${BUILD_LOG}
     if [ "$PT_NAME" = "i86pc" ]; then
-        sed 's/\/opt\/sunstudio12.1\/prod\/lib\/amd64 \/lib\/64 \/usr\/lib \/usr\/ccs\/lib/\/lib\/64 \/usr\/lib \/usr\/ccs\/lib/' config.sh > config.sh.tmp
+        sed 's/^libspath\=.*/libspath\='\''\/lib\/64 \/usr\/lib\/amd64 \/usr\/ccs\/lib\/amd64 \/usr\/lib \/usr\/ccs\/lib'\''/' config.sh > config.sh.tmp
     else
-
-    sed 's/^libspath\=.*/libspath\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9 \/usr\/lib \/usr\/ccs\/lib'\''/' config.sh > config.sh.tmp
+        sed 's/^libspath\=.*/libspath\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9 \/usr\/lib \/usr\/ccs\/lib'\''/' config.sh > config.sh.tmp
     fi
+
     if [ $? -ne 0 ]; then
         echo "Error: fixing libpath perl failed !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -180,7 +174,7 @@ else
     # ################################################################## #
     echo "Fixing loclibpth..." >> ${BUILD_PATH}/${BUILD_LOG} 
     if [ "$PT_NAME" = "i86pc" ]; then
-        sed 's/\/opt\/sunstudio12.1\/prod\/lib\/amd64 \/amd64 \/lib\/64 \/64 \/usr\/local\/lib \/opt\/local\/lib \/usr\/gnu\/lib \/opt\/gnu\/lib \/usr\/GNU\/lib\/opt\/GNU\/lib/\/amd64 \/lib\/64 \/64 \/usr\/lib \/usr\/ccs\/lib/' config.sh > config.sh.tmp
+        sed 's/^loclibpth=.*/loclibpth\='\''\/lib\/64 \/usr\/lib\/amd64 \/usr\/ccs\/lib\/amd64'\''/' config.sh > config.sh.tmp
     else
        sed 's/^loclibpth=.*/loclibpth\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
     fi
@@ -196,11 +190,7 @@ else
     # fix ccflags
     # ################################################################## #
     echo  "Fixing ccflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [ "$PT_NAME" = "i86pc" ]; then
-        sed 's/\-xarch=generic64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64 \-DPERL_USE_SAFE_PUTENV/\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64/' config.sh > config.sh.tmp
-    else
-        sed 's/^ccflags\=.*/ccflags\='\''\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64'\''/' config.sh > config.sh.tmp
-    fi
+    sed 's/^ccflags\=.*/ccflags\='\''\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64'\''/' config.sh > config.sh.tmp
 
     if [ $? != 0 ]; then
         echo "Error: fixing ccflags perl failed !" |\
@@ -210,20 +200,6 @@ else
     fi
     mv config.sh.tmp config.sh
 
-    # ################################################################## #
-    # fix cppflags
-    # ################################################################## #
-    echo "Fixing cppflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    sed 's/\-xarch=generic64/\-m64/' config.sh > config.sh.tmp
-        
-    if [ $? -ne 0 ]; then
-        echo "Error: fixing cppflags perl failed !" |\
-         tee -a ${BUILD_PATH}/${BUILD_LOG}
-        rm /var/tmp/build.${module}
-        exit 3
-    fi
-    mv config.sh.tmp config.sh
- 
     sh Configure -S >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     make depend >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if [ $? -ne 0 ]; then
