@@ -193,7 +193,7 @@ else
     echo  "Fixing ccflags..." >> ${BUILD_PATH}/${BUILD_LOG}
     sed 's/^ccflags\=.*/ccflags\='\''\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64'\''/' config.sh > config.sh.tmp
 
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]; then
         echo "Error: fixing ccflags perl failed !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
@@ -370,7 +370,7 @@ cd ..
 # KSTAT MODULE
 # ############################################################### #
 cd Kstat
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: Sun::Solaris::Kstat cannot change directory!" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -383,7 +383,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: building Sun::Solaris::Kstat module" | tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 ${iprefix}/perl/bin/perl Makefile.PL >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if [ $? != 0 ]; then
+if [ $? -ne 0 ]; then
     echo "Error: Sun::Solaris::Kstat perl Makefile.PL failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
