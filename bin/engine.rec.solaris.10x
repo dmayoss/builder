@@ -141,13 +141,9 @@ else
     # fix ldflags
     # ################################################################## #
     echo "Fixing ldflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [ $PT_NAME = "i86pc" ]; then
+    if [ "$PT_NAME" = "i86pc" ]; then
         sed 's/\-xarch=generic64 \-L\/opt\/sunstudio12.1\/prod\/lib\/amd64 \-L\/lib\/64/\-m64 \-L\/lib\/64/' config.sh > config.sh.tmp
     else
-        # ldflags=' -xarch=generic64 -L/opt/sunstudio12.1/prod/lib/sparc/64 -L/o
-pt/sunstudio12.1/prod/lib/v9 
-        # -L/lib/64 -L/usr/lib/spar cv9 -L/usr/ccs/lib/sparcv9 '
-
         sed 's/^ldflags\=.*/ldflags\='\''\-m64 \-L\/lib\/64 \-L\/usr\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
     fi
     
@@ -165,12 +161,9 @@ pt/sunstudio12.1/prod/lib/v9
     # fix libspath
     # ################################################################## #
     echo "Fixing libspath..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [ $PT_NAME = "i86pc" ]; then
+    if [ "$PT_NAME" = "i86pc" ]; then
         sed 's/\/opt\/sunstudio12.1\/prod\/lib\/amd64 \/lib\/64 \/usr\/lib \/usr\/ccs\/lib/\/lib\/64 \/usr\/lib \/usr\/ccs\/lib/' config.sh > config.sh.tmp
     else
-        # libspath=' /opt/sunstudio12.1/prod/lib/sparc/64 /opt/sunstudio12.1/pro
-d/lib/v9 
-        # /lib/64 /usr/lib/sparcv9 /usr/ccs/lib/sparcv9 /usr/lib /usr/ccs/lib' 
 
     sed 's/^libspath\=.*/libspath\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9 \/usr\/lib \/usr\/ccs\/lib'\''/' config.sh > config.sh.tmp
     fi
@@ -186,12 +179,12 @@ d/lib/v9
     # fix loclibpth
     # ################################################################## #
     echo "Fixing loclibpth..." >> ${BUILD_PATH}/${BUILD_LOG} 
-    if [ $PT_NAME = "i86pc" ]; then
+    if [ "$PT_NAME" = "i86pc" ]; then
         sed 's/\/opt\/sunstudio12.1\/prod\/lib\/amd64 \/amd64 \/lib\/64 \/64 \/usr\/local\/lib \/opt\/local\/lib \/usr\/gnu\/lib \/opt\/gnu\/lib \/usr\/GNU\/lib\/opt\/GNU\/lib/\/amd64 \/lib\/64 \/64 \/usr\/lib \/usr\/ccs\/lib/' config.sh > config.sh.tmp
     else
        sed 's/^loclibpth=.*/loclibpth\='\''\/lib\/64 \/usr\/lib\/sparcv9 \/usr\/ccs\/lib\/sparcv9'\''/' config.sh > config.sh.tmp
     fi
-    if (( $? != 0 )); then
+    if [ $? -ne 0 ]; then
         echo "Error: fixing loclibpth perl failed !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
@@ -203,7 +196,7 @@ d/lib/v9
     # fix ccflags
     # ################################################################## #
     echo  "Fixing ccflags..." >> ${BUILD_PATH}/${BUILD_LOG}
-    if [ $PT_NAME = "i86pc" ]; then
+    if [ "$PT_NAME" = "i86pc" ]; then
         sed 's/\-xarch=generic64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64 \-DPERL_USE_SAFE_PUTENV/\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64/' config.sh > config.sh.tmp
     else
         sed 's/^ccflags\=.*/ccflags\='\''\-m64 \-D_LARGEFILE_SOURCE \-D_FILE_OFFSET_BITS=64'\''/' config.sh > config.sh.tmp
@@ -233,7 +226,7 @@ d/lib/v9
  
     sh Configure -S >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     make depend >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-    if (( $? != 0 )); then
+    if [ $? -ne 0 ]; then
         echo "Error: make depend perl failed !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
@@ -475,7 +468,7 @@ fi
 
 
 make >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
+if [ $? -ne 0 ]; then
     echo "Error: Sun::Solaris::Lgrp make failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -639,7 +632,7 @@ fi
 
 
 make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
-if (( $? != 0 )); then
+if [ $? -ne 0 ]; then
     echo "Error: Sun::Solaris::Utils make install failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
@@ -932,7 +925,7 @@ fi
 if [ -d ${iprefix}/lib ]; then
     echo "Warning: lib directory found..." |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
-    for f in $(find ${iprefix}/lib -name '*curl*')
+    for f in `find ${iprefix}/lib -name '*curl*'`
     do
         echo "Cleaning file: $f..." |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1272,7 +1265,7 @@ fi
 ln -s ${iprefix}/share/man/man3 ${iprefix}/man
 ln -s ${iprefix}/share/man/man8 ${iprefix}/man
 ln -s ${iprefix}/share/man/man5 ${iprefix}/man
-for man in $(ls ${iprefix}/share/man/man1)
+for man in `ls ${iprefix}/share/man/man1`
 do
     ln -s ${iprefix}/share/man/man1/${man} ${iprefix}/man/man1
 done 

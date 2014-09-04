@@ -683,8 +683,7 @@ else
     exit 1
 fi
 
-
-if [ "$OS_NAME" = "SunOS" ]; then
+if [ "$OS_NAME" = "sunos" ]; then
     start=`nawk 'BEGIN{print srand()}'`
 else
     start=`date +%s`
@@ -694,7 +693,7 @@ echo ""
 echo "#################################################################"
 echo "# SDR Build Engine                                              #"
 echo "#################################################################"
-echo "# Start: $(date)"
+echo "# Start: `date`"
 if [ ! -z "$appliance" ]; then
     echo "# Appliance: $appliance"
 fi
@@ -713,90 +712,24 @@ echo "#################################################################"
 
 case "$module" in
  rec)
-    if [ "$perl_sem" -eq 0 -a "$ossl_sem" -eq 0     \
-          -a "$lidn_sem" -eq 0 -a "$syss_sem" -eq 0 \
-          -a "$lcrl_sem" -eq 0 -a "$lwcl_sem" -eq 0 \
-          -a "$wrec_sem" -eq 0 -a "$nrec_sem" -eq 0 \
-          -a "$recs_sem" -eq 0 -a "$test_sem" -eq 0 \
-          -a "$rec1_sem" -eq 0 ]; then
-        echo "" > ${BUILD_PATH}/${BUILD_LOG}
-        build_rec_perl
-        build_rec_ossl
-        build_rec_idn
-        build_rec_curl
-        build_rec_wcurl
-        if [ "${OS_NAME}" = "linux" ]; then
-            build_rec_sysstat
-        fi
+     echo "" > ${BUILD_PATH}/${BUILD_LOG}
+     build_rec_perl
+     build_rec_ossl
+     build_rec_idn
+     build_rec_curl
+     build_rec_wcurl
+     if [ "${OS_NAME}" = "linux" ]; then
+         build_rec_sysstat
+     fi
   
-        if [ "$PT_NAME" != "armv6l" ]; then 
-            build_rec_webrec
-        fi
-        build_rec_scripts
+     if [ "$PT_NAME" != "armv6l" ]; then 
+         build_rec_webrec
+     fi
+     build_rec_scripts
         
-        if [ "$OS_NAME" != "freebsd" ]; then 
-            test_rec_scripts
-        fi
-    else
-        if [ "$perl_sem" -eq 1 ]; then
-          echo "" > ${BUILD_PATH}/${BUILD_LOG}
-          build_rec_perl
-        fi
-
-        if [ "$ossl_sem" -eq 1 ]; then
-          echo "" > ${BUILD_PATH}/${BUILD_LOG}
-          build_rec_ossl
-        fi
-     
-        if [ "$rec1_sem" -eq 1 ]; then
-          echo "" > ${BUILD_PATH}/${BUILD_LOG}
-          build_rec_perlssh2
-        fi
-
-        if [ "$lidn_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            build_rec_idn
-        fi
-
-        if [ "$lcrl_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            build_rec_curl
-        fi
-
-        if [ "$lwcl_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            build_rec_wcurl
-        fi
-
-        if [ "$syss_sem" -eq 1 ]; then
-            if [ "${OS_NAME}" = "linux" ]; then
-                echo "" > ${BUILD_PATH}/${BUILD_LOG}
-                build_rec_sysstat
-            fi
-        fi
-
-        if [ "$nrec_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            build_rec_nrec
-        fi
-
-        if [ "$wrec_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            build_rec_webrec
-        fi
-
-        if [ "$recs_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            build_rec_scripts
-        fi
-
-        if [ "$test_sem" -eq 1 ]; then
-            echo "" > ${BUILD_PATH}/${BUILD_LOG}
-            test_rec_scripts
-        fi
-
-    fi
-
+     if [ "$OS_NAME" != "freebsd" ]; then 
+         test_rec_scripts
+     fi
  ;;
 
 
@@ -1281,7 +1214,7 @@ echo "#################################################################"
 
 elapsed=0
 end=0
-if [ "$OS_NAME" = "SunOS" ]; then
+if [ "$OS_NAME" = "sunos" ]; then
     end=`nawk 'BEGIN{print srand()}'`
 else
     end=`date +%s`
