@@ -89,8 +89,6 @@ wwwcurl_done=0
 sysstat_done=0
 rec_ssh2_done=0
 rec_perlssh2_done=0
-libxml2_done=0
-perlxml_done=0
 ##
 
 ##appliance
@@ -725,8 +723,6 @@ case "$module" in
         build_rec_perl
         build_rec_ossl
         build_rec_idn
-        # build_rec_libxml2
-        # build_rec_xmllibxml
         build_rec_curl
         build_rec_wcurl
         if [ "${OS_NAME}" = "linux" ]; then
