@@ -149,7 +149,7 @@ else
         exit 3
     fi
     mv config.sh.tmp config.sh
-    sed 's/^lddlflags\=.*/lddlflags\='\''\-G \/lib\/64 \/usr\/lib\/amd64 \/usr\/ccs\/lib\/amd64 \/usr\/lib \/usr\/ccs\/lib'\''/' config.sh > config.sh.tmp
+    sed 's/^lddlflags\=.*/lddlflags\='\''\-G \-m64 \-L\/lib\/64 \-L\/usr\/lib\/amd64'\''/' config.sh > config.sh.tmp
     mv config.sh.tmp config.sh
 
     # ################################################################## #
