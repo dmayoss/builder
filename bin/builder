@@ -112,6 +112,7 @@ kernel_libluafs_done=0
 kernel_libluatemplate_done=0
 kernel_libluasession_done=0
 kernel_libluarouter_done=0
+kernel_libdate_done=0
 kernel_redis_done=0
 kernel_fin_done=0
 kernel_config_done=0
@@ -752,6 +753,7 @@ case "$module" in
     build_kernel_libluatemplate
     build_kernel_libluasession
     build_kernel_libluarouter
+    build_kernel_libdate
     build_kernel_redis
     build_kernel_config
     build_kernel_fin
@@ -1171,6 +1173,16 @@ case "$module" in
         else
             if [ $kernel_libluarouter_done -eq 90 ]; then
                 echo  "# lib router.lua: not integrated"
+            fi
+        fi
+    fi
+
+    if [ $kernel_libdate_done -ne 0 ]; then
+        if [ $kernel_libdate_done -eq 1 ]; then
+            echo  "# lib date.lua: built and integrated"
+        else
+            if [ $kernel_libdone_done -eq 90 ]; then
+                echo  "# lib date.lua: not integrated"
             fi
         fi
     fi
