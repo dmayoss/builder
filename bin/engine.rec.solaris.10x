@@ -853,9 +853,9 @@ PKG_CONFIG_PATH=${iprefix}/lib/pkgconfig:/usr/lib/64/pkgconfig \
 CC=cc CFLAGS="-m64 -xO3 -KPIC" CPPFLAGS="-I${iprefix}/include" \
 LDFLAGS="-m64 -L${iprefix}/lib -R${iprefix}/lib -L/usr/lib/64 -R/usr/lib/64 \
 -L/usr/sfw/lib/64 -R/usr/sfw/lib/64" \
-./configure --prefix=${iprefix} \
---with-ssl=${iprefix} --with-libidn=${iprefix} --with-libssh2=${iprefix} \
---enable-cookies --enable-nonblocking --disable-ldap --disable-ldaps >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+./configure --with-ssl=${iprefix} --with-libidn=${iprefix} \
+--prefix=${iprefix} --enable-cookies --enable-nonblocking \
+--disable-ldap --disable-ldaps >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: configure $dir failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
