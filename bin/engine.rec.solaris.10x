@@ -1350,6 +1350,7 @@ for r in sys cpu nic hdw
 do
     echo "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     echo "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
+    ${SDR_BIN}/${r}rec >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     if [ $? -ne 0 ]; then
         echo "Error: cannot run ${r}rec !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
