@@ -1172,14 +1172,27 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing recorders ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
+#corerec corestat.sparc64, corestat.t1, corestat.t2
+#cpurec
+#hdwrec
+#jvmrec
+#netrec
+#nicrec
+#sender
+#sysrec
+#webrec
+#zonerec
 nrecs=`ls *rec | wc -l`
-if [ "$nrecs" -ne 5 ]; then
+if [ "$nrecs" -ne 9 ]; then
     echo "Error: wrong no. of recorders, check workspace !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
+     tee -a ${BUILd_PATH}/${BUILD_LOG}
     rm /var/tmp/build.${module}
     exit 3
 else
-    cp *rec ${iprefix}/bin
+    cp sysrec cpurec nicrec hdwrec netrec jvmrec webrec zonerec  ${iprefix}/bin
+    if [ $PT_NAME != "i86pc" ]; then
+        cp core* ${iprefix}/bin
+    fi
     if [ $? -ne 0 ]; then
         echo "Error: cannot install rec scripts !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
@@ -1333,7 +1346,7 @@ echo "Info: Step 1 - Check recorders" |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 . ${iprefix}/bin/setenv
-for r in sys cpu disk nic hdw 
+for r in sys cpu nic hdw 
 do
     echo "" >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
     echo "Executing ${r}rec" | tee -a ${BUILD_PATH}/${BUILD_LOG}
