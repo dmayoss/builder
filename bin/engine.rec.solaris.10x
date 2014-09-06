@@ -1216,7 +1216,7 @@ fi
 
 # set etc settings
 cd ../..
-cp etc/${OS_NAME}/* ${iprefix}/etc
+cp -R etc/${OS_NAME}/* ${iprefix}/etc
 cp etc/*.start ${iprefix}/etc
 cp etc/sdr.json ${iprefix}/etc
 cp etc/sdr ${iprefix}/etc
