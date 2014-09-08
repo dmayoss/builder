@@ -461,7 +461,7 @@ fi
 # STEP 2
 
 echo "" >> ${BUILD_PATH}/${BUILD_LOG}
-echo "Info: Step 2 - Install router.lua ..." |\
+echo "Info: Step 2 - Install date.lua ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cp date.lua ${iprefix}/lualib/
