@@ -1234,19 +1234,10 @@ fi
 
 elapsed=`expr $end - $start`
 
-if [ $elapsed -gt 3600 ]; then
-    h=`expr $elapsed / 3600`
-    m=`expr  $elapsed / 60 % 60`
-    s=`expr $elapsed % 60`
-    echo "# Total Build time: ${h}h:${m}m:${s}s"
-else
-    if [ $elapsed -gt 60 -a $elapsed -lt 3600 ]; then
-        m=`expr $elapsed / 60 % 60`
-        echo "# Total Build time: $m mins"
-    else
-        echo "# Total Build time: $elapsed secs"
-    fi
-fi
+h=`expr $elapsed / 3600`
+m=`expr  $elapsed / 60 % 60`
+s=`expr $elapsed % 60`
+echo "# Total Build time: ${h}h:${m}m:${s}s"
 echo "#################################################################"
 
 
