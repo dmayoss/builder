@@ -269,7 +269,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
- env PATH=/sbin:$PATH PKG_CONFIG_PATH=/usr/local/libdata/pkgconfig \
+ env PATH=/sbin:$PATH \
      ./configure --prefix=${iprefix} --with-luajit \
      >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 

@@ -127,7 +127,8 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Configure $dir ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
- ./configure --prefix=${iprefix} --with-luajit \
+ env PATH=/sbin:$PATH \
+     ./configure --prefix=${iprefix} --with-luajit \
       >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 
 if [ $? -ne 0 ]; then
