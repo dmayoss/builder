@@ -48,6 +48,8 @@ case "$OS_NAME" in
             DIST_ID=`grep ID_LIKE /etc/os-release | sed 's/^.*=//'`
         elif [ -f /etc/system-release ]; then
             DIST_ID=`sed 's/ release.*$//' /etc/system-release | tr '[A-Z]' '[a-z]'`
+        elif [ -f /etc/redhat-release ]; then
+            DIST_ID=`sed 's/ release.*$//' /etc/redhat-release | tr '[A-Z]' '[a-z]'`
         fi
     ;;
 
