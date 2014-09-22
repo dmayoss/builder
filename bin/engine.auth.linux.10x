@@ -610,8 +610,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing sdrauth startup services..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp sdrauth-http ${iprefix}/etc/
-cp sdrauth-redis ${iprefix}/etc/
+cp sdrauth* ${iprefix}/etc/
 cp redis.conf ${iprefix}/etc/
 
 if [ $? -ne 0 ]; then
