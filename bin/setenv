@@ -37,17 +37,24 @@ case "$OS_NAME" in
     sunos)
         USER_ID=`/usr/xpg4/bin/id -u`
         KERNEL=`uname -sr`
+        DIST_ID="sunos"
     ;;
 
     linux)
         COMPILER=`gcc --version | head -1 | sed 's/(GCC) //'`
         KERNEL=`uname -r`
         USER_ID=`/usr/bin/id -u`
+        if [ -f /etc/os-release ]; then
+            DIST_ID=`grep ID_LIKE /etc/os-release | sed 's/^.*=//'`
+        elif [ -f /etc/system-release ]; then
+            DIST_ID=`sed 's/ release.*$//' /etc/system-release | tr '[A-Z]' '[a-z]'`
+        fi
     ;;
 
     freebsd)
         KERNEL=`uname -r`
         USER_ID=`/usr/bin/id -u`
+        DIST_ID="freebsd"
     ;;
 
     *)
@@ -103,4 +110,4 @@ ZONEADM_BIN=/usr/sbin/zoneadm
 #############################
 
 
-export HOSTNAME BUILDER_PREFIX SDR_PATH SDR_BIN SDR_PERLBIN
+export HOSTNAME BUILDER_PREFIX SDR_PATH SDR_BIN SDR_PERLBIN DIST_ID
