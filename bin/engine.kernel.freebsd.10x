@@ -632,8 +632,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing sdrkernel startup services ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp sdrkernel-http ${iprefix}/etc/
-cp sdrkernel-redis ${iprefix}/etc/
+cp sdrkernel* ${iprefix}/etc/
 cp redis.conf ${iprefix}/etc/
 
 if [ $? -ne 0 ]; then
