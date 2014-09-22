@@ -646,11 +646,11 @@ echo "Info: Step 4 - Creating sdranalytics-auth package ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cd ${iprefix}/../../..
-tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar sdr/analytics/auth
-if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2 ]; then
-    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2
+tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar sdr/analytics/auth
+if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2 ]; then
+    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2
 fi
-bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar
+bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar
 if [ $? -ne 0 ]; then
     echo "Error: cannot create sdranalytics-auth package !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}

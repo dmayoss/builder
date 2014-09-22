@@ -667,11 +667,11 @@ echo "Info: Step 4 - Creating sdranalytics-kernel package ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cd ${iprefix}/../../..
-tar cf /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar sdr/analytics/kernel
-if [ -f /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2 ]; then
-    rm /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar.bz2
+tar cf /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar sdr/analytics/kernel
+if [ -f /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2 ]; then
+    rm /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2
 fi
-bzip2 /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${OS_NAME}.${PT_NAME}.tar
+bzip2 /var/tmp/sdranalytics-kernel-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar
 if [ $? -ne 0 ]; then
     echo "Error: cannot create sdranalytics-kernel package !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
