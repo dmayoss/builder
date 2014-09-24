@@ -21,7 +21,7 @@
 #
 #  (http://www.gnu.org/copyleft/gpl.html)
 
-# VERSION: 1.2
+# VERSION: 1.3
 
 # ############################################################### #
 # SDR Engine: Analytics Authentication Linux                      #
@@ -467,6 +467,55 @@ cd ..
 }
 
 
+### inspect.lua
+build_auth_libluainspect() {
+dir="inspect.lua"
+step1=0
+step2=0
+step3=0
+
+
+cd lib
+
+# STEP 1
+init_module "$dir"
+if [ $? -eq 0 ]; then
+    step1=1
+fi
+
+
+# STEP 2
+
+echo "" >> ${BUILD_PATH}/${BUILD_LOG}
+echo "Info: Step 2 - Install inspect.lua ..." |\
+ tee -a ${BUILD_PATH}/${BUILD_LOG}
+
+cp inspect.lua ${iprefix}/lualib
+if [ $? -ne 0 ]; then
+    echo "Error: cannot install inspect.lua script !" |\
+     tee -a ${BUILD_PATH}/${BUILD_LOG}
+     rm /var/tmp/build.${module}
+     exit 3
+else
+    step2=1
+fi
+
+# final check; all 2 steps
+auth_libluainspect_done=`expr $step1 + $step2`
+if [ $auth_libluainspect_done -eq 2 ]; then
+   auth_libluainspect_done=1
+else
+   auth_libluainspect_done=90
+fi
+
+clean_module
+
+# back to root
+cd ..
+
+}
+
+
 ### configuration settings
 build_auth_config() {
 
@@ -645,19 +694,37 @@ echo "Info: Step 4 - Creating sdranalytics-auth package ..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
 cd ${iprefix}/../../..
-tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar sdr/analytics/auth
-if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2 ]; then
-    rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2
-fi
-bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar
-if [ $? -ne 0 ]; then
-    echo "Error: cannot create sdranalytics-auth package !" |\
-     tee -a ${BUILD_PATH}/${BUILD_LOG}
-    rm /var/tmp/build.${module}
-    exit 3
+if [ "$buildno" -ne 0 ]; then
+    tar cf /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar sdr/analytics/auth
+    if [ -f /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2 ]; then
+        rm /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar.bz2
+    fi
+    bzip2 /var/tmp/sdranalytics-auth-${sdrver}b${buildno}-${DIST_ID}.${PT_NAME}.tar
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot create sdranalytics-auth package !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step4=1
+    fi
 else
-    step4=1
+    # GA General Release
+    tar cf /var/tmp/sdranalytics-auth-${sdrver}-${DIST_ID}.${PT_NAME}.tar sdr/analytics/auth
+    if [ -f /var/tmp/sdranalytics-auth-${sdrver}-${DIST_ID}.${PT_NAME}.tar.bz2 ]; then
+        rm /var/tmp/sdranalytics-auth-${sdrver}-${DIST_ID}.${PT_NAME}.tar.bz2
+    fi
+    bzip2 /var/tmp/sdranalytics-auth-${sdrver}-${DIST_ID}.${PT_NAME}.tar
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot create sdranalytics-auth package !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step4=1
+    fi
 fi
+
 # final check; all 4 steps
 auth_fin_done=`expr $step1 + $step2 + $step3 + $step4`
 if [ "$auth_fin_done" -eq 4 ]; then
