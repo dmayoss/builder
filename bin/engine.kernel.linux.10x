@@ -620,7 +620,7 @@ echo "Info: Step 1 - Setting up directory structure ..." |\
 if [ ! -d ${iprefix}/etc ]; then
     mkdir ${iprefix}/etc
     if [ $? -ne 0 ]; then
-        echo "Error: cannot configure etc directory !" |\
+        echo "Error: cannot setup etc directory !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
         exit 3
@@ -633,7 +633,7 @@ fi
 if [ ! -d ${iprefix}/app ]; then
     mkdir ${iprefix}/app
     if [ $? -ne 0 ]; then
-        echo "Error: cannot configure app directory !" |\
+        echo "Error: cannot setup app directory !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
         exit 3
@@ -646,7 +646,7 @@ fi
 if [ ! -d ${iprefix}/static ]; then
     mkdir ${iprefix}/static
     if [ $? -ne 0 ]; then
-        echo "Error: cannot configure static directory !" |\
+        echo "Error: cannot setup static directory !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
         exit 3
@@ -659,7 +659,7 @@ fi
 if [ ! -d ${iprefix}/logs ]; then
     mkdir ${iprefix}/logs
     if [ $? -ne 0 ]; then
-        echo "Error: cannot configure logs directory !" |\
+        echo "Error: cannot setup logs directory !" |\
          tee -a ${BUILD_PATH}/${BUILD_LOG}
         rm /var/tmp/build.${module}
         exit 3
@@ -671,8 +671,22 @@ if [ ! -d ${iprefix}/logs ]; then
 fi
 
 
-# there are 4 settings
-step1=`expr $step1 / 4`
+if [ ! -d ${iprefix}/subscriptions ]; then
+    mkdir ${iprefix}/subscriptions
+    if [ $? -ne 0 ]; then
+        echo "Error: cannot setup subscriptions directory !" |\
+         tee -a ${BUILD_PATH}/${BUILD_LOG}
+        rm /var/tmp/build.${module}
+        exit 3
+    else
+        step1=`expr $step1 + 1`
+    fi
+
+    step1=`expr $step1 + 1`
+fi
+
+# there are 5 settings
+step1=`expr $step1 / 5`
 
 
 # STEP 2
