@@ -659,8 +659,12 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 2 - Installing sdrauth startup services..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-cp sdrauth* ${iprefix}/etc/
-cp redis.conf ${iprefix}/etc/
+cp auth* ${iprefix}/etc/
+if [ $entreprise_sem -eq 1 ]; then
+    cp redis.conf.maas ${iprefix}/etc/redis.conf
+elif [ $rbpi_sem -eq 1 ]; then
+    cp redis.conf.rbpi ${iprefix}/etc/redis.conf
+fi
 
 if [ $? -ne 0 ]; then
     echo "Error: cannot install sdrauth startup services !" |\
