@@ -159,8 +159,7 @@ echo "" >> ${BUILD_PATH}/${BUILD_LOG}
 echo "Info: Step 4 - Make install $dir..." |\
  tee -a ${BUILD_PATH}/${BUILD_LOG}
 
-
-make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
+env PATH=/sbin:$PATH make install >> ${BUILD_PATH}/${BUILD_LOG} 2>&1
 if [ $? -ne 0 ]; then
     echo "Error: make install gd failed !" |\
      tee -a ${BUILD_PATH}/${BUILD_LOG}
